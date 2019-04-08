@@ -3,11 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 	"net/http"
-
-	"github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 var token = flag.String("token", "", "set new bot api token")
@@ -24,7 +22,9 @@ func main() {
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	_, err = bot.SetWebhook(tgbotapi.NewWebhook("https://ec2-52-194-147-237.ap-northeast-1.compute.amazonaws.com/" + bot.Token))
+	webHook := tgbotapi.NewWebhookWithCert("https://y11e.com/"+bot.Token, "/etc/letsencrypt/live/y11e.com/fullchain.pem")
+	//webHook := tgbotapi.NewWebhook("https://52.194.147.237/ping/" + bot.Token)
+	_, err = bot.SetWebhook(webHook)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,10 +36,13 @@ func main() {
 		log.Printf("Telegram callback failed: %s", info.LastErrorMessage)
 	}
 	fmt.Println("telegram bot starting")
-	updates := bot.ListenForWebhook("/" + bot.Token)
-	go http.ListenAndServe("0.0.0.0:8443", &router{})
+	//updates := bot.ListenForWebhook("/" + bot.Token)
 
-	for update := range updates {
-		log.Printf("%+v\n", update)
-	}
+	http.ListenAndServe(":8080", NewRouter(bot.Token))
+
+	//for update := range updates {
+	//	log.Printf("%+v\n", update)
+	//}
+	//http.ListenAndServe(":8080", NewRouter())
+
 }
