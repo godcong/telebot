@@ -22,8 +22,8 @@ func BootWithGAE(token string) {
 	bot.Debug = true
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
-
-	_, err = bot.SetWebhook(tgbotapi.NewWebhook("https://yinhe-bot.appspot.com/" + bot.Token))
+	t := "thisistoken"
+	_, err = bot.SetWebhook(tgbotapi.NewWebhook("https://yinhe-bot.appspot.com/"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,7 +34,7 @@ func BootWithGAE(token string) {
 	if info.LastErrorDate != 0 {
 		log.Printf("Telegram callback failed: %s", info.LastErrorMessage)
 	}
-	updates := bot.ListenForWebhook("/" + bot.Token)
+	updates := bot.ListenForWebhook("/")
 	go http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 
 	for update := range updates {
