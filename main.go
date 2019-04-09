@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"io/ioutil"
+	"log"
 )
 
 func main() {
@@ -12,6 +13,6 @@ func main() {
 	if e != nil {
 		return
 	}
-
+	log.Println(string(token))
 	BootWithGAE(string(token))
 }
