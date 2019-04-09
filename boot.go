@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	api "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 	"net/http"
 	"os"
@@ -10,7 +10,7 @@ import (
 )
 
 func BootWithGAE(token string) {
-	bot, err := tgbotapi.NewBotAPI(token)
+	bot, err := api.NewBotAPI(token)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,7 +23,7 @@ func BootWithGAE(token string) {
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 	t := "thisistoken"
-	_, err = bot.SetWebhook(tgbotapi.NewWebhook("https://yinhe-bot.appspot.com/"))
+	_, err = bot.SetWebhook(api.NewWebhook("https://yinhe-bot.appspot.com/" + t))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,7 +34,7 @@ func BootWithGAE(token string) {
 	if info.LastErrorDate != 0 {
 		log.Printf("Telegram callback failed: %s", info.LastErrorMessage)
 	}
-	updates := bot.ListenForWebhook("/")
+	updates := bot.ListenForWebhook("/" + t)
 	go http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 
 	for update := range updates {
@@ -48,22 +48,23 @@ func BootWithGAE(token string) {
 
 		// Create a new MessageConfig. We don't have text yet,
 		// so we should leave it empty.
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
+		msg := api.NewMessage(update.Message.Chat.ID, "")
 
 		// Extract the command from the Message.
 		switch update.Message.Command() {
-		case "help":
-			msg.Text = "type /sayhi or /status."
-		case "sayhi":
-			msg.Text = "Hi :)"
-		case "status":
-			msg.Text = "I'm ok."
 		case "av":
 			v := strings.Split(update.Message.Text, " ")
 			msg.Text = "av not found"
 			if len(v) > 1 {
 				msg.Text = searchVideo(v[1])
 			}
+		case "suggest":
+			msg.Text = "result the top"
+		case "help":
+			msg.Text = "type /av or /suggest."
+		case "status":
+			msg.Text = "I'm ok."
+
 		}
 
 		if _, err := bot.Send(msg); err != nil {
@@ -73,7 +74,7 @@ func BootWithGAE(token string) {
 }
 
 func BootWithUpdate(token string) {
-	bot, err := tgbotapi.NewBotAPI(token)
+	bot, err := api.NewBotAPI(token)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -82,7 +83,7 @@ func BootWithUpdate(token string) {
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 
-	u := tgbotapi.NewUpdate(0)
+	u := api.NewUpdate(0)
 	u.Timeout = 60
 
 	updates, err := bot.GetUpdatesChan(u)
@@ -98,7 +99,7 @@ func BootWithUpdate(token string) {
 
 		// Create a new MessageConfig. We don't have text yet,
 		// so we should leave it empty.
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
+		msg := api.NewMessage(update.Message.Chat.ID, "")
 
 		// Extract the command from the Message.
 		switch update.Message.Command() {
