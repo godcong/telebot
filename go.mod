@@ -1,18 +1,16 @@
-module "https://github.com/girlvr/yinhe_bot"
+module github.com/girlvr/yinhe_bot
 
-go 1.12
+go 1.11
 
 require (
-	github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3 // indirect
-	github.com/gin-gonic/gin v1.3.0
-	github.com/girlvr/seed v0.0.0-20190411085235-c10205e9bfe7
+	github.com/denisenkom/go-mssqldb v0.0.0-20190401154936-ce35bd87d4b3 // indirect
+	github.com/go-sql-driver/mysql v1.4.1 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
-	github.com/golang/protobuf v1.3.1 // indirect
-	github.com/mattn/go-isatty v0.0.7 // indirect
-	github.com/stretchr/testify v1.3.0 // indirect
+	github.com/go-xorm/xorm v0.7.1
+	github.com/godcong/go-ipfs-restapi v0.0.0-20190410064157-238d7e91ad0a
+	github.com/google/uuid v1.1.1
+	github.com/mattn/go-sqlite3 v1.10.0 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
+	github.com/sirupsen/logrus v1.4.0
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
-	github.com/ugorji/go/codec v0.0.0-20190320090025-2dc34c0b8780 // indirect
-	golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3 // indirect
-	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 )

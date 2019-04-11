@@ -1,6 +1,6 @@
 package main
 
-import "github.com/girlvr/seed/model"
+import "github.com/girlvr/yinhe_bot/model"
 
 func searchVideo(s string) *model.Video {
 	video := &model.Video{}
