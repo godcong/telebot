@@ -7,14 +7,13 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
 )
 
 const ServerURL = "https://ipfs.io/ipfs/"
 
 var bot *tgbotapi.BotAPI
+var photoHas = make(map[string][]byte)
 
 func InitBoot(botapi *tgbotapi.BotAPI) {
 	bot = botapi
@@ -81,30 +80,24 @@ func searchVideo(s string) *model.Video {
 	return video
 }
 
-func getFile(hash string) string {
+func getFile(hash string) tgbotapi.FileBytes {
 	url := url(hash)
 	logrus.Info("url:", url)
+	fb := tgbotapi.FileBytes{
+		Name: hash,
+	}
 	resp, err := http.Get(url)
 	if err != nil {
 		logrus.Error(err)
-		return ""
+		return fb
 	}
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Error(err)
-		return ""
+		return fb
 	}
-	s, err := filepath.Abs(hash)
-	if err != nil {
-		return ""
-	}
-	logrus.Info("filepath:", s)
-	err = ioutil.WriteFile(s, bytes, os.ModePerm)
-	if err != nil {
-		logrus.Error(err)
-		return ""
-	}
-	return s
+	fb.Bytes = bytes
+	return fb
 }
 
 func url(hash string) string {
