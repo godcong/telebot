@@ -87,7 +87,12 @@ func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) {
 		count := int64(1)
 		for _, o := range value.Object {
 			hasVideo = true
-			cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/media.m3u8\n"
+			if value.Sliced {
+				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
+			} else {
+				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "\n"
+			}
+
 			count++
 		}
 	}
