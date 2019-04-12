@@ -1,18 +1,16 @@
 package main
 
 import (
-	"flag"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
-	"log"
 )
 
 func main() {
-	flag.Parse()
-
 	token, e := ioutil.ReadFile("token")
 	if e != nil {
 		return
 	}
-	log.Println(string(token))
+	logrus.Info(string(token))
+	logrus.SetReportCaller(true)
 	BootWithGAE(string(token))
 }
