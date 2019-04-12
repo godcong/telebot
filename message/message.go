@@ -3,9 +3,15 @@ package message
 import (
 	"github.com/girlvr/yinhe_bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/sirupsen/logrus"
+	"io/ioutil"
 	"log"
+	"net/http"
+	"os"
 	"strings"
 )
+
+const ServerURL = "https://ipfs.io/ipfs/"
 
 var bot *tgbotapi.BotAPI
 
@@ -29,9 +35,9 @@ func HookMessage(update tgbotapi.Update) {
 
 	// Extract the command from the Message.
 	switch update.Message.Command() {
-	case "av":
+	case "video":
 		v := strings.Split(update.Message.Text, " ")
-		msg.Text = "av not found"
+		msg.Text = "video not found"
 		if len(v) > 1 {
 			video := searchVideo(v[1])
 			if video == nil {
@@ -43,16 +49,16 @@ func HookMessage(update tgbotapi.Update) {
 					msg.Text += "https://ipfs.io/ipfs/" + o.Link.Hash + "\n"
 				}
 			}
-			pto.File = "https://ipfs.io/ipfs/" + video.Poster
+			pto.File = getFile(video.Poster)
 		}
-	case "suggest":
+	case "top":
 		msg.Text = "result the top"
 	case "help":
-		msg.Text = "type /av or /suggest."
+		msg.Text = "type /video or /top."
 	case "status":
 		msg.Text = "I'm ok."
-
 	}
+
 	if _, err := bot.Send(pto); err != nil {
 		log.Panic(err)
 	}
@@ -67,4 +73,27 @@ func searchVideo(s string) *model.Video {
 		return nil
 	}
 	return video
+}
+
+func getFile(hash string) string {
+	resp, err := http.Get(url(hash))
+	if err != nil {
+		logrus.Error(err)
+		return ""
+	}
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Error(err)
+		return ""
+	}
+	err = ioutil.WriteFile(hash, bytes, os.ModePerm)
+	if err != nil {
+		logrus.Error(err)
+		return ""
+	}
+	return hash
+}
+
+func url(hash string) string {
+	return ServerURL + hash
 }

@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/girlvr/yinhe_bot/message"
 	api "github.com/go-telegram-bot-api/telegram-bot-api"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
 	"os"
-	"strings"
 )
 
 func BootWithGAE(token string) {
@@ -23,7 +23,7 @@ func BootWithGAE(token string) {
 	bot.Debug = true
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
-	t := "thisistoken"
+	t := "crVuYHQbUWCerib3"
 	_, err = bot.SetWebhook(api.NewWebhook("https://yinhe-bot.appspot.com/" + t))
 	if err != nil {
 		log.Fatal(err)
@@ -35,55 +35,12 @@ func BootWithGAE(token string) {
 	if info.LastErrorDate != 0 {
 		log.Printf("Telegram callback failed: %s", info.LastErrorMessage)
 	}
+
 	updates := bot.ListenForWebhook("/" + t)
 	go http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
-
+	message.InitBoot(bot)
 	for update := range updates {
-		if update.Message == nil { // ignore any non-Message updates
-			continue
-		}
-
-		if !update.Message.IsCommand() { // ignore any non-command Messages
-			continue
-		}
-
-		// Create a new MessageConfig. We don't have text yet,
-		// so we should leave it empty.
-		msg := api.NewMessage(update.Message.Chat.ID, "")
-		pto := api.NewPhotoUpload(update.Message.Chat.ID, "")
-
-		// Extract the command from the Message.
-		switch update.Message.Command() {
-		case "av":
-			v := strings.Split(update.Message.Text, " ")
-			msg.Text = "av not found"
-			if len(v) > 1 {
-				video := searchVideo(v[1])
-				if video == nil {
-					return
-				}
-				msg.Text = ""
-				for _, value := range video.VideoGroupList {
-					for _, o := range value.Object {
-						msg.Text += "https://ipfs.io/ipfs/" + o.Link.Hash + "\n"
-					}
-				}
-				pto.File = "https://ipfs.io/ipfs/" + video.Poster
-			}
-		case "suggest":
-			msg.Text = "result the top"
-		case "help":
-			msg.Text = "type /av or /suggest."
-		case "status":
-			msg.Text = "I'm ok."
-
-		}
-		if _, err := bot.Send(pto); err != nil {
-			log.Panic(err)
-		}
-		if _, err := bot.Send(msg); err != nil {
-			log.Panic(err)
-		}
+		message.HookMessage(update)
 	}
 }
 
@@ -103,45 +60,6 @@ func BootWithUpdate(token string) {
 	updates, err := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		if update.Message == nil { // ignore any non-Message updates
-			continue
-		}
-
-		if !update.Message.IsCommand() { // ignore any non-command Messages
-			continue
-		}
-
-		// Create a new MessageConfig. We don't have text yet,
-		// so we should leave it empty.
-		msg := api.NewMessage(update.Message.Chat.ID, "")
-
-		// Extract the command from the Message.
-		switch update.Message.Command() {
-		case "help":
-			msg.Text = "type /sayhi or /status."
-		case "sayhi":
-			msg.Text = "Hi :)"
-		case "status":
-			msg.Text = "I'm ok."
-		case "av":
-			v := strings.Split(update.Message.Text, " ")
-			msg.Text = "av not found"
-			if len(v) > 1 {
-				video := searchVideo(v[1])
-				if video == nil {
-					return
-				}
-				msg.Text = ""
-				for _, value := range video.VideoGroupList {
-					for _, o := range value.Object {
-						msg.Text += "https://ipfs.io/ipfs/" + o.Link.Hash + "\n"
-					}
-				}
-			}
-		}
-
-		if _, err := bot.Send(msg); err != nil {
-			log.Panic(err)
-		}
+		message.HookMessage(update)
 	}
 }
