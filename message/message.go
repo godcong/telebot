@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -32,7 +33,7 @@ func HookMessage(update tgbotapi.Update) {
 	// so we should leave it empty.
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
 	pto := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
-
+	hasVideo := false
 	// Extract the command from the Message.
 	switch update.Message.Command() {
 	case "video":
@@ -43,13 +44,13 @@ func HookMessage(update tgbotapi.Update) {
 			if video == nil {
 				return
 			}
-			msg.Text = ""
+			pto.File = getFile(video.Poster)
 			for _, value := range video.VideoGroupList {
 				for _, o := range value.Object {
-					msg.Text += "https://ipfs.io/ipfs/" + o.Link.Hash + "\n"
+					hasVideo = true
+					pto.Caption += url(o.Link.Hash) + "\n"
 				}
 			}
-			pto.File = getFile(video.Poster)
 		}
 	case "top":
 		msg.Text = "result the top"
@@ -57,10 +58,15 @@ func HookMessage(update tgbotapi.Update) {
 		msg.Text = "type /video or /top."
 	case "status":
 		msg.Text = "I'm ok."
+	default:
+		msg.Text = "type /video or /top."
 	}
 
-	if _, err := bot.Send(pto); err != nil {
-		log.Panic(err)
+	if hasVideo {
+		if _, err := bot.Send(pto); err != nil {
+			log.Panic(err)
+		}
+		return
 	}
 	if _, err := bot.Send(msg); err != nil {
 		log.Panic(err)
@@ -69,14 +75,16 @@ func HookMessage(update tgbotapi.Update) {
 
 func searchVideo(s string) *model.Video {
 	video := &model.Video{}
-	if b, err := model.FindVideo(s, video); err != nil || !b {
+	if b, err := model.DeepFind(s, video); err != nil || !b {
 		return nil
 	}
 	return video
 }
 
 func getFile(hash string) string {
-	resp, err := http.Get(url(hash))
+	url := url(hash)
+	logrus.Info("url:", url)
+	resp, err := http.Get(url)
 	if err != nil {
 		logrus.Error(err)
 		return ""
@@ -86,12 +94,17 @@ func getFile(hash string) string {
 		logrus.Error(err)
 		return ""
 	}
-	err = ioutil.WriteFile(hash, bytes, os.ModePerm)
+	s, err := filepath.Abs(hash)
+	if err != nil {
+		return ""
+	}
+	logrus.Info("filepath:", s)
+	err = ioutil.WriteFile(s, bytes, os.ModePerm)
 	if err != nil {
 		logrus.Error(err)
 		return ""
 	}
-	return hash
+	return s
 }
 
 func url(hash string) string {

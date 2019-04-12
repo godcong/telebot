@@ -52,7 +52,19 @@ func (v *Video) AddSourceInfo(info *SourceInfoDetail) {
 
 // FindVideo ...
 func FindVideo(ban string, video *Video) (b bool, e error) {
-	return DB().Where("bangumi like %?%", ban).Get(video)
+	return DB().Where("bangumi like ?", "%"+ban+"%").Get(video)
+}
+
+func DeepFind(s string, video *Video) (b bool, e error) {
+	b, e = DB().Where("bangumi = ?", s).Get(video)
+	if e != nil || !b {
+		like := "%" + s + "%"
+		return DB().Where("bangumi like ? ", like).
+			Or("alias like ?", like).
+			Or("role like ?", like).
+			Get(video)
+	}
+	return b, e
 }
 
 // AddVideo ...
