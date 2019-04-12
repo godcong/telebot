@@ -5,8 +5,8 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
-	"log"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -31,7 +31,7 @@ func HookMessage(update tgbotapi.Update) {
 	// Create a new MessageConfig. We don't have text yet,
 	// so we should leave it empty.
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
-	pto := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
+	config := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
 	hasVideo := false
 	// Extract the command from the Message.
 	switch update.Message.Command() {
@@ -41,40 +41,18 @@ func HookMessage(update tgbotapi.Update) {
 		if len(v) > 1 {
 			video := searchVideo(v[1])
 			if video == nil {
-				return
+				break
 			}
-			pto.File = getFile(video.Poster)
-			for _, value := range video.VideoGroupList {
-				if value.Sharpness != "" {
-					pto.Caption += value.Sharpness + ":\n"
-				}
-
-				for _, o := range value.Object {
-					hasVideo = true
-					pto.Caption += url(o.Link.Hash) + "\n"
-				}
-			}
-			if pto.Caption == "" {
-				pto.Caption = "无视频信息"
-			}
+			hasVideo = true
+			parseVideo(&config, video)
 		}
 	case "top":
 		video := model.Video{}
 		b, e := model.Top(&video)
+		msg.Text = "video not found"
 		if e == nil && b {
 			hasVideo = true
-			for _, value := range video.VideoGroupList {
-				if value.Sharpness != "" {
-					pto.Caption += value.Sharpness + ":\n"
-				}
-
-				for _, o := range value.Object {
-					pto.Caption += url(o.Link.Hash) + "\n"
-				}
-			}
-			if pto.Caption == "" {
-				pto.Caption = "无视频信息"
-			}
+			parseVideo(&config, &video)
 		}
 	case "help":
 		msg.Text = "输入 /video #番号# 或者 /top 查询视频."
@@ -85,14 +63,41 @@ func HookMessage(update tgbotapi.Update) {
 	}
 
 	if hasVideo {
-		if _, err := bot.Send(pto); err != nil {
-			log.Panic(err)
+		if _, err := bot.Send(config); err != nil {
+			logrus.Error(err)
 		}
 		return
 	}
 	if _, err := bot.Send(msg); err != nil {
-		log.Panic(err)
+		logrus.Error(err)
 	}
+}
+
+func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) {
+	cfg.File = getFile(video.Poster)
+
+	cfg.Caption = video.Intro
+	cfg.Caption = AddLine(cfg.Caption)
+	hasVideo := false
+	for _, value := range video.VideoGroupList {
+		if value.Sharpness != "" {
+			cfg.Caption += value.Sharpness + "片源链接\n"
+			cfg.Caption = AddLine(cfg.Caption)
+		}
+		count := int64(1)
+		for _, o := range value.Object {
+			hasVideo = true
+			cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/media.m3u8\n"
+			count++
+		}
+	}
+	if cfg.Caption == "" || !hasVideo {
+		cfg.Caption += "无片源信息"
+	}
+}
+
+func AddLine(s string) string {
+	return s + "\n" + "-----------" + "\n"
 }
 
 func searchVideo(s string) *model.Video {
