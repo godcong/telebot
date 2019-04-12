@@ -50,7 +50,7 @@ func BootWithGAE(token string) {
 		// Create a new MessageConfig. We don't have text yet,
 		// so we should leave it empty.
 		msg := api.NewMessage(update.Message.Chat.ID, "")
-		//var photo api.PhotoConfig
+		pto := api.NewPhotoUpload(update.Message.Chat.ID, "")
 
 		// Extract the command from the Message.
 		switch update.Message.Command() {
@@ -68,7 +68,7 @@ func BootWithGAE(token string) {
 						msg.Text += "https://ipfs.io/ipfs/" + o.Link.Hash + "\n"
 					}
 				}
-				//photo = api.NewPhotoUpload(update.Message.Chat.ID, "https://ipfs.io/ipfs/"+video.Poster)
+				pto.File = "https://ipfs.io/ipfs/" + video.Poster
 			}
 		case "suggest":
 			msg.Text = "result the top"
@@ -78,9 +78,9 @@ func BootWithGAE(token string) {
 			msg.Text = "I'm ok."
 
 		}
-		//if _, err := bot.Send(photo); err != nil {
-		//	log.Panic(err)
-		//}
+		if _, err := bot.Send(pto); err != nil {
+			log.Panic(err)
+		}
 		if _, err := bot.Send(msg); err != nil {
 			log.Panic(err)
 		}

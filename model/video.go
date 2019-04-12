@@ -52,7 +52,7 @@ func (v *Video) AddSourceInfo(info *SourceInfoDetail) {
 
 // FindVideo ...
 func FindVideo(ban string, video *Video) (b bool, e error) {
-	return DB().Where("bangumi = ?", ban).Get(video)
+	return DB().Where("bangumi like %?%", ban).Get(video)
 }
 
 // AddVideo ...
