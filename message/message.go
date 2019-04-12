@@ -45,14 +45,37 @@ func HookMessage(update tgbotapi.Update) {
 			}
 			pto.File = getFile(video.Poster)
 			for _, value := range video.VideoGroupList {
+				if value.Sharpness != "" {
+					pto.Caption += value.Sharpness + ":\n"
+				}
+
 				for _, o := range value.Object {
 					hasVideo = true
 					pto.Caption += url(o.Link.Hash) + "\n"
 				}
 			}
+			if pto.Caption == "" {
+				pto.Caption = "无视频信息"
+			}
 		}
 	case "top":
-		msg.Text = "result the top"
+		video := model.Video{}
+		b, e := model.Top(&video)
+		if e == nil && b {
+			hasVideo = true
+			for _, value := range video.VideoGroupList {
+				if value.Sharpness != "" {
+					pto.Caption += value.Sharpness + ":\n"
+				}
+
+				for _, o := range value.Object {
+					pto.Caption += url(o.Link.Hash) + "\n"
+				}
+			}
+			if pto.Caption == "" {
+				pto.Caption = "无视频信息"
+			}
+		}
 	case "help":
 		msg.Text = "type /video or /top."
 	case "status":

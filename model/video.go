@@ -55,6 +55,10 @@ func FindVideo(ban string, video *Video) (b bool, e error) {
 	return DB().Where("bangumi like ?", "%"+ban+"%").Get(video)
 }
 
+func Top(video *Video) (b bool, e error) {
+	return DB().OrderBy("created_at desc").Get(video)
+}
+
 func DeepFind(s string, video *Video) (b bool, e error) {
 	b, e = DB().Where("bangumi = ?", s).Get(video)
 	if e != nil || !b {
