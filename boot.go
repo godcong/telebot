@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	api "github.com/go-telegram-bot-api/telegram-bot-api"
+	_ "github.com/mattn/go-sqlite3"
 	"log"
 	"net/http"
 	"os"
@@ -49,7 +50,7 @@ func BootWithGAE(token string) {
 		// Create a new MessageConfig. We don't have text yet,
 		// so we should leave it empty.
 		msg := api.NewMessage(update.Message.Chat.ID, "")
-		var photo api.PhotoConfig
+		//var photo api.PhotoConfig
 
 		// Extract the command from the Message.
 		switch update.Message.Command() {
@@ -67,7 +68,7 @@ func BootWithGAE(token string) {
 						msg.Text += "https://ipfs.io/ipfs/" + o.Link.Hash + "\n"
 					}
 				}
-				photo = api.NewPhotoUpload(update.Message.Chat.ID, "https://ipfs.io/ipfs/"+video.Poster)
+				//photo = api.NewPhotoUpload(update.Message.Chat.ID, "https://ipfs.io/ipfs/"+video.Poster)
 			}
 		case "suggest":
 			msg.Text = "result the top"
@@ -77,9 +78,9 @@ func BootWithGAE(token string) {
 			msg.Text = "I'm ok."
 
 		}
-		if _, err := bot.Send(photo); err != nil {
-			log.Panic(err)
-		}
+		//if _, err := bot.Send(photo); err != nil {
+		//	log.Panic(err)
+		//}
 		if _, err := bot.Send(msg); err != nil {
 			log.Panic(err)
 		}
@@ -126,7 +127,16 @@ func BootWithUpdate(token string) {
 			v := strings.Split(update.Message.Text, " ")
 			msg.Text = "av not found"
 			if len(v) > 1 {
-				msg.Text = searchVideo(v[1])
+				video := searchVideo(v[1])
+				if video == nil {
+					return
+				}
+				msg.Text = ""
+				for _, value := range video.VideoGroupList {
+					for _, o := range value.Object {
+						msg.Text += "https://ipfs.io/ipfs/" + o.Link.Hash + "\n"
+					}
+				}
 			}
 		}
 
