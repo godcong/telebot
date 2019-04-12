@@ -77,11 +77,11 @@ func HookMessage(update tgbotapi.Update) {
 			}
 		}
 	case "help":
-		msg.Text = "type /video or /top."
+		msg.Text = "输入 /video #番号# 或者 /top 查询视频."
 	case "status":
 		msg.Text = "I'm ok."
 	default:
-		msg.Text = "type /video or /top."
+		return
 	}
 
 	if hasVideo {
