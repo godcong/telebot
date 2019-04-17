@@ -81,7 +81,7 @@ func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) {
 	hasVideo := false
 	for _, value := range video.VideoGroupList {
 		if value.Sharpness != "" {
-			cfg.Caption += value.Sharpness + "片源链接\n"
+			cfg.Caption += value.Sharpness + "片源链接"
 			cfg.Caption = AddLine(cfg.Caption)
 		}
 		count := int64(1)
