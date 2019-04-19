@@ -10,15 +10,18 @@ import (
 	"strings"
 )
 
+// ServerURL ...
 const ServerURL = "https://ipfs.io/ipfs/"
 
 var bot *tgbotapi.BotAPI
 var photoHas = make(map[string][]byte)
 
+// InitBoot ...
 func InitBoot(botapi *tgbotapi.BotAPI) {
 	bot = botapi
 }
 
+// HookMessage ...
 func HookMessage(update tgbotapi.Update) {
 	if update.Message == nil {
 		return
@@ -27,7 +30,6 @@ func HookMessage(update tgbotapi.Update) {
 	if !update.Message.IsCommand() { // ignore any non-command Messages
 		return
 	}
-
 	// Create a new MessageConfig. We don't have text yet,
 	// so we should leave it empty.
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
@@ -54,6 +56,8 @@ func HookMessage(update tgbotapi.Update) {
 			hasVideo = true
 			parseVideo(&config, &video)
 		}
+	case "ban":
+
 	case "help":
 		msg.Text = "输入 /video #番号# 或者 /top 查询视频."
 	case "status":
@@ -77,12 +81,12 @@ func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) {
 	cfg.File = getFile(video.Poster)
 
 	cfg.Caption = video.Intro
-	cfg.Caption = AddLine(cfg.Caption)
+	cfg.Caption = addLine(cfg.Caption)
 	hasVideo := false
 	for _, value := range video.VideoGroupList {
 		if value.Sharpness != "" {
 			cfg.Caption += value.Sharpness + "片源链接"
-			cfg.Caption = AddLine(cfg.Caption)
+			cfg.Caption = addLine(cfg.Caption)
 		}
 		count := int64(1)
 		for _, o := range value.Object {
@@ -101,7 +105,7 @@ func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) {
 	}
 }
 
-func AddLine(s string) string {
+func addLine(s string) string {
 	return s + "\n" + "-----------" + "\n"
 }
 

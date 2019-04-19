@@ -10,6 +10,7 @@ import (
 	"os"
 )
 
+// BootWithGAE ...
 func BootWithGAE(token string) {
 	bot, err := api.NewBotAPI(token)
 	if err != nil {
@@ -44,6 +45,7 @@ func BootWithGAE(token string) {
 	}
 }
 
+// BootWithUpdate ...
 func BootWithUpdate(token string) {
 	bot, err := api.NewBotAPI(token)
 	if err != nil {
