@@ -1,6 +1,7 @@
 package message
 
 import (
+	"context"
 	"github.com/girlvr/yinhe_bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/sirupsen/logrus"
@@ -8,6 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // ServerURL ...
@@ -45,16 +47,23 @@ func HookMessage(update tgbotapi.Update) {
 			if video == nil {
 				break
 			}
+
+			e := parseVideo(&config, video)
+			if e != nil {
+				break
+			}
 			hasVideo = true
-			parseVideo(&config, video)
 		}
 	case "top":
 		video := model.Video{}
 		b, e := model.Top(&video)
 		msg.Text = "video not found"
 		if e == nil && b {
+			e := parseVideo(&config, &video)
+			if e != nil {
+				return
+			}
 			hasVideo = true
-			parseVideo(&config, &video)
 		}
 	case "ban":
 
@@ -77,9 +86,12 @@ func HookMessage(update tgbotapi.Update) {
 	}
 }
 
-func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) {
-	cfg.File = getFile(video.Poster)
-
+func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) error {
+	fb, e := getFile(video.Poster)
+	if e != nil {
+		return e
+	}
+	cfg.File = *fb
 	cfg.Caption = video.Intro
 	cfg.Caption = addLine(cfg.Caption)
 	hasVideo := false
@@ -103,6 +115,7 @@ func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) {
 	if cfg.Caption == "" || !hasVideo {
 		cfg.Caption += "无片源信息"
 	}
+	return nil
 }
 
 func addLine(s string) string {
@@ -117,24 +130,30 @@ func searchVideo(s string) *model.Video {
 	return video
 }
 
-func getFile(hash string) tgbotapi.FileBytes {
+func getFile(hash string) (fb *tgbotapi.FileBytes, e error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
 	url := url(hash)
 	logrus.Info("url:", url)
-	fb := tgbotapi.FileBytes{
+	fb = &tgbotapi.FileBytes{
 		Name: hash,
 	}
-	resp, err := http.Get(url)
-	if err != nil {
-		logrus.Error(err)
-		return fb
+	request, e := http.NewRequest("GET", url, nil)
+	if e != nil {
+		return &tgbotapi.FileBytes{}, e
 	}
-	bytes, err := ioutil.ReadAll(resp.Body)
+	response, e := http.DefaultClient.Do(request.WithContext(ctx))
+
+	if e != nil {
+		return &tgbotapi.FileBytes{}, e
+	}
+
+	bytes, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		logrus.Error(err)
-		return fb
+		return &tgbotapi.FileBytes{}, err
 	}
 	fb.Bytes = bytes
-	return fb
+	return fb, nil
 }
 
 func url(hash string) string {
