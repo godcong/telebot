@@ -87,13 +87,14 @@ func HookMessage(update tgbotapi.Update) {
 }
 
 func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) error {
+	cfg.Caption = video.Intro
+	cfg.Caption = addLine(cfg.Caption)
 	fb, e := getFile(video.Poster)
 	if e != nil {
+		cfg.Caption += "无片源信息"
 		return e
 	}
 	cfg.File = *fb
-	cfg.Caption = video.Intro
-	cfg.Caption = addLine(cfg.Caption)
 	hasVideo := false
 	for _, value := range video.VideoGroupList {
 		if value.Sharpness != "" {
