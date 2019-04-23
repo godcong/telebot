@@ -47,14 +47,15 @@ func HookMessage(update tgbotapi.Update) {
 			if _, err := bot.Send(msg); err != nil {
 				return
 			}
-
 			video := searchVideo(v[1])
 			if video == nil {
+				msg.Text = "没有找到对应资源"
 				break
 			}
 
 			e := parseVideo(&config, video)
 			if e != nil {
+				msg.Text = "没有找到对应资源"
 				break
 			}
 			hasVideo = true
@@ -65,6 +66,7 @@ func HookMessage(update tgbotapi.Update) {
 		if e == nil && b {
 			e := parseVideo(&config, &video)
 			if e != nil {
+				msg.Text = "没有找到对应资源"
 				break
 			}
 			hasVideo = true
@@ -72,7 +74,7 @@ func HookMessage(update tgbotapi.Update) {
 	case "ban":
 
 	case "help":
-		msg.Text = "输入 /video #番号# 或者 /top 查询视频."
+		msg.Text = "输入 /video +番号 或者 /top 查询视频."
 	case "status":
 		msg.Text = "I'm ok."
 	default:
@@ -85,9 +87,7 @@ func HookMessage(update tgbotapi.Update) {
 		}
 		return
 	}
-	if msg.Text == "" {
-		msg.Text = "没有找到对应资源"
-	}
+
 	if _, err := bot.Send(msg); err != nil {
 		return
 	}
