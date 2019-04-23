@@ -61,7 +61,7 @@ func HookMessage(update tgbotapi.Update) {
 		if e == nil && b {
 			e := parseVideo(&config, &video)
 			if e != nil {
-				return
+				break
 			}
 			hasVideo = true
 		}
