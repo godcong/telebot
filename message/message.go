@@ -37,12 +37,17 @@ func HookMessage(update tgbotapi.Update) {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
 	config := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
 	hasVideo := false
-	// Extract the command from the Message.
+
 	switch update.Message.Command() {
 	case "video":
 		v := strings.Split(update.Message.Text, " ")
-		msg.Text = "video not found"
+
 		if len(v) > 1 {
+			msg.Text = "正在搜索：" + v[1]
+			if _, err := bot.Send(msg); err != nil {
+				return
+			}
+
 			video := searchVideo(v[1])
 			if video == nil {
 				break
@@ -57,7 +62,6 @@ func HookMessage(update tgbotapi.Update) {
 	case "top":
 		video := model.Video{}
 		b, e := model.Top(&video)
-		msg.Text = "video not found"
 		if e == nil && b {
 			e := parseVideo(&config, &video)
 			if e != nil {
@@ -81,8 +85,11 @@ func HookMessage(update tgbotapi.Update) {
 		}
 		return
 	}
+	if msg.Text == "" {
+		msg.Text = "没有找到对应资源"
+	}
 	if _, err := bot.Send(msg); err != nil {
-		logrus.Error(err)
+		return
 	}
 }
 
@@ -132,7 +139,7 @@ func searchVideo(s string) *model.Video {
 }
 
 func getFile(hash string) (fb *tgbotapi.FileBytes, e error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
 	url := connectURL(hash)
