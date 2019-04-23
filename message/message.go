@@ -104,9 +104,9 @@ func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) error {
 		for _, o := range value.Object {
 			hasVideo = true
 			if value.Sliced {
-				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
+				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + connectURL(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
 			} else {
-				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "\n"
+				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + connectURL(o.Link.Hash) + "\n"
 			}
 
 			count++
@@ -133,11 +133,13 @@ func searchVideo(s string) *model.Video {
 func getFile(hash string) (fb *tgbotapi.FileBytes, e error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	url := url(hash)
-	logrus.Info("url:", url)
+
+	url := connectURL(hash)
+	logrus.Info("connectURL:", url)
 	fb = &tgbotapi.FileBytes{
 		Name: hash,
 	}
+
 	request, e := http.NewRequest("GET", url, nil)
 	if e != nil {
 		return &tgbotapi.FileBytes{}, e
@@ -156,6 +158,6 @@ func getFile(hash string) (fb *tgbotapi.FileBytes, e error) {
 	return fb, nil
 }
 
-func url(hash string) string {
+func connectURL(hash string) string {
 	return ServerURL + hash
 }
