@@ -132,7 +132,7 @@ func searchVideo(s string) *model.Video {
 }
 
 func getFile(hash string) (fb *tgbotapi.FileBytes, e error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	url := connectURL(hash)
