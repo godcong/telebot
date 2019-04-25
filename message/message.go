@@ -45,7 +45,9 @@ func HookMessage(update tgbotapi.Update) {
 		if len(v) > 1 {
 			msg.Text = "正在搜索：" + v[1]
 			if _, err := bot.Send(msg); err != nil {
-				return
+				logrus.Error(err)
+				msg.Text = "没有找到对应资源"
+				break
 			}
 			video := searchVideo(v[1])
 			if video == nil {
