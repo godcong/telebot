@@ -65,14 +65,17 @@ func HookMessage(update tgbotapi.Update) {
 	case "top":
 		video := model.Video{}
 		b, e := model.Top(&video)
-		if e == nil && b {
-			e := parseVideo(&config, &video)
-			if e != nil {
-				msg.Text = "没有找到对应资源"
-				break
-			}
-			hasVideo = true
+		if e != nil || !b {
+			msg.Text = "没有找到对应资源"
+			break
 		}
+		e = parseVideo(&config, &video)
+		if e != nil {
+			msg.Text = "没有找到对应资源"
+			break
+		}
+		hasVideo = true
+
 	case "ban":
 
 	case "help":
