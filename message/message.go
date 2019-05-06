@@ -23,6 +23,11 @@ func InitBoot(botapi *tgbotapi.BotAPI) {
 	bot = botapi
 }
 
+// CMD ...
+func CMD(name string, args ...string) {
+
+}
+
 // HookMessage ...
 func HookMessage(update tgbotapi.Update) {
 	if update.Message == nil {
