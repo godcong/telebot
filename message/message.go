@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/girlvr/yinhe_bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	shell "github.com/godcong/go-ipfs-restapi"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -15,8 +16,12 @@ import (
 // ServerURL ...
 const ServerURL = "https://ipfs.io/ipfs/"
 
+// LocalURL ...
+const LocalURL = "http://localhost:8080/ipfs/"
+
 var bot *tgbotapi.BotAPI
 var photoHas = make(map[string][]byte)
+var hasLocal = false
 
 // InitBoot ...
 func InitBoot(botapi *tgbotapi.BotAPI) {
@@ -177,5 +182,19 @@ func getFile(hash string) (fb *tgbotapi.FileBytes, e error) {
 }
 
 func connectURL(hash string) string {
+	if checkLocal() {
+		return LocalURL + hash
+	}
 	return ServerURL + hash
+}
+
+func checkLocal() bool {
+	if !hasLocal {
+		rest := shell.NewShell("localhost:5001")
+		if _, err := rest.ID(); err != nil {
+			return false
+		}
+		hasLocal = true
+	}
+	return hasLocal
 }
