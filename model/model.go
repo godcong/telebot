@@ -12,6 +12,12 @@ import (
 
 var db *xorm.Engine
 var syncTable map[string]interface{}
+var path string
+
+// SetPath ...
+func SetPath(p string) {
+	path = p
+}
 
 // RegisterTable ...
 func RegisterTable(v interface{}) {
@@ -73,9 +79,8 @@ func (d *Database) Source() string {
 }
 
 // InitDB ...
-func InitDB(pathname string) (e error) {
-
-	eng, e := xorm.NewEngine("mysql", LoadToml(pathname).Source())
+func InitDB() (e error) {
+	eng, e := xorm.NewEngine("mysql", LoadToml(path).Source())
 	if e != nil {
 		return e
 	}
