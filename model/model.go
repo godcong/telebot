@@ -5,39 +5,19 @@ import (
 	"github.com/go-xorm/xorm"
 	"github.com/google/uuid"
 	"github.com/pelletier/go-toml"
+	log "github.com/sirupsen/logrus"
 	"net/url"
 	"reflect"
 	"time"
 )
 
 var db *xorm.Engine
-var syncTable map[string]interface{}
+var syncTable = map[string]interface{}{}
 var path string
 
 // SetPath ...
 func SetPath(p string) {
 	path = p
-}
-
-// RegisterTable ...
-func RegisterTable(v interface{}) {
-	tof := reflect.TypeOf(v).Name()
-	if syncTable == nil {
-		syncTable = map[string]interface{}{
-			tof: v,
-		}
-	}
-	syncTable[tof] = v
-}
-
-// DB ...
-func DB() *xorm.Engine {
-	if db == nil {
-		if err := InitDB(); err != nil {
-			panic(err)
-		}
-	}
-	return db
 }
 
 // Database ...
@@ -78,16 +58,33 @@ func (d *Database) Source() string {
 		d.Username, d.Password, d.Addr, d.Port, d.Schema, d.Location, d.Charset)
 }
 
+// RegisterTable ...
+func RegisterTable(v interface{}) {
+	tof := reflect.TypeOf(v).Name()
+	log.Info("register: ", tof)
+	syncTable[tof] = v
+}
+
+// DB ...
+func DB() *xorm.Engine {
+	if db == nil {
+		if err := InitDB(); err != nil {
+			panic(err)
+		}
+	}
+	return db
+}
+
 // InitDB ...
 func InitDB() (e error) {
-	eng, e := xorm.NewEngine("mysql", LoadToml(path).Source())
+	eng, e := xorm.NewEngine("sqlite3", "seed.db")
 	if e != nil {
 		return e
 	}
 	eng.ShowSQL(true)
 	eng.ShowExecTime(true)
-
-	for _, val := range syncTable {
+	for idx, val := range syncTable {
+		log.Println("syncing ", idx)
 		e := eng.Sync2(val)
 		if e != nil {
 			return e
@@ -96,6 +93,24 @@ func InitDB() (e error) {
 
 	db = eng
 	return nil
+}
+
+// InitSync ...
+func InitSync(pathname string) (eng *xorm.Engine, e error) {
+	eng, e = xorm.NewEngine("mysql", LoadToml(pathname).Source())
+	if e != nil {
+		return
+	}
+	eng.ShowSQL(true)
+	eng.ShowExecTime(true)
+	for idx, val := range syncTable {
+		log.Println("syncing ", idx)
+		e = eng.Sync2(val)
+		if e != nil {
+			return
+		}
+	}
+	return eng, nil
 }
 
 // LoadToml ...
