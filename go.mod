@@ -12,5 +12,6 @@ require (
 	github.com/pelletier/go-toml v1.4.0
 	github.com/sirupsen/logrus v1.4.1
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
+	golang.org/x/xerrors v0.0.0-20190510150013-5403a72a6aaf
 	google.golang.org/appengine v1.5.0 // indirect
 )

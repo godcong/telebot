@@ -83,13 +83,14 @@ func InitDB() (e error) {
 	}
 	eng.ShowSQL(true)
 	eng.ShowExecTime(true)
-	for idx, val := range syncTable {
-		log.Println("syncing ", idx)
-		e := eng.Sync2(val)
-		if e != nil {
-			return e
-		}
-	}
+	//bot need not sync
+	//for idx, val := range syncTable {
+	//	log.Println("syncing ", idx)
+	//	e := eng.Sync2(val)
+	//	if e != nil {
+	//		return e
+	//	}
+	//}
 
 	db = eng
 	return nil

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/girlvr/yinhe_bot/message"
 	api "github.com/go-telegram-bot-api/telegram-bot-api"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"log"
@@ -29,7 +30,7 @@ func BootWithGAE(token string) {
 	}
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080"
+		port = "443"
 		log.Printf("Defaulting to port %s", port)
 	}
 	bot.Debug = true
@@ -49,7 +50,12 @@ func BootWithGAE(token string) {
 	}
 
 	updates := bot.ListenForWebhook("/" + t)
-	go http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
+	http.HandleFunc("/ping", func(writer http.ResponseWriter, request *http.Request) {
+		log.Println("ping call")
+		writer.WriteHeader(http.StatusOK)
+		writer.Write([]byte("PONG"))
+	})
+	go http.ListenAndServeTLS(fmt.Sprintf(":%s", port), "server.crt", "server.key", nil)
 	message.InitBoot(bot)
 	for update := range updates {
 		message.HookMessage(update)
