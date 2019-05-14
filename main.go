@@ -55,7 +55,7 @@ func BootWithGAE(token string) {
 		writer.WriteHeader(http.StatusOK)
 		writer.Write([]byte("PONG"))
 	})
-	go http.ListenAndServeTLS(fmt.Sprintf(":%s", port), "server.crt", "server.key", nil)
+	go http.ListenAndServeTLS(fmt.Sprintf(":%s", port), "cert.pem", "key.pem", nil)
 	message.InitBoot(bot)
 	for update := range updates {
 		message.HookMessage(update)
