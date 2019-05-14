@@ -127,9 +127,9 @@ func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) error {
 		for _, o := range value.Object {
 			hasVideo = true
 			if value.Sliced {
-				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + connectURL(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
+				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
 			} else {
-				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + connectURL(o.Link.Hash) + "\n"
+				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "\n"
 			}
 
 			count++
@@ -179,6 +179,10 @@ func getFile(hash string) (fb *tgbotapi.FileBytes, e error) {
 	}
 	fb.Bytes = bytes
 	return fb, nil
+}
+
+func url(hash string) string {
+	return ServerURL + hash
 }
 
 func connectURL(hash string) string {
