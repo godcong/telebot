@@ -92,6 +92,12 @@ func InitDB() (e error) {
 	//	}
 	//}
 
+	i, e := eng.Count(&Video{})
+	if e != nil {
+		return e
+	}
+	log.Infof("now has %d videos", i)
+
 	db = eng
 	return nil
 }
