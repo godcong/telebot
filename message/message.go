@@ -49,7 +49,7 @@ func HookMessage(update tgbotapi.Update) {
 	hasVideo := false
 
 	switch update.Message.Command() {
-	case "video":
+	case "video", "v", "ban", "b":
 		v := strings.Split(update.Message.Text, " ")
 
 		if len(v) > 1 {
@@ -72,7 +72,7 @@ func HookMessage(update tgbotapi.Update) {
 			}
 			hasVideo = true
 		}
-	case "top":
+	case "top", "t":
 		video := model.Video{}
 		b, e := model.Top(&video)
 		if e != nil || !b {
@@ -85,12 +85,9 @@ func HookMessage(update tgbotapi.Update) {
 			break
 		}
 		hasVideo = true
-
-	case "ban":
-
-	case "help":
-		msg.Text = "输入 /video +番号 或者 /top 查询视频."
-	case "status":
+	case "help", "h":
+		msg.Text = "输入 /v 或 /video +番号 查询视频 或者 /top　显示推荐视频."
+	case "status", "s":
 		msg.Text = "I'm ok."
 	default:
 		return
