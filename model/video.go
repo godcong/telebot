@@ -67,7 +67,7 @@ func FindVideo(ban string, video *Video, check bool) (b bool, e error) {
 
 // Top ...
 func Top(video *Video) (b bool, e error) {
-	return DB().OrderBy("created_at desc").Get(video)
+	return DB().OrderBy("visit desc").Get(video)
 }
 
 // AllVideos ...
