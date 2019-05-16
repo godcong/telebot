@@ -2,12 +2,16 @@ package message
 
 import (
 	"context"
+	"fmt"
 	"github.com/girlvr/yinhe_bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	shell "github.com/godcong/go-ipfs-restapi"
 	"github.com/sirupsen/logrus"
+
+	log "github.com/godcong/go-trait"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -22,6 +26,67 @@ const LocalURL = "http://localhost:8080/ipfs/"
 var bot *tgbotapi.BotAPI
 var photoHas = make(map[string][]byte)
 var hasLocal = false
+
+// BootWithGAE ...
+func BootWithGAE(token string) {
+	bot, err := tgbotapi.NewBotAPI(token)
+	if err != nil {
+		log.Fatal(err)
+	}
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "443"
+		log.Infof("Defaulting to port %s", port)
+	}
+	bot.Debug = true
+
+	log.Infof("Authorized on account %s", bot.Self.UserName)
+	t := "crVuYHQbUWCerib3"
+	_, err = bot.SetWebhook(tgbotapi.NewWebhook("https://bot.dhash.app/" + t))
+	if err != nil {
+		log.Fatal(err)
+	}
+	info, err := bot.GetWebhookInfo()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if info.LastErrorDate != 0 {
+		log.Infof("Telegram callback failed: %s", info.LastErrorMessage)
+	}
+
+	updates := bot.ListenForWebhook("/" + t)
+	http.HandleFunc("/ping", func(writer http.ResponseWriter, request *http.Request) {
+		log.Info("ping call")
+		writer.WriteHeader(http.StatusOK)
+		writer.Write([]byte("PONG"))
+	})
+	go http.ListenAndServeTLS(fmt.Sprintf(":%s", port), "cert.pem", "key.pem", nil)
+	InitBoot(bot)
+	for update := range updates {
+		HookMessage(update)
+	}
+}
+
+// BootWithUpdate ...
+func BootWithUpdate(token string) {
+	bot, err := tgbotapi.NewBotAPI(token)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	bot.Debug = true
+
+	log.Infof("Authorized on account %s", bot.Self.UserName)
+
+	u := tgbotapi.NewUpdate(0)
+	u.Timeout = 60
+
+	updates, err := bot.GetUpdatesChan(u)
+
+	for update := range updates {
+		HookMessage(update)
+	}
+}
 
 // InitBoot ...
 func InitBoot(botapi *tgbotapi.BotAPI) {
@@ -50,6 +115,7 @@ func HookMessage(update tgbotapi.Update) {
 
 	switch update.Message.Command() {
 	case "video", "v", "ban", "b":
+		//TODO:to be optimize
 		v := strings.Split(update.Message.Text, " ")
 
 		if len(v) > 1 {
@@ -87,7 +153,7 @@ func HookMessage(update tgbotapi.Update) {
 		}
 		hasVideo = true
 	case "help", "h":
-		msg.Text = "输入 /v 或 /video +番号 查询视频 或者 /top　显示推荐视频."
+		msg.Text = "输入 /v 或 /video +番号 查询视频 如：/v ssni-334 或者 /top　显示推荐视频."
 	case "status", "s":
 		msg.Text = "I'm ok."
 	default:
