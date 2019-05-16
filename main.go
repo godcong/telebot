@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"github.com/girlvr/yinhe_bot/message"
 	api "github.com/go-telegram-bot-api/telegram-bot-api"
+	log "github.com/godcong/go-trait"
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 )
@@ -17,8 +16,7 @@ func main() {
 	if e != nil {
 		return
 	}
-	logrus.Info(string(token))
-	logrus.SetReportCaller(true)
+	log.InitGlobalZapSugar()
 	BootWithGAE(string(token))
 }
 
@@ -31,11 +29,11 @@ func BootWithGAE(token string) {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "443"
-		log.Printf("Defaulting to port %s", port)
+		log.Infof("Defaulting to port %s", port)
 	}
 	bot.Debug = true
 
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	log.Infof("Authorized on account %s", bot.Self.UserName)
 	t := "crVuYHQbUWCerib3"
 	_, err = bot.SetWebhook(api.NewWebhook("https://bot.dhash.app/" + t))
 	if err != nil {
@@ -46,12 +44,12 @@ func BootWithGAE(token string) {
 		log.Fatal(err)
 	}
 	if info.LastErrorDate != 0 {
-		log.Printf("Telegram callback failed: %s", info.LastErrorMessage)
+		log.Infof("Telegram callback failed: %s", info.LastErrorMessage)
 	}
 
 	updates := bot.ListenForWebhook("/" + t)
 	http.HandleFunc("/ping", func(writer http.ResponseWriter, request *http.Request) {
-		log.Println("ping call")
+		log.Info("ping call")
 		writer.WriteHeader(http.StatusOK)
 		writer.Write([]byte("PONG"))
 	})
@@ -71,7 +69,7 @@ func BootWithUpdate(token string) {
 
 	bot.Debug = true
 
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	log.Infof("Authorized on account %s", bot.Self.UserName)
 
 	u := api.NewUpdate(0)
 	u.Timeout = 60
