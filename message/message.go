@@ -70,6 +70,7 @@ func HookMessage(update tgbotapi.Update) {
 				msg.Text = "没有找到对应资源"
 				break
 			}
+			_ = model.Visited(video)
 			hasVideo = true
 		}
 	case "top", "t":
