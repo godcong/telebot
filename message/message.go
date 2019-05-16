@@ -108,10 +108,12 @@ func HookMessage(update tgbotapi.Update) {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
 	config := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
 	var cts []tgbotapi.Chattable
+	log.Infof("%+v", update)
 	switch update.Message.Command() {
 	case "video", "v", "ban", "b":
 		cts = Video(update.Message)
 	case "list", "l":
+
 		cts = List(update.Message)
 	case "top", "t":
 		video := model.Video{}
