@@ -7,6 +7,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	shell "github.com/godcong/go-ipfs-restapi"
 	log "github.com/godcong/go-trait"
+	"golang.org/x/xerrors"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -168,36 +169,36 @@ func HookMessage(update tgbotapi.Update) {
 	}
 }
 
-func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) error {
-
-	cfg.Caption = video.Intro
-	cfg.Caption = addLine(cfg.Caption)
+func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error) {
+	photo.Caption = video.Intro
+	if len(video.Role) > 0 {
+		photo.Caption += video.Role[0]
+	}
+	photo.Caption = addLine(photo.Caption)
 	fb, e := getFile(video.Poster)
 	if e != nil {
-		cfg.Caption += "无片源信息"
 		return e
 	}
-	cfg.File = *fb
+	photo.File = *fb
 	hasVideo := false
 	for _, value := range video.VideoGroupList {
 		if value.Sharpness != "" {
-			cfg.Caption += value.Sharpness + "片源:"
-			cfg.Caption = addLine(cfg.Caption)
+			photo.Caption += value.Sharpness + "片源:"
+			photo.Caption = addLine(photo.Caption)
 		}
 		count := int64(1)
 		for _, o := range value.Object {
 			hasVideo = true
 			if value.Sliced {
-				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
+				photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
 			} else {
-				cfg.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "\n"
+				photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "\n"
 			}
-
 			count++
 		}
 	}
-	if cfg.Caption == "" || !hasVideo {
-		cfg.Caption += "无片源信息"
+	if photo.Caption == "" || !hasVideo {
+		return xerrors.New("无片源信息")
 	}
 	return nil
 }
