@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -108,34 +107,12 @@ func HookMessage(update tgbotapi.Update) {
 	// so we should leave it empty.
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
 	config := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
-	hasVideo := false
-
+	var cts []tgbotapi.Chattable
 	switch update.Message.Command() {
 	case "video", "v", "ban", "b":
-		//TODO:to be optimize
-		v := strings.Split(update.Message.Text, " ")
-
-		if len(v) > 1 {
-			msg.Text = "正在搜索：" + v[1]
-			if _, err := bot.Send(msg); err != nil {
-				log.Error(err)
-				msg.Text = "没有找到对应资源"
-				break
-			}
-			video := searchVideo(v[1])
-			if video == nil {
-				msg.Text = "没有找到对应资源"
-				break
-			}
-
-			e := parseVideo(&config, video)
-			if e != nil {
-				msg.Text = "没有找到对应资源"
-				break
-			}
-			_ = model.Visited(video)
-			hasVideo = true
-		}
+		cts = Video(update.Message)
+	case "list", "l":
+		cts = List(update.Message)
 	case "top", "t":
 		video := model.Video{}
 		b, e := model.Top(&video)
@@ -143,12 +120,11 @@ func HookMessage(update tgbotapi.Update) {
 			msg.Text = "没有找到对应资源"
 			break
 		}
-		e = parseVideo(&config, &video)
+		e = parseVideoInfo(&config, &video)
 		if e != nil {
 			msg.Text = "没有找到对应资源"
 			break
 		}
-		hasVideo = true
 	case "help", "h":
 		msg.Text = "输入 /v 或 /video +番号 查询视频 如：/v ssni-334 或者 /top　显示推荐视频."
 	case "status", "s":
@@ -156,55 +132,11 @@ func HookMessage(update tgbotapi.Update) {
 	default:
 		return
 	}
-
-	if hasVideo {
-		if _, err := bot.Send(config); err != nil {
+	for _, ct := range cts {
+		if _, err := bot.Send(ct); err != nil {
 			log.Error(err)
 		}
-		return
 	}
-
-	if _, err := bot.Send(msg); err != nil {
-		return
-	}
-}
-
-func parseVideoBan(msg *tgbotapi.MessageConfig, videos []*model.Video) (err error) {
-
-	for i, v := range videos {
-
-	}
-	photo.Caption = video.Intro
-	if len(video.Role) > 0 {
-		photo.Caption += video.Role[0]
-	}
-	photo.Caption = addLine(photo.Caption)
-	fb, e := getFile(video.Poster)
-	if e != nil {
-		return e
-	}
-	photo.File = *fb
-	hasVideo := false
-	for _, value := range video.VideoGroupList {
-		if value.Sharpness != "" {
-			photo.Caption += value.Sharpness + "片源:"
-			photo.Caption = addLine(photo.Caption)
-		}
-		count := int64(1)
-		for _, o := range value.Object {
-			hasVideo = true
-			if value.Sliced {
-				photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
-			} else {
-				photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "\n"
-			}
-			count++
-		}
-	}
-	if photo.Caption == "" || !hasVideo {
-		return xerrors.New("无片源信息")
-	}
-	return nil
 }
 
 func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error) {
