@@ -169,6 +169,44 @@ func HookMessage(update tgbotapi.Update) {
 	}
 }
 
+func parseVideoBan(msg *tgbotapi.MessageConfig, videos []*model.Video) (err error) {
+
+	for i, v := range videos {
+
+	}
+	photo.Caption = video.Intro
+	if len(video.Role) > 0 {
+		photo.Caption += video.Role[0]
+	}
+	photo.Caption = addLine(photo.Caption)
+	fb, e := getFile(video.Poster)
+	if e != nil {
+		return e
+	}
+	photo.File = *fb
+	hasVideo := false
+	for _, value := range video.VideoGroupList {
+		if value.Sharpness != "" {
+			photo.Caption += value.Sharpness + "片源:"
+			photo.Caption = addLine(photo.Caption)
+		}
+		count := int64(1)
+		for _, o := range value.Object {
+			hasVideo = true
+			if value.Sliced {
+				photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
+			} else {
+				photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "\n"
+			}
+			count++
+		}
+	}
+	if photo.Caption == "" || !hasVideo {
+		return xerrors.New("无片源信息")
+	}
+	return nil
+}
+
 func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error) {
 	photo.Caption = video.Intro
 	if len(video.Role) > 0 {
@@ -213,6 +251,15 @@ func searchVideo(s string) *model.Video {
 		return nil
 	}
 	return video
+}
+
+func searchVideoList(limit, start int) (videos []*model.Video, err error) {
+	videos = []*model.Video{}
+	err = model.DB().OrderBy("visit desc").Limit(limit, start).Find(&videos)
+	if err != nil {
+		return nil, err
+	}
+	return videos, nil
 }
 
 func getFile(hash string) (fb *tgbotapi.FileBytes, e error) {
