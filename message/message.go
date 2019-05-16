@@ -21,6 +21,9 @@ const ServerURL = "https://ipfs.io/ipfs/"
 // LocalURL ...
 const LocalURL = "http://localhost:8080/ipfs/"
 
+// WhiteSpace ...
+const WhiteSpace = " "
+
 var bot *tgbotapi.BotAPI
 var photoHas = make(map[string][]byte)
 var hasLocal = false
@@ -166,6 +169,7 @@ func HookMessage(update tgbotapi.Update) {
 }
 
 func parseVideo(cfg *tgbotapi.PhotoConfig, video *model.Video) error {
+
 	cfg.Caption = video.Intro
 	cfg.Caption = addLine(cfg.Caption)
 	fb, e := getFile(video.Poster)
