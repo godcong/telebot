@@ -10,6 +10,18 @@ import (
 func List(message *tgbotapi.Message) (ct []tgbotapi.Chattable) {
 	msg := tgbotapi.NewMessage(message.Chat.ID, "")
 	v := strings.Split(message.Text, WhiteSpace)
+	var numericKeyboard = tgbotapi.NewReplyKeyboard(
+		tgbotapi.NewKeyboardButtonRow(
+			tgbotapi.NewKeyboardButton("1"),
+			tgbotapi.NewKeyboardButton("2"),
+			tgbotapi.NewKeyboardButton("3"),
+		),
+		tgbotapi.NewKeyboardButtonRow(
+			tgbotapi.NewKeyboardButton("4"),
+			tgbotapi.NewKeyboardButton("5"),
+			tgbotapi.NewKeyboardButton("6"),
+		),
+	)
 
 	if len(v) > 2 {
 		ct = append(ct, tgbotapi.NewMessage(message.Chat.ID, "正在搜索："+v[1]))
@@ -29,6 +41,8 @@ func List(message *tgbotapi.Message) (ct []tgbotapi.Chattable) {
 			}
 			msg.Text = addLine(msg.Text)
 		}
+		buttonMsg := tgbotapi.NewMessage(message.Chat.ID, message.Text)
+		buttonMsg.ReplyMarkup = numericKeyboard
 		ct = append(ct, msg)
 	}
 	return
