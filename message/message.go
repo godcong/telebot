@@ -6,8 +6,6 @@ import (
 	"github.com/girlvr/yinhe_bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	shell "github.com/godcong/go-ipfs-restapi"
-	"github.com/sirupsen/logrus"
-
 	log "github.com/godcong/go-trait"
 	"io/ioutil"
 	"net/http"
@@ -121,7 +119,7 @@ func HookMessage(update tgbotapi.Update) {
 		if len(v) > 1 {
 			msg.Text = "正在搜索：" + v[1]
 			if _, err := bot.Send(msg); err != nil {
-				logrus.Error(err)
+				log.Error(err)
 				msg.Text = "没有找到对应资源"
 				break
 			}
@@ -162,7 +160,7 @@ func HookMessage(update tgbotapi.Update) {
 
 	if hasVideo {
 		if _, err := bot.Send(config); err != nil {
-			logrus.Error(err)
+			log.Error(err)
 		}
 		return
 	}
@@ -222,7 +220,7 @@ func getFile(hash string) (fb *tgbotapi.FileBytes, e error) {
 	defer cancel()
 
 	url := connectURL(hash)
-	logrus.Info("connectURL:", url)
+	log.Info("connectURL:", url)
 	fb = &tgbotapi.FileBytes{
 		Name: hash,
 	}
