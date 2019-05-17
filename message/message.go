@@ -159,7 +159,7 @@ func HookMessage(update tgbotapi.Update) {
 }
 
 func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error) {
-	photo.Caption = "[" + video.Bangumi + "]: " + video.Intro
+	photo.Caption = "[" + video.Bangumi + "] " + video.Intro
 	if len(video.Role) > 0 {
 		photo.Caption += " " + video.Role[0]
 	}
