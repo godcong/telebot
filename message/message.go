@@ -6,7 +6,8 @@ import (
 	"github.com/girlvr/yinhe_bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	shell "github.com/godcong/go-ipfs-restapi"
-	log "github.com/godcong/go-trait"
+	"github.com/godcong/go-trait"
+	"go.uber.org/zap"
 	"golang.org/x/xerrors"
 	"io/ioutil"
 	"net/http"
@@ -27,9 +28,11 @@ const WhiteSpace = " "
 var bot *tgbotapi.BotAPI
 var photoHas = make(map[string][]byte)
 var hasLocal = false
+var log *zap.SugaredLogger
 
 // BootWithGAE ...
 func BootWithGAE(token string) {
+	log = trait.ZapSugar()
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Fatal(err)
@@ -70,6 +73,7 @@ func BootWithGAE(token string) {
 
 // BootWithUpdate ...
 func BootWithUpdate(token string) {
+	log = trait.ZapSugar()
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Panic(err)
@@ -113,7 +117,6 @@ func HookMessage(update tgbotapi.Update) {
 	case "video", "v", "ban", "b":
 		cts = Video(update.Message)
 	case "list", "l":
-
 		cts = List(update.Message)
 	case "top", "t":
 		video := model.Video{}
