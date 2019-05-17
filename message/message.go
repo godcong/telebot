@@ -119,8 +119,9 @@ func HookMessage(update tgbotapi.Update) {
 	case "list", "l":
 		if update.Message.Chat.IsPrivate() == true {
 			cts = List(update.Message)
+		} else {
+			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "仅支持私聊"))
 		}
-		cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "仅支持私聊"))
 	case "top", "t":
 		video := model.Video{}
 		b, e := model.Top(&video)
