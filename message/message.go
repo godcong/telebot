@@ -206,7 +206,7 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error)
 		} else {
 			// do nothing if size < 1
 		}
-
+		photo.Caption = addLine(photo.Caption)
 	}
 	if !hasVideo {
 		photo.Caption += "无片源信息"
