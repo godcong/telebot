@@ -138,6 +138,10 @@ func HookMessage(update tgbotapi.Update) {
 		msg.Text = "输入 /v 或 /video +番号 查询视频 如：/v ssni-334 或者 /top　显示推荐视频."
 	case "status", "s":
 		msg.Text = "I'm ok."
+	case "close":
+		closeMsg := tgbotapi.NewMessage(message.Chat.ID, "")
+		closeMsg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+		cts = append(cts, closeMsg)
 	default:
 		return
 	}

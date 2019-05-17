@@ -23,7 +23,19 @@ func List(message *tgbotapi.Message) (ct []tgbotapi.Chattable) {
 	if len(v) > 1 {
 		//limit, _ := strconv.ParseUint(v[0], 10, 32)
 		start, _ = strconv.ParseUint(v[1], 10, 32)
-		next := fmt.Sprintf("/list %d", start+10)
+
+		numStr = v[1]
+	}
+	limit := 10
+
+	videos, err := searchVideoList(limit, int(start))
+	if err != nil || videos == nil || len(videos) == 0 {
+		ct = append(ct, tgbotapi.NewMessage(message.Chat.ID, "没有找到对应资源"))
+		return
+	}
+	next := fmt.Sprintf("/list %d", start+10)
+	if len(videos) < limit {
+		next = "/close"
 		if start >= 10 {
 			pre := fmt.Sprintf("/list %d", start-10)
 			row = tgbotapi.NewKeyboardButtonRow(
@@ -31,15 +43,8 @@ func List(message *tgbotapi.Message) (ct []tgbotapi.Chattable) {
 				tgbotapi.NewKeyboardButton(next),
 			)
 		}
-		numStr = v[1]
 	}
-
 	numericKeyboard := tgbotapi.NewReplyKeyboard(row)
-	videos, err := searchVideoList(10, int(start))
-	if err != nil || videos == nil || len(videos) == 0 {
-		ct = append(ct, tgbotapi.NewMessage(message.Chat.ID, "没有找到对应资源"))
-		return
-	}
 	msg.Text = addLine("资源列表" + numStr + ":")
 	for i, v := range videos {
 		role := ""
