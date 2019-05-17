@@ -180,13 +180,12 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error)
 			continue
 		}
 		if len(value.Object) > 0 {
-			if value.Sharpness != "" {
-				photo.Caption += value.Sharpness + "片源:"
-				photo.Caption = addLine(photo.Caption)
-			}
+			hasVideo = true
+			photo.Caption += fmt.Sprintf("%s片源:", value.Sharpness)
+			photo.Caption = addLine(photo.Caption)
 		}
 		if objS := len(value.Object); objS == 1 {
-			hasVideo = true
+
 			if value.Sliced {
 				photo.Caption += url(value.Object[0].Link.Hash) + "/" + value.HLS.M3U8 + "\n"
 			} else {
@@ -195,7 +194,6 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error)
 		} else if objS > 1 {
 			count := int64(1)
 			for _, o := range value.Object {
-				hasVideo = true
 				if value.Sliced {
 					photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
 				} else {
