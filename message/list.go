@@ -55,11 +55,7 @@ func List(message *tgbotapi.Message) (ct []tgbotapi.Chattable) {
 	numericKeyboard := tgbotapi.NewReplyKeyboard(row)
 	msg.Text = addLine("资源列表" + numStr + ":")
 	for i, v := range videos {
-		role := ""
-		if len(v.Role) > 0 {
-			role = v.Role[0]
-		}
-		msg.Text += fmt.Sprintf("%d. [%s] %s %s ☆Hot %d☆", i+1, v.Bangumi, v.Intro, role, v.Visit)
+		msg.Text += fmt.Sprintf("%d. [%s] %s ☆Hot %d☆", i+1, v.Bangumi, v.Intro, v.Visit)
 		msg.Text = addLine(msg.Text)
 	}
 	ct = append(ct, msg)
