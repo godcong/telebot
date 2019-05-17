@@ -8,7 +8,6 @@ import (
 	shell "github.com/godcong/go-ipfs-restapi"
 	"github.com/godcong/go-trait"
 	"go.uber.org/zap"
-	"golang.org/x/xerrors"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -171,24 +170,46 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error)
 	}
 	photo.File = *fb
 	hasVideo := false
+	if video.VideoGroupList == nil || len(video.VideoGroupList) == 0 {
+		photo.Caption += "无片源信息"
+		return nil
+	}
+
 	for _, value := range video.VideoGroupList {
-		if value.Sharpness != "" {
-			photo.Caption += value.Sharpness + "片源:"
-			photo.Caption = addLine(photo.Caption)
+		if value.Object == nil || len(value.Object) == 0 {
+			continue
 		}
-		count := int64(1)
-		for _, o := range value.Object {
+		if len(value.Object) > 0 {
+			if value.Sharpness != "" {
+				photo.Caption += value.Sharpness + "片源:"
+				photo.Caption = addLine(photo.Caption)
+			}
+		}
+		if objS := len(value.Object); objS == 1 {
 			hasVideo = true
 			if value.Sliced {
-				photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
+				photo.Caption += url(value.Object[0].Link.Hash) + "/" + value.HLS.M3U8 + "\n"
 			} else {
-				photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "\n"
+				photo.Caption += url(value.Object[0].Link.Hash) + "\n"
 			}
-			count++
+		} else if objS > 1 {
+			count := int64(1)
+			for _, o := range value.Object {
+				hasVideo = true
+				if value.Sliced {
+					photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
+				} else {
+					photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "\n"
+				}
+				count++
+			}
+		} else {
+			// do nothing if size < 1
 		}
+
 	}
-	if photo.Caption == "" || !hasVideo {
-		return xerrors.New("无片源信息")
+	if !hasVideo {
+		photo.Caption += "无片源信息"
 	}
 	return nil
 }
