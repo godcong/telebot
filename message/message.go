@@ -126,7 +126,6 @@ func HookMessage(update tgbotapi.Update) {
 		video := model.Video{}
 		b, e := model.Top(&video)
 		if e != nil || !b {
-
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源"))
 			break
 		}

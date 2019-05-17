@@ -51,7 +51,7 @@ func List(message *tgbotapi.Message) (ct []tgbotapi.Chattable) {
 		if len(v.Role) > 0 {
 			role = v.Role[0]
 		}
-		msg.Text += fmt.Sprintf("%d. ☆Hot %d☆ [%s] %s %s", i+1, v.Visit, v.Bangumi, v.Intro, role)
+		msg.Text += fmt.Sprintf("%d. [%s]☆Hot %d☆ %s %s", i+1, v.Bangumi, v.Visit, v.Intro, role)
 		msg.Text = addLine(msg.Text)
 	}
 	ct = append(ct, msg)
