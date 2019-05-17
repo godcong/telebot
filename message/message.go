@@ -192,14 +192,16 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error)
 				photo.Caption += url(value.Object[0].Link.Hash) + "\n"
 			}
 		} else if objS > 1 {
-			count := int64(1)
-			for _, o := range value.Object {
-				if value.Sliced {
-					photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8 + "\n"
-				} else {
-					photo.Caption += "片段" + strconv.FormatInt(count, 10) + ":" + url(o.Link.Hash) + "\n"
+
+			for idx, o := range value.Object {
+				if idx != 0 {
+					photo.Caption += "\n"
 				}
-				count++
+				if value.Sliced {
+					photo.Caption += "片段" + strconv.FormatInt(int64(idx+1), 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8
+				} else {
+					photo.Caption += "片段" + strconv.FormatInt(int64(idx+1), 10) + ":" + url(o.Link.Hash)
+				}
 			}
 		} else {
 			// do nothing if size < 1
