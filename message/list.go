@@ -16,9 +16,6 @@ func List(message *tgbotapi.Message) (ct []tgbotapi.Chattable) {
 	ct = append(ct, closeMsg)
 	ct = append(ct, tgbotapi.NewMessage(message.Chat.ID, "正在搜索..."))
 
-	row := tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton("/list 10"),
-	)
 	numStr := "0"
 	start := uint64(0)
 	if len(v) > 1 {
@@ -29,6 +26,9 @@ func List(message *tgbotapi.Message) (ct []tgbotapi.Chattable) {
 	limit := uint64(10)
 	if len(v) > 2 {
 		limit, _ = strconv.ParseUint(v[2], 10, 32)
+		if limit > 25 {
+			limit = 25
+		}
 	}
 
 	videos, err := searchVideoList(int(limit), int(start))
@@ -36,17 +36,22 @@ func List(message *tgbotapi.Message) (ct []tgbotapi.Chattable) {
 		ct = append(ct, tgbotapi.NewMessage(message.Chat.ID, "没有找到对应资源"))
 		return
 	}
-	next := fmt.Sprintf("/list %d", start+10)
+	next := fmt.Sprintf("/list %d", start+limit)
 	if len(videos) < int(limit) {
 		next = "/close"
 	}
-	if start >= 10 {
-		pre := fmt.Sprintf("/list %d", start-10)
-		row = tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton(pre),
-			tgbotapi.NewKeyboardButton(next),
-		)
+	pre := "/close"
+	if start >= limit {
+		pre = fmt.Sprintf("/list %d", start-limit)
+	} else if start > 0 && start < limit {
+		pre = fmt.Sprintf("/list %d", 0)
+	} else {
+		// close
 	}
+	row := tgbotapi.NewKeyboardButtonRow(
+		tgbotapi.NewKeyboardButton(pre),
+		tgbotapi.NewKeyboardButton(next),
+	)
 	numericKeyboard := tgbotapi.NewReplyKeyboard(row)
 	msg.Text = addLine("资源列表" + numStr + ":")
 	for i, v := range videos {

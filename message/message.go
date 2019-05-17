@@ -159,9 +159,9 @@ func HookMessage(update tgbotapi.Update) {
 }
 
 func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error) {
-	photo.Caption = video.Intro
+	photo.Caption = "[" + video.Bangumi + "]: " + video.Intro
 	if len(video.Role) > 0 {
-		photo.Caption += video.Role[0]
+		photo.Caption += " " + video.Role[0]
 	}
 	photo.Caption = addLine(photo.Caption)
 	fb, e := getFile(video.Poster)
@@ -185,14 +185,12 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error)
 			photo.Caption = addLine(photo.Caption)
 		}
 		if objS := len(value.Object); objS == 1 {
-
 			if value.Sliced {
-				photo.Caption += url(value.Object[0].Link.Hash) + "/" + value.HLS.M3U8 + "\n"
+				photo.Caption += url(value.Object[0].Link.Hash) + "/" + value.HLS.M3U8
 			} else {
-				photo.Caption += url(value.Object[0].Link.Hash) + "\n"
+				photo.Caption += url(value.Object[0].Link.Hash)
 			}
 		} else if objS > 1 {
-
 			for idx, o := range value.Object {
 				if idx != 0 {
 					photo.Caption += "\n"
