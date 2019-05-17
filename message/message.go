@@ -110,7 +110,6 @@ func HookMessage(update tgbotapi.Update) {
 	// Create a new MessageConfig. We don't have text yet,
 	// so we should leave it empty.
 
-	config := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
 	var cts []tgbotapi.Chattable
 	log.Infof("%+v", update)
 	switch update.Message.Command() {
@@ -129,11 +128,13 @@ func HookMessage(update tgbotapi.Update) {
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源"))
 			break
 		}
-		e = parseVideoInfo(&config, &video)
+		photo := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
+		e = parseVideoInfo(&photo, &video)
 		if e != nil {
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源"))
 			break
 		}
+		cts = append(cts, photo)
 	case "help", "h":
 		help := `输入:
 /v 或 /video +番号 查询视频 如：/v ssni-334
@@ -145,7 +146,7 @@ func HookMessage(update tgbotapi.Update) {
 	case "status", "s":
 		cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "I'm ok"))
 	case "close":
-		closeMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
+		closeMsg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 		closeMsg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		cts = append(cts, closeMsg)
 	default:
