@@ -102,7 +102,7 @@ func HookMessage(update tgbotapi.Update) {
 	if update.Message == nil {
 		return
 	}
-
+	log.Info("users:", update.Message.NewChatMembers)
 	if !update.Message.IsCommand() { // ignore any non-command Messages
 		return
 	}
