@@ -14,7 +14,13 @@ import (
 var db *xorm.Engine
 var syncTable = map[string]interface{}{}
 var path string
-var log = trait.ZapSugar()
+var log = trait.Zap().Sugar()
+
+func init() {
+	if log == nil {
+		log = trait.Zap().Sugar()
+	}
+}
 
 // SetPath ...
 func SetPath(p string) {
@@ -62,7 +68,6 @@ func (d *Database) Source() string {
 // RegisterTable ...
 func RegisterTable(v interface{}) {
 	tof := reflect.TypeOf(v).Name()
-	log.Info("register: ", tof)
 	syncTable[tof] = v
 }
 
@@ -112,7 +117,7 @@ func InitSync(pathname string) (eng *xorm.Engine, e error) {
 	eng.ShowSQL(true)
 	eng.ShowExecTime(true)
 	for idx, val := range syncTable {
-		log.Println("syncing ", idx)
+		log.Info("syncing ", idx)
 		e = eng.Sync2(val)
 		if e != nil {
 			return
