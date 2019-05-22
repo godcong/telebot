@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -51,7 +52,7 @@ func BootWithGAE(token string) {
 		port = "443"
 		log.Infof("Defaulting to port %s", port)
 	}
-	bot.Debug = true
+	//bot.Debug = true
 
 	log.Infof("Authorized on account %s", bot.Self.UserName)
 	t := "crVuYHQbUWCerib3"
@@ -113,8 +114,16 @@ func HookMessage(update tgbotapi.Update) {
 		return
 	}
 
-	log.Info("users:", update.Message.NewChatMembers)
 	var cts []tgbotapi.Chattable
+	if update.Message.NewChatMembers != nil {
+		log.Info("users:", update.Message.NewChatMembers)
+		var usr []string
+		for _, u := range *update.Message.NewChatMembers {
+			usr = append(usr, u.UserName)
+		}
+		m := fmt.Sprintf("欢迎用户:%s加入!", strings.Join(usr, ","))
+		cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, m))
+	}
 
 	if !update.Message.IsCommand() {
 		if update.Message.Chat.IsPrivate() {
@@ -149,7 +158,6 @@ func HookMessage(update tgbotapi.Update) {
 				break
 			}
 			cts = append(cts, photo)
-
 		case "status", "s":
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "I'm ok"))
 		case "close":

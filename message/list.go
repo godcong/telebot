@@ -11,9 +11,6 @@ import (
 func List(message *tgbotapi.Message) (ct []tgbotapi.Chattable) {
 	msg := tgbotapi.NewMessage(message.Chat.ID, "")
 	v := strings.Split(message.Text, WhiteSpace)
-	//closeMsg := tgbotapi.NewMessage(message.Chat.ID, "")
-	//closeMsg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-	//ct = append(ct, closeMsg)
 	ct = append(ct, tgbotapi.NewMessage(message.Chat.ID, "正在搜索..."))
 
 	numStr := "0"
