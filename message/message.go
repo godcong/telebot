@@ -116,17 +116,15 @@ func HookMessage(update tgbotapi.Update) {
 	log.Info("users:", update.Message.NewChatMembers)
 	var cts []tgbotapi.Chattable
 
-	if update.Message.Chat.IsPrivate() && !update.Message.IsCommand() {
-		log.Info("private", update.Message)
-		cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？"))
-		cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
-	} else {
-		if !update.Message.IsCommand() { // ignore any non-command Messages
-			return
+	if !update.Message.IsCommand() {
+		if update.Message.Chat.IsPrivate() {
+			log.Info("private", update.Message)
+			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？"))
+			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
 		}
+	} else {
 		// Create a new MessageConfig. We don't have text yet,
 		// so we should leave it empty.
-
 		log.Infof("%+v", update)
 		switch update.Message.Command() {
 		case "video", "v", "ban", "b":
