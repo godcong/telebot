@@ -1,6 +1,7 @@
 package message
 
 import (
+	"context"
 	"fmt"
 	"github.com/girlvr/yinhe_bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -17,10 +18,12 @@ import (
 const help = `输入:
 /v 或 /video +番号 查询视频 如：/v ssni-334
 /t 或 /top　显示推荐视频
-/l 或 /list 显示列表（仅私聊）点击:/l@yinhe_bot
+/l 或 /list 显示列表（仅私聊）点击:@yinhe_bot，私聊获取更多信息
 /d 或 /down 获取求哈希下载链接（仅私聊）
 /r 或 /rule 查看群规（仅私聊）
 /h 或 /help 显示帮助`
+
+const rule = ``
 
 // ServerURL ...
 const ServerURL = "https://ipfs.io/ipfs/"
