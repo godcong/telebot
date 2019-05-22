@@ -1,7 +1,6 @@
 package message
 
 import (
-	"context"
 	"fmt"
 	"github.com/girlvr/yinhe_bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -14,6 +13,14 @@ import (
 	"strconv"
 	"time"
 )
+
+const help = `输入:
+/v 或 /video +番号 查询视频 如：/v ssni-334
+/t 或 /top　显示推荐视频
+/l 或 /list 显示列表（仅私聊）点击:/l@yinhe_bot
+/d 或 /down 获取求哈希下载链接（仅私聊）
+/r 或 /rule 查看群规（仅私聊）
+/h 或 /help 显示帮助`
 
 // ServerURL ...
 const ServerURL = "https://ipfs.io/ipfs/"
@@ -102,59 +109,61 @@ func HookMessage(update tgbotapi.Update) {
 	if update.Message == nil {
 		return
 	}
-	log.Info("users:", update.Message.NewChatMembers)
-	if !update.Message.IsCommand() { // ignore any non-command Messages
-		return
-	}
-	// Create a new MessageConfig. We don't have text yet,
-	// so we should leave it empty.
 
+	log.Info("users:", update.Message.NewChatMembers)
 	var cts []tgbotapi.Chattable
-	log.Infof("%+v", update)
-	switch update.Message.Command() {
-	case "video", "v", "ban", "b":
-		cts = Video(update.Message)
-	case "list", "l":
-		if update.Message.Chat.IsPrivate() == true {
-			cts = List(update.Message)
-		} else {
-			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "仅支持私聊"))
-		}
-	case "top", "t":
-		video := model.Video{}
-		b, e := model.Top(&video)
-		if e != nil || !b {
-			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源"))
-			break
-		}
-		photo := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
-		e = parseVideoInfo(&photo, &video)
-		if e != nil {
-			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源"))
-			break
-		}
-		cts = append(cts, photo)
-	case "help", "h":
-		help := `输入:
-/v 或 /video +番号 查询视频 如：/v ssni-334
-/t 或 /top　显示推荐视频
-/l 或 /list 显示列表（仅私聊）点击:/l@yinhe_bot
-/d 或 /down 获取求哈希下载链接（仅私聊）
-/r 或 /rule 查看群规（仅私聊）
-/h 或 /help 显示帮助
-`
+
+	if update.Message.Chat.IsPrivate() && !update.Message.IsCommand() {
+		log.Info("private", update.Message)
+		cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？"))
 		cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
-	case "status", "s":
-		cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "I'm ok"))
-	case "close":
-		closeMsg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-		closeMsg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-		cts = append(cts, closeMsg)
-	case "down", "d":
-		cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "请认准官方下载地址：xxx"))
-	default:
-		return
+	} else {
+		if !update.Message.IsCommand() { // ignore any non-command Messages
+			return
+		}
+		// Create a new MessageConfig. We don't have text yet,
+		// so we should leave it empty.
+
+		log.Infof("%+v", update)
+		switch update.Message.Command() {
+		case "video", "v", "ban", "b":
+			cts = Video(update.Message)
+		case "list", "l":
+			if update.Message.Chat.IsPrivate() == true {
+				cts = List(update.Message)
+			} else {
+				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "仅支持私聊"))
+			}
+		case "top", "t":
+			video := model.Video{}
+			b, e := model.Top(&video)
+			if e != nil || !b {
+				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源"))
+				break
+			}
+			photo := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
+			e = parseVideoInfo(&photo, &video)
+			if e != nil {
+				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源"))
+				break
+			}
+			cts = append(cts, photo)
+
+		case "status", "s":
+			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "I'm ok"))
+		case "close":
+			closeMsg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
+			closeMsg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+			cts = append(cts, closeMsg)
+		case "down", "d":
+			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "请认准官方下载地址：xxx"))
+		case "help", "h":
+			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
+		default:
+			return
+		}
 	}
+
 	for _, ct := range cts {
 		if _, err := bot.Send(ct); err != nil {
 			log.Error(err)
