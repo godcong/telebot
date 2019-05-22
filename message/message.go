@@ -138,8 +138,9 @@ func HookMessage(update tgbotapi.Update) {
 		help := `输入:
 /v 或 /video +番号 查询视频 如：/v ssni-334
 /t 或 /top　显示推荐视频
-/l 或 /list 显示列表（仅私聊）
+/l 或 /list 显示列表（仅私聊）点击:/l@yinhe_bot
 /d 或 /down 获取求哈希下载链接（仅私聊）
+/r 或 /rule 查看群规（仅私聊）
 /h 或 /help 显示帮助
 `
 		cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
