@@ -1,17 +1,14 @@
 package main
 
 import (
+	"flag"
 	"github.com/girlvr/yinhe_bot/message"
-	log "github.com/godcong/go-trait"
 	_ "github.com/mattn/go-sqlite3"
-	"io/ioutil"
 )
 
+var path = flag.String("path", "yinhe.json", "default property path")
+
 func main() {
-	token, e := ioutil.ReadFile("token")
-	if e != nil {
-		return
-	}
-	log.InitGlobalZapSugar()
-	message.BootWithGAE(string(token))
+	flag.Parse()
+	message.BootWithGAE(*path)
 }

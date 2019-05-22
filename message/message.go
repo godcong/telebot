@@ -26,6 +26,9 @@ const help = `输入:
 
 const rule = ``
 
+const groupName = "银河VR共享总部"
+const welcome = ""
+
 // ServerURL ...
 const ServerURL = "https://ipfs.io/ipfs/"
 
@@ -41,9 +44,13 @@ var hasLocal = false
 var log *zap.SugaredLogger
 
 // BootWithGAE ...
-func BootWithGAE(token string) {
-	log = trait.ZapSugar()
-	bot, err := tgbotapi.NewBotAPI(token)
+func BootWithGAE(path string) {
+	log = trait.InitGlobalZapSugar()
+	e := LoadProperty(path)
+	if e != nil {
+		panic(e)
+	}
+	bot, err := tgbotapi.NewBotAPI(property.Token)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,8 +62,7 @@ func BootWithGAE(token string) {
 	bot.Debug = true
 
 	log.Infof("Authorized on account %s", bot.Self.UserName)
-	t := "crVuYHQbUWCerib3"
-	_, err = bot.SetWebhook(tgbotapi.NewWebhook("https://bot.dhash.app/" + t))
+	_, err = bot.SetWebhook(tgbotapi.NewWebhook(property.Host + property.HookAddress))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,7 +74,7 @@ func BootWithGAE(token string) {
 		log.Infof("Telegram callback failed: %s", info.LastErrorMessage)
 	}
 
-	updates := bot.ListenForWebhook("/" + t)
+	updates := bot.ListenForWebhook("/" + property.HookAddress)
 	http.HandleFunc("/ping", func(writer http.ResponseWriter, request *http.Request) {
 		log.Info("ping call")
 		writer.WriteHeader(http.StatusOK)
