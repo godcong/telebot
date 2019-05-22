@@ -39,7 +39,6 @@ const LocalURL = "http://localhost:8080/ipfs/"
 const WhiteSpace = " "
 
 var bot *tgbotapi.BotAPI
-var photoHas = make(map[string][]byte)
 var hasLocal = false
 var log *zap.SugaredLogger
 
