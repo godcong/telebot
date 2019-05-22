@@ -52,7 +52,7 @@ func BootWithGAE(token string) {
 		port = "443"
 		log.Infof("Defaulting to port %s", port)
 	}
-	//bot.Debug = true
+	bot.Debug = true
 
 	log.Infof("Authorized on account %s", bot.Self.UserName)
 	t := "crVuYHQbUWCerib3"
@@ -115,14 +115,27 @@ func HookMessage(update tgbotapi.Update) {
 	}
 
 	var cts []tgbotapi.Chattable
+	log.Info("users:", update.Message.NewChatMembers)
 	if update.Message.NewChatMembers != nil {
-		log.Info("users:", update.Message.NewChatMembers)
+
 		var usr []string
 		for _, u := range *update.Message.NewChatMembers {
 			usr = append(usr, u.UserName)
 		}
-		m := fmt.Sprintf("欢迎用户:%s加入!", strings.Join(usr, ","))
-		cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, m))
+		m := fmt.Sprintf("欢迎 %s 加入%s! 请阅读置顶下置顶内容。（本消息将于30秒后销毁）", strings.Join(usr, ","), groupName)
+		var msg tgbotapi.Message
+		var err error
+		if msg, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, m)); err != nil {
+			log.Error("send message error:", err)
+		}
+		go func(message tgbotapi.Message) {
+			time.Sleep(30 * time.Second)
+			response, e := bot.DeleteMessage(tgbotapi.NewDeleteMessage(message.Chat.ID, message.MessageID))
+			if e != nil {
+				log.Error(e)
+			}
+			log.Infof("delete resp:%+v", response)
+		}(msg)
 	}
 
 	if !update.Message.IsCommand() {
@@ -142,7 +155,7 @@ func HookMessage(update tgbotapi.Update) {
 			if update.Message.Chat.IsPrivate() == true {
 				cts = List(update.Message)
 			} else {
-				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "仅支持私聊"))
+				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "仅支持私聊@yinhe_bot"))
 			}
 		case "top", "t":
 			video := model.Video{}
@@ -168,6 +181,8 @@ func HookMessage(update tgbotapi.Update) {
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "请认准官方下载地址：xxx"))
 		case "help", "h":
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
+		case "fuck":
+			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "你想fuck谁？可以私聊我哦（@yinhe_bot)"))
 		default:
 			return
 		}
@@ -175,7 +190,7 @@ func HookMessage(update tgbotapi.Update) {
 
 	for _, ct := range cts {
 		if _, err := bot.Send(ct); err != nil {
-			log.Error(err)
+			log.Error("send message error:", err)
 		}
 	}
 }
