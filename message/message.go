@@ -128,7 +128,7 @@ func HookMessage(update tgbotapi.Update) {
 		for _, u := range *update.Message.NewChatMembers {
 			usr = append(usr, u.UserName)
 		}
-		m := fmt.Sprintf("欢迎 %s 加入%s! 请阅读置顶下置顶内容。（本消息将于30秒后销毁）", strings.Join(usr, ","), groupName)
+		m := fmt.Sprintf(property.Welcome, strings.Join(usr, ","), property.GroupName)
 		var msg tgbotapi.Message
 		var err error
 		if msg, err = bot.Send(tgbotapi.NewMessage(update.Message.Chat.ID, m)); err != nil {
@@ -161,7 +161,8 @@ func HookMessage(update tgbotapi.Update) {
 			if update.Message.Chat.IsPrivate() == true {
 				cts = List(update.Message)
 			} else {
-				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "仅支持私聊@yinhe_bot"))
+				bot := fmt.Sprintf("仅支持私聊(%s)", property.BotName)
+				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, bot))
 			}
 		case "top", "t":
 			video := model.Video{}
@@ -184,11 +185,13 @@ func HookMessage(update tgbotapi.Update) {
 			closeMsg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 			cts = append(cts, closeMsg)
 		case "down", "d":
-			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "请认准官方下载地址：xxx"))
+			down := fmt.Sprintf("请认准官方下载地址:%s", property.Download)
+			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, down))
 		case "help", "h":
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
 		case "fuck":
-			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "你想fuck谁？可以私聊我哦（@yinhe_bot)"))
+			fuck := fmt.Sprintf("你想fuck谁？可以私聊我哦（%s)", property.BotName)
+			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, fuck))
 		default:
 			return
 		}

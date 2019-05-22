@@ -11,9 +11,11 @@ var property *Property
 type Property struct {
 	Welcome     string `json:"welcome"`
 	GroupName   string `json:"group_name"`
+	BotName     string `json:"bot_name"`
 	Host        string `json:"host"`
 	HookAddress string `json:"hook_address"`
 	Token       string `json:"token"`
+	Download    string `json:"download"`
 }
 
 // LoadProperty ...
