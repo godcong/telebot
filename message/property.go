@@ -18,13 +18,7 @@ type Property struct {
 
 // LoadProperty ...
 func LoadProperty(pathname string) error {
-	property = &Property{
-		Welcome:     "欢迎 %s 加入%s, 新朋友请先看置顶消息, 老朋友快来围观这只野生的新人, 邀请更多好友加入求哈希, 大家一起加速.\n（本消息将于30秒后自动销毁）",
-		GroupName:   "",
-		Host:        "https://bot.dhash.app/",
-		HookAddress: "crVuYHQbUWCerib3",
-		Token:       "",
-	}
+	property = &Property{}
 	file, e := os.OpenFile(pathname, os.O_RDONLY, 0755)
 	if e != nil {
 		return e
@@ -34,6 +28,7 @@ func LoadProperty(pathname string) error {
 	if e != nil {
 		return e
 	}
+	log.Infof("property:%+v", *property)
 	return nil
 }
 
