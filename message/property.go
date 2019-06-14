@@ -22,7 +22,7 @@ type Property struct {
 // LoadProperty ...
 func LoadProperty(pathname string) error {
 	property = &Property{}
-	file, e := os.OpenFile(pathname, os.O_RDONLY, 0755)
+	file, e := os.Open(pathname)
 	if e != nil {
 		return e
 	}
