@@ -3,18 +3,17 @@ package message
 import (
 	"context"
 	"fmt"
+	"github.com/girlvr/yinhe_bot/model"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	shell "github.com/godcong/go-ipfs-restapi"
+	"github.com/godcong/go-trait"
+	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/girlvr/yinhe_bot/model"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	shell "github.com/godcong/go-ipfs-restapi"
-	"github.com/godcong/go-trait"
-	"go.uber.org/zap"
 )
 
 const help = `输入:
@@ -78,9 +77,17 @@ func BootWithGAE(path string) {
 	http.HandleFunc("/ping", func(writer http.ResponseWriter, request *http.Request) {
 		log.Info("ping call")
 		writer.WriteHeader(http.StatusOK)
-		_, _ = writer.Write([]byte("PONG"))
+		_, e := writer.Write([]byte("PONG"))
+		if e != nil {
+			log.Error(e)
+		}
 	})
-	go http.ListenAndServeTLS(fmt.Sprintf(":%s", port), "cert.pem", "key.pem", nil)
+	go func() {
+		e := http.ListenAndServeTLS(fmt.Sprintf(":%s", port), "cert.pem", "key.pem", nil)
+		if e != nil {
+			log.Error(e)
+		}
+	}()
 	InitBoot(bot)
 	for update := range updates {
 		HookMessage(update)
