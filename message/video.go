@@ -1,8 +1,8 @@
 package message
 
 import (
-	"github.com/girlvr/yinhe_bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/yinhevr/yinhe_bot/model"
 	"strings"
 )
 

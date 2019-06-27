@@ -3,10 +3,10 @@ package message
 import (
 	"context"
 	"fmt"
-	"github.com/girlvr/yinhe_bot/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	shell "github.com/godcong/go-ipfs-restapi"
 	"github.com/godcong/go-trait"
+	"github.com/yinhevr/yinhe_bot/model"
 	"io/ioutil"
 	"net/http"
 	"os"
