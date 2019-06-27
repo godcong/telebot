@@ -94,7 +94,6 @@ func BootWithGAE(path string) {
 
 // BootWithUpdate ...
 func BootWithUpdate(token string) {
-	log = trait.ZapSugar()
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Panic(err)
