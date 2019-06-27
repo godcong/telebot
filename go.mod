@@ -7,7 +7,7 @@ require (
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/go-xorm/xorm v0.7.1
 	github.com/godcong/go-ipfs-restapi v0.0.2
-	github.com/godcong/go-trait v0.0.0-20190522093148-a46842de0f21
+	github.com/godcong/go-trait v0.0.0-20190528080809-9a857488365f
 	github.com/google/uuid v1.1.1
 	github.com/json-iterator/go v1.1.6
 	github.com/mattn/go-sqlite3 v1.9.0

@@ -7,7 +7,6 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	shell "github.com/godcong/go-ipfs-restapi"
 	"github.com/godcong/go-trait"
-	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -40,11 +39,10 @@ const WhiteSpace = " "
 
 var bot *tgbotapi.BotAPI
 var hasLocal = false
-var log *zap.SugaredLogger
+var log = trait.NewZapSugar()
 
 // BootWithGAE ...
 func BootWithGAE(path string) {
-	log = trait.InitGlobalZapSugar()
 	e := LoadProperty(path)
 	if e != nil {
 		panic(e)
