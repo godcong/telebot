@@ -6,11 +6,11 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	shell "github.com/godcong/go-ipfs-restapi"
 	"github.com/godcong/go-trait"
-	"github.com/yinhevr/yinhe_bot/model"
+	"github.com/yinhevr/seed/model"
+	"golang.org/x/xerrors"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -176,7 +176,7 @@ func HookMessage(update tgbotapi.Update) {
 				break
 			}
 			photo := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
-			e = parseVideoInfo(&photo, &video)
+			e = parseVideoInfo(&photo, []*model.Video{&video})
 			if e != nil {
 				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源"))
 				break
@@ -208,57 +208,44 @@ func HookMessage(update tgbotapi.Update) {
 	}
 }
 
-func parseVideoInfo(photo *tgbotapi.PhotoConfig, video *model.Video) (err error) {
-	photo.Caption = "[" + video.Bangumi + "] " + video.Intro
-	if len(video.Role) > 0 {
-		photo.Caption += " " + video.Role[0]
+func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err error) {
+	if videos == nil || len(videos) <= 0 {
+		return xerrors.New("nil video")
+	}
+	first := videos[0]
+
+	photo.Caption = first.Intro
+	if max := len(first.Role); max > 0 {
+		if max > 5 {
+			max = 5
+		}
+		for i := 0; i < max; i++ {
+			photo.Caption += " " + first.Role[i]
+		}
+
 	}
 	photo.Caption = addLine(photo.Caption)
-	fb, e := getFile(video.Poster)
+	fb, e := getFile(first.PosterHash)
 	if e != nil {
 		return e
 	}
 	photo.File = *fb
 	hasVideo := false
-	if video.VideoGroupList == nil || len(video.VideoGroupList) == 0 {
-		photo.Caption += "无片源信息"
-		return nil
-	}
 
-	for _, value := range video.VideoGroupList {
-		if value.Object == nil || len(value.Object) == 0 {
+	for _, video := range videos {
+		if video.M3U8Hash == "" || video.SourceHash == "" {
 			continue
 		}
-		if len(value.Object) > 0 {
-			hasVideo = true
-			photo.Caption += fmt.Sprintf("%s片源:", value.Sharpness)
-			photo.Caption = addLine(photo.Caption)
-		}
-		if objS := len(value.Object); objS == 1 {
-			if value.Sliced {
-				photo.Caption += url(value.Object[0].Link.Hash) + "/" + value.HLS.M3U8
-			} else {
-				photo.Caption += url(value.Object[0].Link.Hash)
-			}
-		} else if objS > 1 {
-			for idx, o := range value.Object {
-				if idx != 0 {
-					photo.Caption += "\n"
-				}
-				if value.Sliced {
-					photo.Caption += "片段" + strconv.FormatInt(int64(idx+1), 10) + ":" + url(o.Link.Hash) + "/" + value.HLS.M3U8
-				} else {
-					photo.Caption += "片段" + strconv.FormatInt(int64(idx+1), 10) + ":" + url(o.Link.Hash)
-				}
-			}
-		} else {
-			// do nothing if size < 1
-		}
+		hasVideo = true
+		photo.Caption += fmt.Sprintf("%s片段%s: %s", video.Sharpness, video.Episode, video.SourceHash)
 		photo.Caption = addLine(photo.Caption)
 	}
 	if !hasVideo {
 		photo.Caption += "无片源信息"
+		return nil
 	}
+	photo.Caption = "请复制本片番号:[" + first.Bangumi + "]或Hash到求哈希APP,即可播放视频"
+	photo.Caption = addLine(photo.Caption)
 	return nil
 }
 
@@ -266,12 +253,12 @@ func addLine(s string) string {
 	return s + "\n" + "-----------" + "\n"
 }
 
-func searchVideo(s string) *model.Video {
-	video := &model.Video{}
-	if b, err := model.DeepFind(s, video); err != nil || !b {
+func searchVideo(s string) []*model.Video {
+	videos := new([]*model.Video)
+	if err := model.DeepFind(s, videos); err != nil {
 		return nil
 	}
-	return video
+	return *videos
 }
 
 func searchVideoList(limit, start int) (videos []*model.Video, err error) {
