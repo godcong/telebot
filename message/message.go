@@ -122,6 +122,13 @@ func InitBoot(botapi *tgbotapi.BotAPI) {
 	bot = botapi
 }
 
+func getName(user *tgbotapi.User) string {
+	if user.UserName != "" {
+		return user.UserName
+	}
+	return user.LastName + "·" + user.FirstName
+}
+
 // HookMessage ...
 func HookMessage(update tgbotapi.Update) {
 	if update.Message == nil {
@@ -134,7 +141,7 @@ func HookMessage(update tgbotapi.Update) {
 
 		var usr []string
 		for _, u := range *update.Message.NewChatMembers {
-			usr = append(usr, u.UserName)
+			usr = append(usr, getName(&u))
 		}
 		m := fmt.Sprintf(property.Welcome, strings.Join(usr, ","), property.GroupName)
 		var msg tgbotapi.Message
