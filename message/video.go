@@ -13,7 +13,7 @@ func Video(message *tgbotapi.Message) (ct []tgbotapi.Chattable) {
 
 	if len(v) > 1 {
 		ct = append(ct, tgbotapi.NewMessage(message.Chat.ID, "正在搜索："+v[1]))
-		videos := searchVideo(v[1])
+		videos := searchVideo(strings.ToUpper(v[1]))
 		if videos == nil || len(videos) <= 0 {
 			ct = append(ct, tgbotapi.NewMessage(message.Chat.ID, "没有找到对应资源"))
 			return
