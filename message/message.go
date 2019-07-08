@@ -57,7 +57,11 @@ func BootWithGAE(path string) {
 		log.Infof("Defaulting to port %s", port)
 	}
 	bot.Debug = true
-
+	response, e := bot.RemoveWebhook()
+	if e != nil {
+		return
+	}
+	log.Infof("webhook info:%+v", response)
 	log.Infof("Authorized on account %s", bot.Self.UserName)
 	_, err = bot.SetWebhook(tgbotapi.NewWebhook(property.Host + property.HookAddress))
 	if err != nil {
