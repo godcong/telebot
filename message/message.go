@@ -242,15 +242,20 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err err
 	photo.File = *fb
 	hasVideo := false
 
-	for _, video := range videos {
+	for i, video := range videos {
 		if video.M3U8Hash == "" && video.SourceHash == "" {
 			continue
 		}
 		hasVideo = true
+		if i == 0 {
+			photo.Caption += fmt.Sprintf("番号: %s", video.Bangumi)
+			photo.Caption = addLine(photo.Caption)
+		}
+
 		if video.M3U8Hash != "" {
-			photo.Caption += fmt.Sprintf("%s片段%s: %s", video.Sharpness, video.Episode, video.SourceHash)
+			photo.Caption += fmt.Sprintf("HASH %s %s: %s ", video.Episode, video.Sharpness, video.SourceHash)
 		} else {
-			photo.Caption += fmt.Sprintf("%s片段%s: %s", video.Sharpness, video.Episode, video.SourceHash)
+			photo.Caption += fmt.Sprintf("HASH %s %s: %s ", video.Episode, video.Sharpness, video.SourceHash)
 		}
 		photo.Caption = addLine(photo.Caption)
 
@@ -259,7 +264,7 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err err
 		photo.Caption += "无片源信息"
 		return nil
 	}
-	photo.Caption += "请复制本片番号:[" + first.Bangumi + "]或Hash到求哈希APP,即可播放视频"
+	photo.Caption += "请复制本片[番号]或[HASH]到求哈希APP,即可播放视频"
 	photo.Caption = addLine(photo.Caption)
 	return nil
 }
