@@ -218,6 +218,16 @@ func HookMessage(update tgbotapi.Update) {
 	}
 }
 
+func extInfo(episode string, sharpness string) string {
+	if episode != "" {
+		episode = fmt.Sprintf("第%s集", episode)
+	}
+	if sharpness != "" {
+		sharpness = fmt.Sprintf("清晰度:%s", sharpness)
+	}
+	return episode + " " + sharpness
+}
+
 func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err error) {
 	if videos == nil || len(videos) <= 0 {
 		return xerrors.New("nil video")
@@ -253,9 +263,9 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err err
 		}
 
 		if video.M3U8Hash != "" {
-			photo.Caption += fmt.Sprintf("HASH %s %s: %s ", video.Episode, video.Sharpness, video.SourceHash)
+			photo.Caption += fmt.Sprintf("哈希: %s %s", video.SourceHash, extInfo(video.Episode, video.Sharpness))
 		} else {
-			photo.Caption += fmt.Sprintf("HASH %s %s: %s ", video.Episode, video.Sharpness, video.SourceHash)
+			photo.Caption += fmt.Sprintf("哈希: %s %s", video.SourceHash, extInfo(video.Episode, video.Sharpness))
 		}
 		photo.Caption = addLine(photo.Caption)
 
@@ -264,7 +274,7 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err err
 		photo.Caption += "无片源信息"
 		return nil
 	}
-	photo.Caption += "请复制本片[番号]或[HASH]到求哈希APP,即可播放视频"
+	photo.Caption += "请复制本片[番号]或[哈希]到求哈希APP,即可播放视频"
 	photo.Caption = addLine(photo.Caption)
 	return nil
 }
