@@ -10,5 +10,5 @@ var path = flag.String("path", "yinhe.json", "default property path")
 
 func main() {
 	flag.Parse()
-	message.BootWithGAE(*path)
+	message.BootWithGAE(*path, "")
 }

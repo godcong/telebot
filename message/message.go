@@ -10,7 +10,6 @@ import (
 	"golang.org/x/xerrors"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 )
@@ -42,7 +41,7 @@ var hasLocal = false
 var log = trait.NewZapSugar()
 
 // BootWithGAE ...
-func BootWithGAE(path string) {
+func BootWithGAE(path string, port string) {
 	e := LoadProperty(path)
 	if e != nil {
 		panic(e)
@@ -51,7 +50,7 @@ func BootWithGAE(path string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	port := os.Getenv("PORT")
+	//port := os.Getenv("PORT")
 	if port == "" {
 		port = "443"
 		log.Infof("Defaulting to port %s", port)
