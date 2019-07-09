@@ -221,11 +221,10 @@ func HookMessage(update tgbotapi.Update) {
 func extInfo(total, episode string, sharpness string) string {
 	if total != "1" && episode != "" {
 		episode = fmt.Sprintf("第%s集", episode)
+	} else {
+		episode = ""
 	}
-	if sharpness != "" {
-		sharpness = fmt.Sprintf("清晰度:%s", sharpness)
-	}
-	return episode + " " + sharpness
+	return episode + "[" + sharpness + "]"
 }
 
 func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err error) {
