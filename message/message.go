@@ -218,8 +218,8 @@ func HookMessage(update tgbotapi.Update) {
 	}
 }
 
-func extInfo(episode string, sharpness string) string {
-	if episode != "" {
+func extInfo(total, episode string, sharpness string) string {
+	if total != "1" && episode != "" {
 		episode = fmt.Sprintf("第%s集", episode)
 	}
 	if sharpness != "" {
@@ -263,9 +263,9 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err err
 		}
 
 		if video.M3U8Hash != "" {
-			photo.Caption += fmt.Sprintf("哈希: %s %s", video.SourceHash, extInfo(video.Episode, video.Sharpness))
+			photo.Caption += fmt.Sprintf("哈希: %s %s", video.SourceHash, extInfo(video.TotalEpisode, video.Episode, video.Sharpness))
 		} else {
-			photo.Caption += fmt.Sprintf("哈希: %s %s", video.SourceHash, extInfo(video.Episode, video.Sharpness))
+			photo.Caption += fmt.Sprintf("哈希: %s %s", video.SourceHash, extInfo(video.TotalEpisode, video.Episode, video.Sharpness))
 		}
 		photo.Caption = addLine(photo.Caption)
 
