@@ -272,7 +272,7 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err err
 		photo.Caption += "无片源信息"
 		return nil
 	}
-	photo.Caption += "请复制本片[番号]或[哈希]到求哈希APP,即可播放视频"
+	photo.Caption += "请复制本片【番号】或【哈希】到求哈希APP,即可播放视频"
 	photo.Caption = addLine(photo.Caption)
 	return nil
 }
