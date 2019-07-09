@@ -291,7 +291,7 @@ func searchVideo(s string) []*model.Video {
 
 func searchVideoList(limit, start int) (videos []*model.Video, err error) {
 	videos = []*model.Video{}
-	err = model.DB().OrderBy("visit desc").Limit(limit, start).Find(&videos)
+	err = model.DB().Where("m3u8_hash <> ?", "").OrderBy("visit desc").Limit(limit, start).Find(&videos)
 	if err != nil {
 		return nil, err
 	}
