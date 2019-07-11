@@ -245,6 +245,7 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err err
 	photo.Caption = addLine(photo.Caption)
 	fb, e := getFile(first.PosterHash)
 	if e != nil {
+		photo.Caption += "番号信息尚未收录"
 		return e
 	}
 	photo.File = *fb
