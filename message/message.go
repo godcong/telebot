@@ -226,22 +226,27 @@ func extInfo(total, episode string, sharpness string) string {
 	return episode + sharpness
 }
 
+func fixIntroName(intro string, role []string, limit int) string {
+	if max := len(role); max > 0 {
+		if max > limit {
+			max = limit
+		}
+		for i := 0; i < max; i++ {
+			if strings.Index(intro, role[i]) == -1 {
+				intro += " " + role[i]
+			}
+		}
+	}
+	return intro
+}
+
 func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err error) {
 	if videos == nil || len(videos) <= 0 {
 		return xerrors.New("nil video")
 	}
 	first := videos[0]
 
-	photo.Caption = first.Intro
-	if max := len(first.Role); max > 0 {
-		if max > 5 {
-			max = 5
-		}
-		for i := 0; i < max; i++ {
-			photo.Caption += " " + first.Role[i]
-		}
-
-	}
+	photo.Caption = fixIntroName(first.Intro, first.Role, 5)
 	photo.Caption = addLine(photo.Caption)
 	fb, e := getFile(first.PosterHash)
 	if e != nil {
