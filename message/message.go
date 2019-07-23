@@ -171,6 +171,11 @@ func HookMessage(update tgbotapi.Update) {
 					log.Infof("%s:(%s)", p.FileID, s)
 				}
 			}
+			if update.Message.Chat.Photo != nil {
+				log.Info("BigFileID:", update.Message.Chat.Photo.BigFileID)
+				log.Info("BigFileID:", update.Message.Chat.Photo.SmallFileID)
+			}
+
 			log.Info("private", update.Message)
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？"))
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
