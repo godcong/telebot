@@ -170,12 +170,11 @@ func HookMessage(update tgbotapi.Update) {
 				}
 			}
 			if fid != "" {
-
 				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "图像识别中请稍后!"))
-
 				a, e := Recognition(fid)
 				if e != nil {
-					cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "无法识别!"))
+					log.Error(e)
+					cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "对不起这个妹子长得太有个性,我没认出来!"))
 				} else {
 					cts = append(cts, a)
 				}

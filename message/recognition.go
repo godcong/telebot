@@ -29,7 +29,6 @@ func Recognition(id string) (able tgbotapi.Chattable, e error) {
 	}
 
 	ext := filepath.Ext(s)
-
 	fp := filepath.Join(time.Now().Format("20060102"), uuid.New().String())
 	fp, e = filepath.Abs(fp)
 	if e != nil {
