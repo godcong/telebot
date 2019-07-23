@@ -61,18 +61,25 @@ func RunRecognition(ctx context.Context, path string) (result []string, e error)
 	args := strings.Split(fmt.Sprintf(GetProperty().Recognition, path), " ")
 
 	cmd := exec.CommandContext(ctx, GetProperty().RecognitionCMD, args...)
-	out, e := cmd.StdoutPipe()
+	cmd.Env = os.Environ()
+	stdout, e := cmd.StdoutPipe()
 	if e != nil {
 		log.Error(e)
 		return
 	}
+	stderr, e := cmd.StderrPipe()
+	if e != nil {
+		log.Error(e)
+		return
+	}
+
 	e = cmd.Start()
 	if e != nil {
 		log.Error(e)
 		return
 	}
 	for {
-		reader := bufio.NewReader(out)
+		reader := bufio.NewReader(io.MultiReader(stderr, stdout))
 		lines, _, e := reader.ReadLine()
 		if e != nil || io.EOF == e {
 			goto END
@@ -80,7 +87,7 @@ func RunRecognition(ctx context.Context, path string) (result []string, e error)
 		log.With("line", string(lines)).Info("lines")
 		ss := strings.Split(string(lines), ",")
 		if len(ss) > 1 {
-			if ss[1] != "no_persons_found" {
+			if ss[1] != "no_persons_found" && ss[1] != "unknown_person" {
 				result = append(result, ss[1])
 			}
 		}
