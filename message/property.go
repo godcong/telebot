@@ -16,6 +16,7 @@ type Property struct {
 	HookAddress string `json:"hook_address"`
 	Token       string `json:"token"`
 	Download    string `json:"download"`
+	Recognition string `json:"recognition"`
 	Rule        string `json:"rule"`
 }
 
