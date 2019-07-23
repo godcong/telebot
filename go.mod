@@ -14,6 +14,7 @@ require (
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/godcong/go-ipfs-restapi v0.0.3-0.20190422054229-f13eeaa39df0
 	github.com/godcong/go-trait v0.0.0-20190528080809-9a857488365f
+	github.com/google/uuid v1.1.1
 	github.com/huin/goupnp v1.0.0 // indirect
 	github.com/jackpal/go-nat-pmp v1.0.1 // indirect
 	github.com/json-iterator/go v1.1.6
