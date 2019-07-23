@@ -173,7 +173,7 @@ func HookMessage(update tgbotapi.Update) {
 			}
 			if update.Message.Chat.Photo != nil {
 				log.Info("BigFileID:", update.Message.Chat.Photo.BigFileID)
-				log.Info("BigFileID:", update.Message.Chat.Photo.SmallFileID)
+				log.Info("SmallFileID:", update.Message.Chat.Photo.SmallFileID)
 			}
 
 			log.Info("private", update.Message)
