@@ -24,12 +24,12 @@ func Recognition(id string) (able tgbotapi.Chattable, e error) {
 	}
 
 	ext := filepath.Ext(s)
-	fp, e := filepath.Abs(uuid.New().String())
+
+	fp := filepath.Join(time.Now().Format("20060102"), uuid.New().String())
+	fp, e = filepath.Abs(fp)
 	if e != nil {
 		return nil, e
 	}
-
-	fp = filepath.Join(time.Now().Format("20060102"), fp)
 	_ = os.MkdirAll(fp, os.ModePerm)
 	newfile := filepath.Join(fp, "unknown"+ext)
 	log.With("path", newfile).Info("new file")
