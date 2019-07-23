@@ -1,6 +1,7 @@
 package message
 
 import (
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/google/uuid"
 	"io"
@@ -8,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -50,9 +52,17 @@ func Recognition(id string) (able tgbotapi.Chattable, e error) {
 		property.Point = DefaultPoint
 	}
 
-	//c := fmt.Sprintf(GetProperty().Recognition,, fp)
-
-	exec.Command("")
-
+	c := strings.Split(fmt.Sprintf(GetProperty().Recognition, fp), " ")
+	cmd := exec.Command(GetProperty().RecognitionCMD, c...)
+	e = cmd.Run()
+	if e != nil {
+		log.With(cmd.Args).Error(e)
+		return nil, e
+	}
+	bytes, e := cmd.Output()
+	if e != nil {
+		return nil, e
+	}
+	log.Info("output:", string(bytes))
 	return
 }
