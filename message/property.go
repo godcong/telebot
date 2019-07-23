@@ -9,15 +9,17 @@ var property *Property
 
 // Property ...
 type Property struct {
-	Welcome     string `json:"welcome"`
-	GroupName   string `json:"group_name"`
-	BotName     string `json:"bot_name"`
-	Host        string `json:"host"`
-	HookAddress string `json:"hook_address"`
-	Token       string `json:"token"`
-	Download    string `json:"download"`
-	Recognition string `json:"recognition"`
-	Rule        string `json:"rule"`
+	Welcome     string  `json:"welcome"`
+	GroupName   string  `json:"group_name"`
+	BotName     string  `json:"bot_name"`
+	Host        string  `json:"host"`
+	HookAddress string  `json:"hook_address"`
+	Token       string  `json:"token"`
+	Download    string  `json:"download"`
+	Recognition string  `json:"recognition"`
+	Point       float64 `json:"point"`
+	KnownPath   string  `json:"known_path"`
+	Rule        string  `json:"rule"`
 }
 
 // LoadProperty ...

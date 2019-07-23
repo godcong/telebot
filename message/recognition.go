@@ -11,6 +11,9 @@ import (
 	"time"
 )
 
+// DefaultPoint ...
+const DefaultPoint = 0.43
+
 // Recognition ...
 func Recognition(id string) (able tgbotapi.Chattable, e error) {
 	s, e := bot.GetFileDirectURL(id)
@@ -42,6 +45,12 @@ func Recognition(id string) (able tgbotapi.Chattable, e error) {
 		return nil, e
 	}
 	log.With("size", written).Info("picture written")
+
+	if property.Point <= 0 {
+		property.Point = DefaultPoint
+	}
+
+	//c := fmt.Sprintf(GetProperty().Recognition,, fp)
 
 	exec.Command("")
 
