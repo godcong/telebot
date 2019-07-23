@@ -161,24 +161,27 @@ func HookMessage(update tgbotapi.Update) {
 	if !update.Message.IsCommand() {
 		if update.Message.Chat.IsPrivate() {
 			ps := update.Message.Photo
+			fid := ""
 			if ps != nil {
-				for _, p := range *ps {
-					s, e := bot.GetFileDirectURL(p.FileID)
-					if e != nil {
-						log.Error(e)
-						continue
-					}
-					log.Infof("%s:(%s)", p.FileID, s)
+				idx := len(*ps) - 1
+				if idx >= 0 {
+					fid = (*ps)[idx].FileID
+
 				}
 			}
-			if update.Message.Chat.Photo != nil {
-				log.Info("BigFileID:", update.Message.Chat.Photo.BigFileID)
-				log.Info("SmallFileID:", update.Message.Chat.Photo.SmallFileID)
+			if fid != "" {
+				s, e := bot.GetFileDirectURL(fid)
+				if e != nil {
+					log.Error(e)
+				}
+				log.Infof("%s:(%s)", fid, s)
+				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "图像识别中请稍后"))
+			} else {
+				log.Info("private", update.Message)
+				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？"))
+				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
 			}
 
-			log.Info("private", update.Message)
-			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？"))
-			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
 		}
 	} else {
 		// Create a new MessageConfig. We don't have text yet,
