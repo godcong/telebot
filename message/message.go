@@ -170,19 +170,20 @@ func HookMessage(update tgbotapi.Update) {
 				}
 			}
 			if fid != "" {
-				s, e := bot.GetFileDirectURL(fid)
-				if e != nil {
-					log.Error(e)
-				}
-				log.Infof("%s:(%s)", fid, s)
+
 				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "图像识别中请稍后!"))
 
+				a, e := Recognition(fid)
+				if e != nil {
+					cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "无法识别!"))
+				} else {
+					cts = append(cts, a)
+				}
 			} else {
 				log.Info("private", update.Message)
 				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？"))
 				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
 			}
-
 		}
 	} else {
 		// Create a new MessageConfig. We don't have text yet,
