@@ -63,6 +63,7 @@ func RunRecognition(ctx context.Context, path string) (result []string, e error)
 
 	cmd := exec.CommandContext(ctx, GetProperty().RecognitionCMD, args...)
 	cmd.Env = os.Environ()
+	log.With("args", cmd.Args).Info("cmd")
 	out, e := cmd.CombinedOutput()
 	if e != nil {
 		log.Error(e)
