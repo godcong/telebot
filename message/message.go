@@ -160,19 +160,17 @@ func HookMessage(update tgbotapi.Update) {
 
 	if !update.Message.IsCommand() {
 		if update.Message.Chat.IsPrivate() {
-			ph := update.Message.Chat.Photo
-			if ph != nil {
-				//size := update.Message.Photo
-				//size[0].FileID
-				fc := tgbotapi.FileConfig{FileID: ph.BigFileID}
-				file, e := bot.GetFile(fc)
-				if e != nil {
-					log.Error(e)
-					return
+			ps := update.Message.Photo
+			if ps != nil {
+				for _, p := range *ps {
+					s, e := bot.GetFileDirectURL(p.FileID)
+					if e != nil {
+						log.Error(e)
+						continue
+					}
+					log.Infof("%s:(%s)", p.FileID, s)
 				}
-				log.Info(file.FilePath)
 			}
-
 			log.Info("private", update.Message)
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？"))
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
