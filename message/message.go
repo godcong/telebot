@@ -175,7 +175,8 @@ func HookMessage(update tgbotapi.Update) {
 					log.Error(e)
 				}
 				log.Infof("%s:(%s)", fid, s)
-				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "图像识别中请稍后"))
+				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "图像识别中请稍后!"))
+
 			} else {
 				log.Info("private", update.Message)
 				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？"))
