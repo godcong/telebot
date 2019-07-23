@@ -2,6 +2,7 @@ package message
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -62,24 +63,14 @@ func RunRecognition(ctx context.Context, path string) (result []string, e error)
 
 	cmd := exec.CommandContext(ctx, GetProperty().RecognitionCMD, args...)
 	cmd.Env = os.Environ()
-	stdout, e := cmd.StdoutPipe()
+	out, e := cmd.CombinedOutput()
 	if e != nil {
 		log.Error(e)
 		return
 	}
-	stderr, e := cmd.StderrPipe()
-	if e != nil {
-		log.Error(e)
-		return
-	}
-
-	e = cmd.Start()
-	if e != nil {
-		log.Error(e)
-		return
-	}
+	reader := bufio.NewReader(bytes.NewBuffer(out))
+	tmp := make(map[string][]byte)
 	for {
-		reader := bufio.NewReader(io.MultiReader(stderr, stdout))
 		lines, _, e := reader.ReadLine()
 		if e != nil || io.EOF == e {
 			goto END
@@ -88,14 +79,13 @@ func RunRecognition(ctx context.Context, path string) (result []string, e error)
 		ss := strings.Split(string(lines), ",")
 		if len(ss) > 1 {
 			if ss[1] != "no_persons_found" && ss[1] != "unknown_person" {
-				result = append(result, ss[1])
+				tmp[ss[1]] = nil
 			}
 		}
 	}
 END:
-	e = cmd.Wait()
-	if e != nil {
-		log.Error(e)
+	for key := range tmp {
+		result = append(result, key)
 	}
 	log.With("roles", result).Info("result")
 	return
