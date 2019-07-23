@@ -1,9 +1,9 @@
 package message
 
 import (
+	"bufio"
+	"context"
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/google/uuid"
 	"io"
 	"net/http"
 	"os"
@@ -11,13 +11,16 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/google/uuid"
 )
 
 // DefaultPoint ...
 const DefaultPoint = 0.43
 
 // Recognition ...
-func Recognition(id string) (able tgbotapi.Chattable, e error) {
+func Recognition(message *tgbotapi.Message, id string) (able tgbotapi.Chattable, e error) {
 	s, e := bot.GetFileDirectURL(id)
 	if e != nil {
 		log.Error(e)
@@ -47,21 +50,46 @@ func Recognition(id string) (able tgbotapi.Chattable, e error) {
 	}
 	log.With("size", written).Info("picture written")
 
-	if property.Point <= 0 {
-		property.Point = DefaultPoint
+	result, e := RunRecognition(context.Background(), fp)
+	if e != nil {
+		return nil, e
 	}
+	return tgbotapi.NewMessage(message.Chat.ID, "识别出："+strings.Join(result, ",")), nil
+}
 
-	c := strings.Split(fmt.Sprintf(GetProperty().Recognition, fp), " ")
-	cmd := exec.Command(GetProperty().RecognitionCMD, c...)
-	e = cmd.Run()
+func RunRecognition(ctx context.Context, path string) (result []string, e error) {
+	args := strings.Split(fmt.Sprintf(GetProperty().Recognition, path), " ")
+
+	cmd := exec.CommandContext(ctx, GetProperty().RecognitionCMD, args...)
+	out, e := cmd.StdoutPipe()
 	if e != nil {
-		log.With(cmd.Args).Error(e)
-		return nil, e
+		log.Error(e)
+		return
 	}
-	bytes, e := cmd.Output()
+	e = cmd.Start()
 	if e != nil {
-		return nil, e
+		log.Error(e)
+		return
 	}
-	log.Info("output:", string(bytes))
+	for {
+		reader := bufio.NewReader(out)
+		lines, _, e := reader.ReadLine()
+		if e != nil || io.EOF == e {
+			goto END
+		}
+		log.With("line", string(lines)).Info("lines")
+		ss := strings.Split(string(lines), ",")
+		if len(ss) > 1 {
+			if ss[1] != "no_persons_found" {
+				result = append(result, ss[1])
+			}
+		}
+	}
+END:
+	e = cmd.Wait()
+	if e != nil {
+		log.Error(e)
+	}
+	log.With("roles", result).Info("result")
 	return
 }

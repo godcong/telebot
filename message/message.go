@@ -3,15 +3,16 @@ package message
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"strings"
+	"time"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	shell "github.com/godcong/go-ipfs-restapi"
 	"github.com/godcong/go-trait"
 	"github.com/yinhevr/seed/model"
 	"golang.org/x/xerrors"
-	"io/ioutil"
-	"net/http"
-	"strings"
-	"time"
 )
 
 const help = `输入:
@@ -171,7 +172,7 @@ func HookMessage(update tgbotapi.Update) {
 			}
 			if fid != "" {
 				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "图像识别中请稍后!"))
-				a, e := Recognition(fid)
+				a, e := Recognition(update.Message, fid)
 				if e != nil {
 					log.Error(e)
 					cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "对不起这个妹子长得太有个性,我没认出来!"))
