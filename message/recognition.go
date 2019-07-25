@@ -58,6 +58,7 @@ func Recognition(message *tgbotapi.Message, id string) (able tgbotapi.Chattable,
 	return tgbotapi.NewMessage(message.Chat.ID, "识别出："+strings.Join(result, ",")), nil
 }
 
+// RunRecognition ...
 func RunRecognition(ctx context.Context, path string) (result []string, e error) {
 	args := strings.Split(fmt.Sprintf(GetProperty().Recognition, path), " ")
 
