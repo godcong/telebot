@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -220,8 +221,10 @@ func HookMessage(update tgbotapi.Update) {
 			closeMsg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 			cts = append(cts, closeMsg)
 		case "down", "d":
-			down := fmt.Sprintf("请认准官方下载地址:%s", property.Download)
-			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, down))
+			//down := fmt.Sprintf("请认准官方下载地址:%s", property.Download)
+			//cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, down))
+			down := Download(update.Message)
+			cts = append(cts, down)
 		case "help", "h":
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
 		case "fuck":
@@ -323,6 +326,25 @@ func searchVideoList(limit, start int) (videos []*model.Video, err error) {
 		return nil, err
 	}
 	return videos, nil
+}
+
+func getLocalFile(name, path string) (fb *tgbotapi.FileBytes, e error) {
+	if name == "" {
+		name = "dhash.apk"
+	}
+	fb = &tgbotapi.FileBytes{
+		Name: name,
+	}
+	file, e := os.Open(path)
+	if e != nil {
+		return &tgbotapi.FileBytes{}, e
+	}
+	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		return &tgbotapi.FileBytes{}, err
+	}
+	fb.Bytes = bytes
+	return fb, nil
 }
 
 func getFile(hash string) (fb *tgbotapi.FileBytes, e error) {
