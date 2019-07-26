@@ -41,6 +41,7 @@ const WhiteSpace = " "
 var bot *tgbotapi.BotAPI
 var hasLocal = false
 var log = trait.NewZapSugar()
+var downloadFileID string
 
 // BootWithGAE ...
 func BootWithGAE(path string, port string) {
@@ -221,7 +222,14 @@ func HookMessage(update tgbotapi.Update) {
 			closeMsg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 			cts = append(cts, closeMsg)
 		case "down", "d":
-			cts = append(cts, tgbotapi.NewDocumentUpload(update.Message.Chat.ID, GetProperty().Download))
+
+			if downloadFileID == "" {
+				d := tgbotapi.NewDocumentUpload(update.Message.Chat.ID, GetProperty().Download)
+				downloadFileID = d.FileID
+				cts = append(cts, d)
+			} else {
+				cts = append(cts, tgbotapi.NewDocumentUpload(update.Message.Chat.ID, downloadFileID))
+			}
 		case "help", "h":
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
 		case "fuck":
