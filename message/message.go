@@ -222,14 +222,7 @@ func HookMessage(update tgbotapi.Update) {
 			closeMsg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 			cts = append(cts, closeMsg)
 		case "down", "d":
-
-			if downloadFileID == "" {
-				d := tgbotapi.NewDocumentUpload(update.Message.Chat.ID, GetProperty().Download)
-				downloadFileID = d.FileID
-				cts = append(cts, d)
-			} else {
-				cts = append(cts, tgbotapi.NewDocumentUpload(update.Message.Chat.ID, downloadFileID))
-			}
+			cts = append(cts, Download(update.Message))
 		case "help", "h":
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
 		case "fuck":
