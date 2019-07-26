@@ -221,10 +221,7 @@ func HookMessage(update tgbotapi.Update) {
 			closeMsg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 			cts = append(cts, closeMsg)
 		case "down", "d":
-			//down := fmt.Sprintf("请认准官方下载地址:%s", property.Download)
-			//cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, down))
-			down := Download(update.Message)
-			cts = append(cts, down)
+			cts = append(cts, tgbotapi.NewDocumentUpload(update.Message.Chat.ID, GetProperty().Download))
 		case "help", "h":
 			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
 		case "fuck":
