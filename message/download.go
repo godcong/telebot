@@ -8,5 +8,5 @@ func Download(message *tgbotapi.Message) (able tgbotapi.Chattable) {
 	if downloadFileID == "" {
 		return tgbotapi.NewDocumentUpload(message.Chat.ID, GetProperty().Download)
 	}
-	return tgbotapi.NewDocumentUpload(message.Chat.ID, downloadFileID)
+	return tgbotapi.NewDocumentShare(message.Chat.ID, downloadFileID)
 }
