@@ -234,8 +234,12 @@ func HookMessage(update tgbotapi.Update) {
 	}
 
 	for _, ct := range cts {
-		if _, err := bot.Send(ct); err != nil {
+		if resp, err := bot.Send(ct); err != nil {
 			log.Error("send message error:", err)
+		} else {
+			if resp.Document != nil {
+				downloadFileID = resp.Document.FileID
+			}
 		}
 	}
 }
