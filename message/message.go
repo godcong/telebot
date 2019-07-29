@@ -128,28 +128,28 @@ func BootWithUpdate(token string) {
 
 	ct := make(chan tgbotapi.Chattable, 5)
 
-	go func(c <-chan tgbotapi.Chattable) {
-		for {
-			select {
-			case in := <-c:
-				if in == nil {
-					log.Error("nothing")
-					return
-				}
-				if resp, err := bot.Send(in); err != nil {
-					log.Error("send message error:", err)
-				} else {
-					if resp.Document != nil {
-						downloadFileID = resp.Document.FileID
-					}
+	for update := range updates {
+		go HookMessage(update, ct)
+	}
+
+	//go func(c <-chan tgbotapi.Chattable) {
+	for {
+		select {
+		case in := <-ct:
+			if in == nil {
+				log.Error("nothing")
+				return
+			}
+			if resp, err := bot.Send(in); err != nil {
+				log.Error("send message error:", err)
+			} else {
+				if resp.Document != nil {
+					downloadFileID = resp.Document.FileID
 				}
 			}
 		}
-	}(ct)
-
-	for update := range updates {
-		HookMessage(update, ct)
 	}
+	//}(ct)
 }
 
 // InitBoot ...
