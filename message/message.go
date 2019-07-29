@@ -233,6 +233,7 @@ func HookMessage(update tgbotapi.Update, ct chan<- tgbotapi.Chattable) {
 		switch update.Message.Command() {
 		case "video", "v", "ban", "b":
 			for _, vt := range Video(update.Message) {
+				log.Info("output video info")
 				ct <- vt
 			}
 		case "list", "l":
