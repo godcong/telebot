@@ -124,13 +124,17 @@ func BootWithUpdate(token string) {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
-	updates, err := bot.GetUpdatesChan(u)
-
 	ct := make(chan tgbotapi.Chattable, 5)
 
-	for update := range updates {
-		go HookMessage(update, ct)
-	}
+	go func(b *tgbotapi.BotAPI) {
+		updates, err := b.GetUpdatesChan(u)
+		if err != nil {
+			panic(err)
+		}
+		for update := range updates {
+			HookMessage(update, ct)
+		}
+	}(bot)
 
 	//go func(c <-chan tgbotapi.Chattable) {
 	for {
