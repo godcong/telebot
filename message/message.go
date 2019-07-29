@@ -133,6 +133,7 @@ func BootWithUpdate(token string) {
 			select {
 			case in := <-c:
 				if in == nil {
+					log.Error("nothing")
 					return
 				}
 				if resp, err := bot.Send(in); err != nil {
