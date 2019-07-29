@@ -282,21 +282,19 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err err
 	}
 	photo.File = *fb
 	hasVideo := false
-
-	bangumi := ""
-
-	for i, video := range videos {
+	ban := ""
+	for _, video := range videos {
 		if video.M3U8Hash == "" && video.SourceHash == "" {
 			continue
 		}
 		hasVideo = true
-		if i == 0 {
-			bangumi = video.Bangumi
+		if ban == "" {
+			ban = video.Bangumi
 			photo.Caption += fmt.Sprintf("番号: %s", video.Bangumi)
 			photo.Caption = addLine(photo.Caption)
 		}
 
-		if bangumi != video.Bangumi {
+		if ban != video.Bangumi {
 			//skip other video with fuzzy query
 			continue
 		}
