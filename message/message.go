@@ -93,8 +93,20 @@ func BootWithGAE(path string, port string) {
 		}
 	}()
 	InitBoot(bot)
+	ct := make(chan tgbotapi.Chattable, 5)
+
+	go func(c <-chan tgbotapi.Chattable) {
+		for {
+			select {
+			case in := <-c:
+				if in == nil {
+
+				}
+			}
+		}
+	}(ct)
 	for update := range updates {
-		HookMessage(update)
+		HookMessage(update, ct)
 	}
 }
 
@@ -114,8 +126,28 @@ func BootWithUpdate(token string) {
 
 	updates, err := bot.GetUpdatesChan(u)
 
+	ct := make(chan tgbotapi.Chattable, 5)
+
+	go func(c <-chan tgbotapi.Chattable) {
+		for {
+			select {
+			case in := <-c:
+				if in == nil {
+					return
+				}
+				if resp, err := bot.Send(in); err != nil {
+					log.Error("send message error:", err)
+				} else {
+					if resp.Document != nil {
+						downloadFileID = resp.Document.FileID
+					}
+				}
+			}
+		}
+	}(ct)
+
 	for update := range updates {
-		HookMessage(update)
+		HookMessage(update, ct)
 	}
 }
 
@@ -132,12 +164,11 @@ func getName(user *tgbotapi.User) string {
 }
 
 // HookMessage ...
-func HookMessage(update tgbotapi.Update) {
+func HookMessage(update tgbotapi.Update, ct chan<- tgbotapi.Chattable) {
 	if update.Message == nil {
 		return
 	}
 
-	var cts []tgbotapi.Chattable
 	log.Info("users:", update.Message.NewChatMembers)
 	if update.Message.NewChatMembers != nil {
 
@@ -174,18 +205,20 @@ func HookMessage(update tgbotapi.Update) {
 			}
 
 			if fid != "" {
-				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "正在识别,稍后将推送结果!"))
-				a, e := Recognition(update.Message, fid)
-				if e != nil {
-					log.Error(e)
-					cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "对不起这个妹子长得太有个性,我没认出来!"))
-				} else {
-					cts = append(cts, a)
-				}
+				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "正在识别,稍后将推送结果!")
+				go func() {
+					a, e := Recognition(update.Message, fid)
+					if e != nil {
+						log.Error(e)
+						ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "对不起这个妹子长得太有个性,我没认出来!")
+					} else {
+						ct <- a
+					}
+				}()
 			} else {
 				log.Infof("private:%+v", update.Message)
-				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？"))
-				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
+				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？")
+				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, help)
 			}
 		}
 	} else {
@@ -194,55 +227,50 @@ func HookMessage(update tgbotapi.Update) {
 		log.Infof("%+v", update)
 		switch update.Message.Command() {
 		case "video", "v", "ban", "b":
-			cts = Video(update.Message)
+			for _, vt := range Video(update.Message) {
+				ct <- vt
+			}
 		case "list", "l":
 			if update.Message.Chat.IsPrivate() == true {
-				cts = List(update.Message)
+				for _, vt := range List(update.Message) {
+					ct <- vt
+				}
 			} else {
 				bot := fmt.Sprintf("仅支持私聊(%s)", property.BotName)
-				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, bot))
+				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, bot)
 			}
 		case "top", "t":
 			video := model.Video{}
 			b, e := model.Top(&video)
 			if e != nil || !b {
-				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源"))
+				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源")
 				break
 			}
 			photo := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
 			e = parseVideoInfo(&photo, []*model.Video{&video})
 			if e != nil {
-				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源"))
+				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源")
 				break
 			}
-			cts = append(cts, photo)
+			ct <- photo
 		case "status", "s":
-			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "I'm ok"))
+			ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "I'm ok")
 		case "close":
 			closeMsg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 			closeMsg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-			cts = append(cts, closeMsg)
+			ct <- closeMsg
 		case "down", "d":
-			cts = append(cts, Download(update.Message))
+			ct <- Download(update.Message)
 		case "help", "h":
-			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, help))
+			ct <- tgbotapi.NewMessage(update.Message.Chat.ID, help)
 		case "fuck":
 			fuck := fmt.Sprintf("你想fuck谁？可以私聊我哦（%s)", property.BotName)
-			cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, fuck))
+			ct <- tgbotapi.NewMessage(update.Message.Chat.ID, fuck)
 		default:
 			return
 		}
 	}
 
-	for _, ct := range cts {
-		if resp, err := bot.Send(ct); err != nil {
-			log.Error("send message error:", err)
-		} else {
-			if resp.Document != nil {
-				downloadFileID = resp.Document.FileID
-			}
-		}
-	}
 }
 
 func extInfo(total, episode string, sharpness string) string {
