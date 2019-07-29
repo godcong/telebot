@@ -172,6 +172,7 @@ func HookMessage(update tgbotapi.Update) {
 
 				}
 			}
+
 			if fid != "" {
 				cts = append(cts, tgbotapi.NewMessage(update.Message.Chat.ID, "正在识别,稍后将推送结果!"))
 				a, e := Recognition(update.Message, fid)
@@ -282,14 +283,22 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err err
 	photo.File = *fb
 	hasVideo := false
 
+	bangumi := ""
+
 	for i, video := range videos {
 		if video.M3U8Hash == "" && video.SourceHash == "" {
 			continue
 		}
 		hasVideo = true
 		if i == 0 {
+			bangumi = video.Bangumi
 			photo.Caption += fmt.Sprintf("番号: %s", video.Bangumi)
 			photo.Caption = addLine(photo.Caption)
+		}
+
+		if bangumi != video.Bangumi {
+			//skip other video with fuzzy query
+			continue
 		}
 
 		if video.M3U8Hash != "" {
