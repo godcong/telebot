@@ -127,6 +127,7 @@ func BootWithUpdate(token string) {
 	ct := make(chan tgbotapi.Chattable, 5)
 
 	go func(b *tgbotapi.BotAPI) {
+		log.Info("get updates")
 		updates, err := b.GetUpdatesChan(u)
 		if err != nil {
 			panic(err)
@@ -136,7 +137,6 @@ func BootWithUpdate(token string) {
 		}
 	}(bot)
 
-	//go func(c <-chan tgbotapi.Chattable) {
 	for {
 		select {
 		case in := <-ct:
@@ -153,7 +153,6 @@ func BootWithUpdate(token string) {
 			}
 		}
 	}
-	//}(ct)
 }
 
 // InitBoot ...
@@ -170,6 +169,7 @@ func getName(user *tgbotapi.User) string {
 
 // HookMessage ...
 func HookMessage(update tgbotapi.Update, ct chan<- tgbotapi.Chattable) {
+	log.Info("hook message")
 	if update.Message == nil {
 		return
 	}
