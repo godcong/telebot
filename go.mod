@@ -29,6 +29,7 @@ require (
 	github.com/syndtr/goleveldb v1.0.0 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	github.com/yinhevr/seed v0.0.0-20190708081950-1d3964df5270
+	go.uber.org/atomic v1.4.0
 	golang.org/x/xerrors v0.0.0-20190510150013-5403a72a6aaf
 	google.golang.org/appengine v1.5.0 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect

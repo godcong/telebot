@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"go.uber.org/atomic"
 	"io"
 	"net/http"
 	"os"
@@ -19,6 +20,8 @@ import (
 
 // DefaultPoint ...
 const DefaultPoint = 0.43
+
+var thread = atomic.NewInt32(0)
 
 // Recognition ...
 func Recognition(message *tgbotapi.Message, id string) (able tgbotapi.Chattable, e error) {
@@ -50,12 +53,16 @@ func Recognition(message *tgbotapi.Message, id string) (able tgbotapi.Chattable,
 		return nil, e
 	}
 	log.With("size", written).Info("picture written")
-
-	result, e := RunRecognition(context.Background(), fp)
-	if e != nil {
-		return nil, e
+	if thread.Load() < 5 {
+		thread.Add(1)
+		result, e := RunRecognition(context.Background(), fp)
+		if e != nil {
+			return nil, e
+		}
+		thread.Add(-1)
+		return tgbotapi.NewMessage(message.Chat.ID, "识别出："+strings.Join(result, ",")), nil
 	}
-	return tgbotapi.NewMessage(message.Chat.ID, "识别出："+strings.Join(result, ",")), nil
+	return tgbotapi.NewMessage(message.Chat.ID, "其他用户正在识别,请稍后再试"), nil
 }
 
 // RunRecognition ...
