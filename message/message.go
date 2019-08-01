@@ -350,8 +350,10 @@ func parseVideoInfo(photo *tgbotapi.PhotoConfig, videos []*model.Video) (err err
 
 		if video.M3U8Hash != "" {
 			photo.Caption += fmt.Sprintf("哈希%s:  %s", video.Episode, video.M3U8Hash)
-		} else {
+		} else if video.SourceHash != "" {
 			photo.Caption += fmt.Sprintf("哈希%s:  %s", video.Episode, video.SourceHash)
+		} else {
+			//do nothing
 		}
 		photo.Caption = addLine(photo.Caption)
 
