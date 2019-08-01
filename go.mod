@@ -1,4 +1,4 @@
-module github.com/yinhevr/yinhe_bot
+module github.com/glvd/bot
 
 go 1.11
 
