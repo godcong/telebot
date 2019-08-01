@@ -243,9 +243,13 @@ func HookMessage(update tgbotapi.Update, ct chan<- tgbotapi.Chattable) {
 		log.Infof("%+v", update)
 		switch update.Message.Command() {
 		case "video", "v", "ban", "b":
-			for _, vt := range Video(update.Message) {
-				log.Info("output video info")
-				ct <- vt
+			v := strings.Split(update.Message.Text, WhiteSpace)
+			if len(v) > 1 {
+				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "正在搜索："+v[1])
+				for _, vt := range Video(update.Message, v[1]) {
+					log.Info("output video info")
+					ct <- vt
+				}
 			}
 		case "list", "l":
 			if update.Message.Chat.IsPrivate() == true {
