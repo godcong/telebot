@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/glvd/seed/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	shell "github.com/godcong/go-ipfs-restapi"
 	"github.com/godcong/go-trait"
-	"github.com/yinhevr/seed/model"
 	"golang.org/x/xerrors"
 )
 

@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/yinhevr/seed/model"
+	"github.com/glvd/seed/model"
 )
 
 // RecognitionStatus ...
