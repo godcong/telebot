@@ -32,8 +32,8 @@ const welcome = ""
 // ServerURL ...
 const ServerURL = "https://ipfs.io/ipfs/"
 
-// LocalURL ...
-const LocalURL = "http://localhost:8080/ipfs/"
+// LocalURL ...//TODO:
+const LocalURL = "http://localhost:18080/ipfs/"
 
 // WhiteSpace ...
 const WhiteSpace = " "
