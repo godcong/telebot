@@ -24,11 +24,6 @@ const help = `输入:
 /r 或 /rule 查看群规（仅私聊）
 /h 或 /help 显示帮助`
 
-const rule = ``
-
-const groupName = "银河VR共享总部"
-const welcome = ""
-
 // ServerURL ...
 const ServerURL = "https://ipfs.io/ipfs/"
 
