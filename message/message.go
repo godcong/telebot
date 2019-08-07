@@ -17,7 +17,7 @@ import (
 )
 
 const help = `输入:
-/v 或 /video +番号 查询视频 如：/v video-id
+/v 或 /video +番号 查询视频 如：/v ABP-785
 /t 或 /top　显示推荐视频
 /l 或 /list 显示列表（仅私聊）点击:@yinhe_bot，私聊获取更多信息
 /d 或 /down 获取求哈希下载链接（仅私聊）
