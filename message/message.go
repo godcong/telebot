@@ -11,6 +11,7 @@ import (
 
 	"github.com/glvd/seed/model"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/go-xorm/xorm"
 	shell "github.com/godcong/go-ipfs-restapi"
 	"github.com/godcong/go-trait"
 	"golang.org/x/xerrors"
@@ -37,12 +38,27 @@ var bot *tgbotapi.BotAPI
 var hasLocal = false
 var log = trait.NewZapSugar()
 var downloadFileID string
+var db *xorm.Engine
+
+func InitDB(name string) error {
+	eng, e := model.InitSQLite3(name)
+	if e != nil {
+		return e
+	}
+	db = eng
+	return nil
+}
 
 // BootWithGAE ...
 func BootWithGAE(path string, port string) {
 	e := LoadProperty(path)
 	if e != nil {
 		panic(e)
+	}
+
+	e = InitDB(property.Database)
+	if e != nil {
+		return
 	}
 	bot, err := tgbotapi.NewBotAPI(property.Token)
 	if err != nil {

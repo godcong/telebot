@@ -1,8 +1,9 @@
 package message
 
 import (
-	jsoniter "github.com/json-iterator/go"
 	"os"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 var property *Property
@@ -17,6 +18,7 @@ type Property struct {
 	Token          string  `json:"token"`
 	Download       string  `json:"download"`
 	Recognition    string  `json:"recognition"`
+	Database       string  `json:"database"`
 	Point          float64 `json:"point"`
 	RecognitionCMD string  `json:"recognition_cmd"`
 	KnownPath      string  `json:"known_path"`
