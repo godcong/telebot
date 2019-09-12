@@ -272,14 +272,13 @@ func HookMessage(update tgbotapi.Update, ct chan<- tgbotapi.Chattable) {
 				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, bot)
 			}
 		case "top", "t":
-			video := model.Video{}
-			b, e := model.Top(&video)
-			if e != nil || !b {
+			videos, e := model.Top(db.NoCache(), 0)
+			if e != nil {
 				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源")
 				break
 			}
 			photo := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, "")
-			e = parseVideoInfo(&photo, []*model.Video{&video})
+			e = parseVideoInfo(&photo, *videos)
 			if e != nil {
 				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源")
 				break
@@ -384,7 +383,7 @@ func addLine(s string) string {
 
 func searchVideo(s string) []*model.Video {
 	videos := new([]*model.Video)
-	if err := model.DeepFind(s, videos); err != nil {
+	if err := model.DeepFind(db.NoCache(), s, videos); err != nil {
 		return nil
 	}
 	return *videos
@@ -392,7 +391,7 @@ func searchVideo(s string) []*model.Video {
 
 func searchVideoList(limit, start int) (videos []*model.Video, err error) {
 	videos = []*model.Video{}
-	err = model.DB().Where("m3u8_hash <> ?", "").OrderBy("visit desc").Limit(limit, start).Find(&videos)
+	err = db.Where("m3u8_hash <> ?", "").OrderBy("visit desc").Limit(limit, start).Find(&videos)
 	if err != nil {
 		return nil, err
 	}
