@@ -245,16 +245,16 @@ func HookMessage(update tgbotapi.Update, ct chan<- tgbotapi.Chattable) {
 			}
 
 			if fid != "" {
-				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "正在识别,稍后将推送结果!")
-				go func() {
-					a, e := Recognition(update.Message, fid)
-					if e != nil {
-						log.Error(e)
-						ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "对不起这个妹子长得太有个性,我没认出来!")
-					} else {
-						ct <- a
-					}
-				}()
+				//ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "正在识别,稍后将推送结果!")
+				//go func() {
+				//	a, e := Recognition(update.Message, fid)
+				//	if e != nil {
+				//		log.Error(e)
+				//		ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "对不起这个妹子长得太有个性,我没认出来!")
+				//	} else {
+				//		ct <- a
+				//	}
+				//}()
 			} else {
 				log.Infof("private:%+v", update.Message)
 				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "您好，有什么可以帮您？")
