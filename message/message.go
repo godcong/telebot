@@ -133,10 +133,20 @@ func BootWithGAE(path string, port string) {
 }
 
 // BootWithUpdate ...
-func BootWithUpdate(token string) {
-	bot, err := tgbotapi.NewBotAPI(token)
+func BootWithUpdate(path string) {
+	e := LoadProperty(path)
+	if e != nil {
+		log.Fatal(e)
+	}
+
+	e = InitDB(property.Database)
+	if e != nil {
+		log.Fatal(e)
+	}
+
+	bot, err := tgbotapi.NewBotAPI(property.Token)
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 
 	bot.Debug = true
@@ -144,7 +154,7 @@ func BootWithUpdate(token string) {
 	log.Infof("Authorized on account %s", bot.Self.UserName)
 
 	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
+	u.Timeout = 15
 
 	ct := make(chan tgbotapi.Chattable, 5)
 
@@ -152,19 +162,20 @@ func BootWithUpdate(token string) {
 		log.Info("get updates")
 		updates, err := b.GetUpdatesChan(u)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		for update := range updates {
 			HookMessage(update, ct)
 		}
 	}(bot)
 
+ChanEnd:
 	for {
 		select {
 		case in := <-ct:
 			if in == nil {
-				log.Error("nothing")
-				return
+				log.Warn("nothing receive end")
+				break ChanEnd
 			}
 			if resp, err := bot.Send(in); err != nil {
 				log.Error("send message error:", err)
