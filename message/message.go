@@ -146,7 +146,11 @@ func BootWithUpdate(path string) {
 	}
 
 	bot.Debug = true
-
+	response, e := bot.RemoveWebhook()
+	if e != nil {
+		return
+	}
+	log.Infof("webhook info:%+v", response)
 	log.Infof("Authorized on account %s", bot.Self.UserName)
 
 	u := tgbotapi.NewUpdate(0)
