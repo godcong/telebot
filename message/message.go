@@ -184,6 +184,8 @@ ChanEnd:
 					downloadFileID = resp.Document.FileID
 				}
 			}
+		case <-time.After(30 * time.Second):
+			log.Info("waiting for new message")
 		}
 	}
 }
