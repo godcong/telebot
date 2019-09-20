@@ -56,10 +56,6 @@ func BootWithGAE(path string, port string) {
 		panic(e)
 	}
 
-	e = InitDB(property.Database)
-	if e != nil {
-		return
-	}
 	bot, err := tgbotapi.NewBotAPI(property.Token)
 	if err != nil {
 		log.Fatal(err)
