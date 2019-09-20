@@ -40,13 +40,22 @@ var log = trait.NewZapSugar()
 var downloadFileID string
 var db *xorm.Engine
 
-func InitDB(name string) error {
-	eng, e := model.InitSQLite3(name)
+func InitDB(name string, fns ...func(db *xorm.Engine)) (e error) {
+	db, e = model.InitSQLite3(name)
 	if e != nil {
 		return e
 	}
-	db = eng
+	for _, fn := range fns {
+		fn(db)
+	}
+
 	return nil
+}
+
+func ShowDatabaseSQL() func(engine *xorm.Engine) {
+	return func(engine *xorm.Engine) {
+		engine.ShowSQL()
+	}
 }
 
 // BootWithGAE ...
