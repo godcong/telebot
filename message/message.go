@@ -28,8 +28,8 @@ const help = `输入:
 // ServerURL ...
 const ServerURL = "https://ipfs.io/ipfs/"
 
-// LocalURL ...//TODO:
-const LocalURL = "http://localhost:18080/ipfs/"
+// LocalURL ...
+const LocalURL = "http://localhost:8080/ipfs/"
 
 // WhiteSpace ...
 const WhiteSpace = " "
@@ -472,6 +472,9 @@ func url(hash string) string {
 
 func connectURL(hash string) string {
 	if checkLocal() {
+		if property.LocalURL != "" {
+			return property.LocalURL + hash
+		}
 		return LocalURL + hash
 	}
 	return ServerURL + hash

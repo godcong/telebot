@@ -23,6 +23,7 @@ type Property struct {
 	RecognitionCMD string  `json:"recognition_cmd"`
 	KnownPath      string  `json:"known_path"`
 	Rule           string  `json:"rule"`
+	LocalURL       string  `json:"local_url"`
 }
 
 // LoadProperty ...
