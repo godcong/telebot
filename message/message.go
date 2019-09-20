@@ -144,11 +144,6 @@ func BootWithUpdate(path string) {
 		log.Fatal(e)
 	}
 
-	e = InitDB(property.Database)
-	if e != nil {
-		log.Fatal(e)
-	}
-
 	bot, err := tgbotapi.NewBotAPI(property.Token)
 	if err != nil {
 		log.Fatal(err)
