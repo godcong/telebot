@@ -4,7 +4,7 @@ go 1.11
 
 require (
 	cloud.google.com/go v0.37.4 // indirect
-	github.com/glvd/seed v0.0.0-20190912060639-e639cc86ea21
+	github.com/glvd/seed v0.0.0-20190919090848-319aeb69d5f1
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/go-xorm/xorm v0.7.1
 	github.com/godcong/go-ipfs-restapi v0.0.3-0.20190422054229-f13eeaa39df0
