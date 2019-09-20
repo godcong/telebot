@@ -294,7 +294,9 @@ func HookMessage(update tgbotapi.Update, ct chan<- tgbotapi.Chattable) {
 				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, bot)
 			}
 		case "top", "t":
-			videos, e := model.Top(db.NoCache(), 0)
+			session := db.NewSession()
+			defer session.Close()
+			videos, e := model.Top(session, 0)
 			if e != nil {
 				ct <- tgbotapi.NewMessage(update.Message.Chat.ID, "没有找到对应资源")
 				break
@@ -405,7 +407,9 @@ func addLine(s string) string {
 
 func searchVideo(s string) []*model.Video {
 	videos := new([]*model.Video)
-	if err := model.DeepFind(db.NoCache(), s, videos); err != nil {
+	session := db.NewSession()
+	defer session.Close()
+	if err := model.DeepFind(session, s, videos); err != nil {
 		return nil
 	}
 	return *videos

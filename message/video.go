@@ -21,6 +21,8 @@ func Video(message *tgbotapi.Message, s string) (ct []tgbotapi.Chattable) {
 		ct = append(ct, tgbotapi.NewMessage(message.Chat.ID, "没有找到对应资源"))
 		return
 	}
-	_ = model.Visited(db.NoCache(), videos[0])
+	session := db.NewSession()
+	defer session.Close()
+	_ = model.Visited(session, videos[0])
 	return append(ct, photo)
 }
