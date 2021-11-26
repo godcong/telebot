@@ -3,8 +3,9 @@ package main
 import (
 	"flag"
 
-	"github.com/glvd/bot/message"
 	_ "github.com/mattn/go-sqlite3"
+
+	"github.com/motomototv/telebot/message"
 )
 
 var path = flag.String("path", "yinhe.json", "default property path")

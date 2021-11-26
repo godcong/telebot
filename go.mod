@@ -1,6 +1,4 @@
-module github.com/glvd/bot
-
-go 1.11
+module github.com/motomototv/telebot
 
 require (
 	cloud.google.com/go v0.37.4 // indirect
@@ -20,3 +18,5 @@ require (
 	golang.org/x/xerrors v0.0.0-20190513163551-3ee3066db522
 	google.golang.org/appengine v1.5.0 // indirect
 )
+
+go 1.12
