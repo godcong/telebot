@@ -5,7 +5,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/motomototv/telebot/message"
+	"github.com/motomototv/telebot/internal/message"
 )
 
 var path = flag.String("path", "yinhe.json", "default property path")

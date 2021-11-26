@@ -2,6 +2,7 @@ module github.com/motomototv/telebot
 
 require (
 	cloud.google.com/go v0.37.4 // indirect
+	github.com/Arman92/go-tdlib v1.0.0
 	github.com/glvd/seed v0.0.0-20190919090848-319aeb69d5f1
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/go-xorm/xorm v0.7.1

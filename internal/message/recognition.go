@@ -13,10 +13,9 @@ import (
 	"strings"
 	"time"
 
-	"go.uber.org/atomic"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/google/uuid"
+	"go.uber.org/atomic"
 )
 
 // DefaultPoint ...
