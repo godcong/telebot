@@ -1,12 +1,12 @@
-package message
+package config
 
 import (
+	"context"
 	"os"
 
 	jsoniter "github.com/json-iterator/go"
+	"google.golang.org/appengine/log"
 )
-
-var property *Property
 
 // Property ...
 type Property struct {
@@ -27,22 +27,17 @@ type Property struct {
 }
 
 // LoadProperty ...
-func LoadProperty(pathname string) error {
-	property = &Property{}
+func LoadProperty(pathname string) (*Property, error) {
+	property := &Property{}
 	file, e := os.Open(pathname)
 	if e != nil {
-		return e
+		return nil, e
 	}
 	dec := jsoniter.NewDecoder(file)
 	e = dec.Decode(property)
 	if e != nil {
-		return e
+		return nil, e
 	}
-	log.Infof("property:%+v", *property)
-	return nil
-}
-
-// GetProperty ...
-func GetProperty() *Property {
-	return property
+	log.Infof(context.TODO(), "property:%+v", *property)
+	return property, nil
 }

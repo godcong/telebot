@@ -15,6 +15,8 @@ import (
 	shell "github.com/godcong/go-ipfs-restapi"
 	"github.com/godcong/go-trait"
 	"golang.org/x/xerrors"
+
+	"github.com/motomototv/telebot/config"
 )
 
 const help = `输入:
@@ -60,11 +62,11 @@ func ShowDatabaseSQL() func(engine *xorm.Engine) {
 
 // BootWithGAE ...
 func BootWithGAE(path string, port string) {
-	e := LoadProperty(path)
+	ppty, e := config.LoadProperty(path)
 	if e != nil {
 		panic(e)
 	}
-
+	property = ppty
 	bot, err := tgbotapi.NewBotAPI(property.Token)
 	if err != nil {
 		log.Fatal(err)
@@ -137,13 +139,15 @@ func BootWithGAE(path string, port string) {
 	}
 }
 
+var property *config.Property
+
 // BootWithUpdate ...
 func BootWithUpdate(path string) {
-	e := LoadProperty(path)
+	ppty, e := config.LoadProperty(path)
 	if e != nil {
 		log.Fatal(e)
 	}
-
+	property = ppty
 	bot, err := tgbotapi.NewBotAPI(property.Token)
 	if err != nil {
 		log.Fatal(err)
@@ -215,7 +219,6 @@ func HookMessage(update tgbotapi.Update, ct chan<- tgbotapi.Chattable) {
 
 	log.Info("users:", update.Message.NewChatMembers)
 	if update.Message.NewChatMembers != nil {
-
 		var usr []string
 		for _, u := range *update.Message.NewChatMembers {
 			usr = append(usr, getName(&u))
