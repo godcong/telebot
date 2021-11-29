@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -104,15 +105,15 @@ func (sc *StatisticCreate) SetNillableUserID(i *int) *StatisticCreate {
 }
 
 // SetJoinTime sets the "join_time" field.
-func (sc *StatisticCreate) SetJoinTime(i int64) *StatisticCreate {
-	sc.mutation.SetJoinTime(i)
+func (sc *StatisticCreate) SetJoinTime(t time.Time) *StatisticCreate {
+	sc.mutation.SetJoinTime(t)
 	return sc
 }
 
 // SetNillableJoinTime sets the "join_time" field if the given value is not nil.
-func (sc *StatisticCreate) SetNillableJoinTime(i *int64) *StatisticCreate {
-	if i != nil {
-		sc.SetJoinTime(*i)
+func (sc *StatisticCreate) SetNillableJoinTime(t *time.Time) *StatisticCreate {
+	if t != nil {
+		sc.SetJoinTime(*t)
 	}
 	return sc
 }
@@ -146,15 +147,15 @@ func (sc *StatisticCreate) SetNillableMessage(i *int64) *StatisticCreate {
 }
 
 // SetLastMessage sets the "last_message" field.
-func (sc *StatisticCreate) SetLastMessage(i int64) *StatisticCreate {
-	sc.mutation.SetLastMessage(i)
+func (sc *StatisticCreate) SetLastMessage(t time.Time) *StatisticCreate {
+	sc.mutation.SetLastMessage(t)
 	return sc
 }
 
 // SetNillableLastMessage sets the "last_message" field if the given value is not nil.
-func (sc *StatisticCreate) SetNillableLastMessage(i *int64) *StatisticCreate {
-	if i != nil {
-		sc.SetLastMessage(*i)
+func (sc *StatisticCreate) SetNillableLastMessage(t *time.Time) *StatisticCreate {
+	if t != nil {
+		sc.SetLastMessage(*t)
 	}
 	return sc
 }
@@ -255,7 +256,7 @@ func (sc *StatisticCreate) defaults() {
 		sc.mutation.SetUserID(v)
 	}
 	if _, ok := sc.mutation.JoinTime(); !ok {
-		v := statistic.DefaultJoinTime
+		v := statistic.DefaultJoinTime()
 		sc.mutation.SetJoinTime(v)
 	}
 	if _, ok := sc.mutation.Invited(); !ok {
@@ -267,7 +268,7 @@ func (sc *StatisticCreate) defaults() {
 		sc.mutation.SetMessage(v)
 	}
 	if _, ok := sc.mutation.LastMessage(); !ok {
-		v := statistic.DefaultLastMessage
+		v := statistic.DefaultLastMessage()
 		sc.mutation.SetLastMessage(v)
 	}
 }
@@ -381,7 +382,7 @@ func (sc *StatisticCreate) createSpec() (*Statistic, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := sc.mutation.JoinTime(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: statistic.FieldJoinTime,
 		})
@@ -405,7 +406,7 @@ func (sc *StatisticCreate) createSpec() (*Statistic, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := sc.mutation.LastMessage(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: statistic.FieldLastMessage,
 		})

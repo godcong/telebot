@@ -42,10 +42,10 @@ var (
 		{Name: "from_user", Type: field.TypeInt, Default: 0},
 		{Name: "channel_id", Type: field.TypeInt64, Default: 0},
 		{Name: "user_id", Type: field.TypeInt, Default: 0},
-		{Name: "join_time", Type: field.TypeInt64, Default: 0},
+		{Name: "join_time", Type: field.TypeTime},
 		{Name: "invited", Type: field.TypeInt64, Default: 0},
 		{Name: "message", Type: field.TypeInt64, Default: 0},
-		{Name: "last_message", Type: field.TypeInt64, Default: 0},
+		{Name: "last_message", Type: field.TypeTime},
 	}
 	// StatisticsTable holds the schema information for the "statistics" table.
 	StatisticsTable = &schema.Table{

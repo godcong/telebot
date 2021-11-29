@@ -3,6 +3,8 @@
 package statistic
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"github.com/motomototv/telebot/database/ent/predicate"
 )
@@ -133,7 +135,7 @@ func UserID(v int) predicate.Statistic {
 }
 
 // JoinTime applies equality check predicate on the "join_time" field. It's identical to JoinTimeEQ.
-func JoinTime(v int64) predicate.Statistic {
+func JoinTime(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldJoinTime), v))
 	})
@@ -154,7 +156,7 @@ func Message(v int64) predicate.Statistic {
 }
 
 // LastMessage applies equality check predicate on the "last_message" field. It's identical to LastMessageEQ.
-func LastMessage(v int64) predicate.Statistic {
+func LastMessage(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldLastMessage), v))
 	})
@@ -722,21 +724,21 @@ func UserIDLTE(v int) predicate.Statistic {
 }
 
 // JoinTimeEQ applies the EQ predicate on the "join_time" field.
-func JoinTimeEQ(v int64) predicate.Statistic {
+func JoinTimeEQ(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldJoinTime), v))
 	})
 }
 
 // JoinTimeNEQ applies the NEQ predicate on the "join_time" field.
-func JoinTimeNEQ(v int64) predicate.Statistic {
+func JoinTimeNEQ(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldJoinTime), v))
 	})
 }
 
 // JoinTimeIn applies the In predicate on the "join_time" field.
-func JoinTimeIn(vs ...int64) predicate.Statistic {
+func JoinTimeIn(vs ...time.Time) predicate.Statistic {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -753,7 +755,7 @@ func JoinTimeIn(vs ...int64) predicate.Statistic {
 }
 
 // JoinTimeNotIn applies the NotIn predicate on the "join_time" field.
-func JoinTimeNotIn(vs ...int64) predicate.Statistic {
+func JoinTimeNotIn(vs ...time.Time) predicate.Statistic {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -770,28 +772,28 @@ func JoinTimeNotIn(vs ...int64) predicate.Statistic {
 }
 
 // JoinTimeGT applies the GT predicate on the "join_time" field.
-func JoinTimeGT(v int64) predicate.Statistic {
+func JoinTimeGT(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldJoinTime), v))
 	})
 }
 
 // JoinTimeGTE applies the GTE predicate on the "join_time" field.
-func JoinTimeGTE(v int64) predicate.Statistic {
+func JoinTimeGTE(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldJoinTime), v))
 	})
 }
 
 // JoinTimeLT applies the LT predicate on the "join_time" field.
-func JoinTimeLT(v int64) predicate.Statistic {
+func JoinTimeLT(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldJoinTime), v))
 	})
 }
 
 // JoinTimeLTE applies the LTE predicate on the "join_time" field.
-func JoinTimeLTE(v int64) predicate.Statistic {
+func JoinTimeLTE(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldJoinTime), v))
 	})
@@ -950,21 +952,21 @@ func MessageLTE(v int64) predicate.Statistic {
 }
 
 // LastMessageEQ applies the EQ predicate on the "last_message" field.
-func LastMessageEQ(v int64) predicate.Statistic {
+func LastMessageEQ(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.EQ(s.C(FieldLastMessage), v))
 	})
 }
 
 // LastMessageNEQ applies the NEQ predicate on the "last_message" field.
-func LastMessageNEQ(v int64) predicate.Statistic {
+func LastMessageNEQ(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.NEQ(s.C(FieldLastMessage), v))
 	})
 }
 
 // LastMessageIn applies the In predicate on the "last_message" field.
-func LastMessageIn(vs ...int64) predicate.Statistic {
+func LastMessageIn(vs ...time.Time) predicate.Statistic {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -981,7 +983,7 @@ func LastMessageIn(vs ...int64) predicate.Statistic {
 }
 
 // LastMessageNotIn applies the NotIn predicate on the "last_message" field.
-func LastMessageNotIn(vs ...int64) predicate.Statistic {
+func LastMessageNotIn(vs ...time.Time) predicate.Statistic {
 	v := make([]interface{}, len(vs))
 	for i := range v {
 		v[i] = vs[i]
@@ -998,28 +1000,28 @@ func LastMessageNotIn(vs ...int64) predicate.Statistic {
 }
 
 // LastMessageGT applies the GT predicate on the "last_message" field.
-func LastMessageGT(v int64) predicate.Statistic {
+func LastMessageGT(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.GT(s.C(FieldLastMessage), v))
 	})
 }
 
 // LastMessageGTE applies the GTE predicate on the "last_message" field.
-func LastMessageGTE(v int64) predicate.Statistic {
+func LastMessageGTE(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.GTE(s.C(FieldLastMessage), v))
 	})
 }
 
 // LastMessageLT applies the LT predicate on the "last_message" field.
-func LastMessageLT(v int64) predicate.Statistic {
+func LastMessageLT(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.LT(s.C(FieldLastMessage), v))
 	})
 }
 
 // LastMessageLTE applies the LTE predicate on the "last_message" field.
-func LastMessageLTE(v int64) predicate.Statistic {
+func LastMessageLTE(v time.Time) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldLastMessage), v))
 	})

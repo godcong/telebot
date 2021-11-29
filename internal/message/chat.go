@@ -61,7 +61,7 @@ func actionChatMember(bot abstract.Bot, msg *ent.Message, update tgbotapi.Update
 				FromUser:  update.Message.From.ID,
 				ChannelID: update.Message.Chat.ID,
 				UserID:    u.ID,
-				JoinTime:  time.Now().Unix(),
+				JoinTime:  time.Now().UTC(),
 			})
 			if err != nil {
 				log.Println("ERROR", "update statistic:", err)
@@ -74,8 +74,8 @@ func actionChatMember(bot abstract.Bot, msg *ent.Message, update tgbotapi.Update
 				UserID:      update.Message.From.ID,
 				FromUser:    0,
 				ChannelID:   update.Message.Chat.ID,
-				JoinTime:    time.Now().Unix(),
-				LastMessage: time.Now().Unix(),
+				JoinTime:    time.Now().UTC(),
+				LastMessage: time.Now().UTC(),
 			})
 			if err != nil {
 				log.Println("ERROR", "update invite statistic:", err)

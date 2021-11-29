@@ -2,6 +2,10 @@
 
 package statistic
 
+import (
+	"time"
+)
+
 const (
 	// Label holds the string label denoting the statistic type in the database.
 	Label = "statistic"
@@ -70,11 +74,11 @@ var (
 	// DefaultUserID holds the default value on creation for the "user_id" field.
 	DefaultUserID int
 	// DefaultJoinTime holds the default value on creation for the "join_time" field.
-	DefaultJoinTime int64
+	DefaultJoinTime func() time.Time
 	// DefaultInvited holds the default value on creation for the "invited" field.
 	DefaultInvited int64
 	// DefaultMessage holds the default value on creation for the "message" field.
 	DefaultMessage int64
 	// DefaultLastMessage holds the default value on creation for the "last_message" field.
-	DefaultLastMessage int64
+	DefaultLastMessage func() time.Time
 )

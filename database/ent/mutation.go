@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/motomototv/telebot/database/ent/message"
 	"github.com/motomototv/telebot/database/ent/predicate"
@@ -838,30 +839,28 @@ func (m *MessageMutation) ResetEdge(name string) error {
 // StatisticMutation represents an operation that mutates the Statistic nodes in the graph.
 type StatisticMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *int
-	first_name      *string
-	lat_name        *string
-	user_name       *string
-	from_user       *int
-	addfrom_user    *int
-	channel_id      *int64
-	addchannel_id   *int64
-	user_id         *int
-	adduser_id      *int
-	join_time       *int64
-	addjoin_time    *int64
-	invited         *int64
-	addinvited      *int64
-	message         *int64
-	addmessage      *int64
-	last_message    *int64
-	addlast_message *int64
-	clearedFields   map[string]struct{}
-	done            bool
-	oldValue        func(context.Context) (*Statistic, error)
-	predicates      []predicate.Statistic
+	op            Op
+	typ           string
+	id            *int
+	first_name    *string
+	lat_name      *string
+	user_name     *string
+	from_user     *int
+	addfrom_user  *int
+	channel_id    *int64
+	addchannel_id *int64
+	user_id       *int
+	adduser_id    *int
+	join_time     *time.Time
+	invited       *int64
+	addinvited    *int64
+	message       *int64
+	addmessage    *int64
+	last_message  *time.Time
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Statistic, error)
+	predicates    []predicate.Statistic
 }
 
 var _ ent.Mutation = (*StatisticMutation)(nil)
@@ -1220,13 +1219,12 @@ func (m *StatisticMutation) ResetUserID() {
 }
 
 // SetJoinTime sets the "join_time" field.
-func (m *StatisticMutation) SetJoinTime(i int64) {
-	m.join_time = &i
-	m.addjoin_time = nil
+func (m *StatisticMutation) SetJoinTime(t time.Time) {
+	m.join_time = &t
 }
 
 // JoinTime returns the value of the "join_time" field in the mutation.
-func (m *StatisticMutation) JoinTime() (r int64, exists bool) {
+func (m *StatisticMutation) JoinTime() (r time.Time, exists bool) {
 	v := m.join_time
 	if v == nil {
 		return
@@ -1237,7 +1235,7 @@ func (m *StatisticMutation) JoinTime() (r int64, exists bool) {
 // OldJoinTime returns the old "join_time" field's value of the Statistic entity.
 // If the Statistic object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *StatisticMutation) OldJoinTime(ctx context.Context) (v int64, err error) {
+func (m *StatisticMutation) OldJoinTime(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldJoinTime is only allowed on UpdateOne operations")
 	}
@@ -1251,28 +1249,9 @@ func (m *StatisticMutation) OldJoinTime(ctx context.Context) (v int64, err error
 	return oldValue.JoinTime, nil
 }
 
-// AddJoinTime adds i to the "join_time" field.
-func (m *StatisticMutation) AddJoinTime(i int64) {
-	if m.addjoin_time != nil {
-		*m.addjoin_time += i
-	} else {
-		m.addjoin_time = &i
-	}
-}
-
-// AddedJoinTime returns the value that was added to the "join_time" field in this mutation.
-func (m *StatisticMutation) AddedJoinTime() (r int64, exists bool) {
-	v := m.addjoin_time
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetJoinTime resets all changes to the "join_time" field.
 func (m *StatisticMutation) ResetJoinTime() {
 	m.join_time = nil
-	m.addjoin_time = nil
 }
 
 // SetInvited sets the "invited" field.
@@ -1388,13 +1367,12 @@ func (m *StatisticMutation) ResetMessage() {
 }
 
 // SetLastMessage sets the "last_message" field.
-func (m *StatisticMutation) SetLastMessage(i int64) {
-	m.last_message = &i
-	m.addlast_message = nil
+func (m *StatisticMutation) SetLastMessage(t time.Time) {
+	m.last_message = &t
 }
 
 // LastMessage returns the value of the "last_message" field in the mutation.
-func (m *StatisticMutation) LastMessage() (r int64, exists bool) {
+func (m *StatisticMutation) LastMessage() (r time.Time, exists bool) {
 	v := m.last_message
 	if v == nil {
 		return
@@ -1405,7 +1383,7 @@ func (m *StatisticMutation) LastMessage() (r int64, exists bool) {
 // OldLastMessage returns the old "last_message" field's value of the Statistic entity.
 // If the Statistic object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *StatisticMutation) OldLastMessage(ctx context.Context) (v int64, err error) {
+func (m *StatisticMutation) OldLastMessage(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldLastMessage is only allowed on UpdateOne operations")
 	}
@@ -1419,28 +1397,9 @@ func (m *StatisticMutation) OldLastMessage(ctx context.Context) (v int64, err er
 	return oldValue.LastMessage, nil
 }
 
-// AddLastMessage adds i to the "last_message" field.
-func (m *StatisticMutation) AddLastMessage(i int64) {
-	if m.addlast_message != nil {
-		*m.addlast_message += i
-	} else {
-		m.addlast_message = &i
-	}
-}
-
-// AddedLastMessage returns the value that was added to the "last_message" field in this mutation.
-func (m *StatisticMutation) AddedLastMessage() (r int64, exists bool) {
-	v := m.addlast_message
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetLastMessage resets all changes to the "last_message" field.
 func (m *StatisticMutation) ResetLastMessage() {
 	m.last_message = nil
-	m.addlast_message = nil
 }
 
 // Where appends a list predicates to the StatisticMutation builder.
@@ -1602,7 +1561,7 @@ func (m *StatisticMutation) SetField(name string, value ent.Value) error {
 		m.SetUserID(v)
 		return nil
 	case statistic.FieldJoinTime:
-		v, ok := value.(int64)
+		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1623,7 +1582,7 @@ func (m *StatisticMutation) SetField(name string, value ent.Value) error {
 		m.SetMessage(v)
 		return nil
 	case statistic.FieldLastMessage:
-		v, ok := value.(int64)
+		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1646,17 +1605,11 @@ func (m *StatisticMutation) AddedFields() []string {
 	if m.adduser_id != nil {
 		fields = append(fields, statistic.FieldUserID)
 	}
-	if m.addjoin_time != nil {
-		fields = append(fields, statistic.FieldJoinTime)
-	}
 	if m.addinvited != nil {
 		fields = append(fields, statistic.FieldInvited)
 	}
 	if m.addmessage != nil {
 		fields = append(fields, statistic.FieldMessage)
-	}
-	if m.addlast_message != nil {
-		fields = append(fields, statistic.FieldLastMessage)
 	}
 	return fields
 }
@@ -1672,14 +1625,10 @@ func (m *StatisticMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedChannelID()
 	case statistic.FieldUserID:
 		return m.AddedUserID()
-	case statistic.FieldJoinTime:
-		return m.AddedJoinTime()
 	case statistic.FieldInvited:
 		return m.AddedInvited()
 	case statistic.FieldMessage:
 		return m.AddedMessage()
-	case statistic.FieldLastMessage:
-		return m.AddedLastMessage()
 	}
 	return nil, false
 }
@@ -1710,13 +1659,6 @@ func (m *StatisticMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddUserID(v)
 		return nil
-	case statistic.FieldJoinTime:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddJoinTime(v)
-		return nil
 	case statistic.FieldInvited:
 		v, ok := value.(int64)
 		if !ok {
@@ -1730,13 +1672,6 @@ func (m *StatisticMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddMessage(v)
-		return nil
-	case statistic.FieldLastMessage:
-		v, ok := value.(int64)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddLastMessage(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Statistic numeric field %s", name)

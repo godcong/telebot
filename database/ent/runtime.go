@@ -3,6 +3,8 @@
 package ent
 
 import (
+	"time"
+
 	"github.com/motomototv/telebot/database/ent/message"
 	"github.com/motomototv/telebot/database/ent/schema"
 	"github.com/motomototv/telebot/database/ent/statistic"
@@ -59,7 +61,7 @@ func init() {
 	// statisticDescJoinTime is the schema descriptor for join_time field.
 	statisticDescJoinTime := statisticFields[6].Descriptor()
 	// statistic.DefaultJoinTime holds the default value on creation for the join_time field.
-	statistic.DefaultJoinTime = statisticDescJoinTime.Default.(int64)
+	statistic.DefaultJoinTime = statisticDescJoinTime.Default.(func() time.Time)
 	// statisticDescInvited is the schema descriptor for invited field.
 	statisticDescInvited := statisticFields[7].Descriptor()
 	// statistic.DefaultInvited holds the default value on creation for the invited field.
@@ -71,5 +73,5 @@ func init() {
 	// statisticDescLastMessage is the schema descriptor for last_message field.
 	statisticDescLastMessage := statisticFields[9].Descriptor()
 	// statistic.DefaultLastMessage holds the default value on creation for the last_message field.
-	statistic.DefaultLastMessage = statisticDescLastMessage.Default.(int64)
+	statistic.DefaultLastMessage = statisticDescLastMessage.Default.(func() time.Time)
 }

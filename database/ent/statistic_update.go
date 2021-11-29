@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -132,23 +133,16 @@ func (su *StatisticUpdate) AddUserID(i int) *StatisticUpdate {
 }
 
 // SetJoinTime sets the "join_time" field.
-func (su *StatisticUpdate) SetJoinTime(i int64) *StatisticUpdate {
-	su.mutation.ResetJoinTime()
-	su.mutation.SetJoinTime(i)
+func (su *StatisticUpdate) SetJoinTime(t time.Time) *StatisticUpdate {
+	su.mutation.SetJoinTime(t)
 	return su
 }
 
 // SetNillableJoinTime sets the "join_time" field if the given value is not nil.
-func (su *StatisticUpdate) SetNillableJoinTime(i *int64) *StatisticUpdate {
-	if i != nil {
-		su.SetJoinTime(*i)
+func (su *StatisticUpdate) SetNillableJoinTime(t *time.Time) *StatisticUpdate {
+	if t != nil {
+		su.SetJoinTime(*t)
 	}
-	return su
-}
-
-// AddJoinTime adds i to the "join_time" field.
-func (su *StatisticUpdate) AddJoinTime(i int64) *StatisticUpdate {
-	su.mutation.AddJoinTime(i)
 	return su
 }
 
@@ -195,23 +189,16 @@ func (su *StatisticUpdate) AddMessage(i int64) *StatisticUpdate {
 }
 
 // SetLastMessage sets the "last_message" field.
-func (su *StatisticUpdate) SetLastMessage(i int64) *StatisticUpdate {
-	su.mutation.ResetLastMessage()
-	su.mutation.SetLastMessage(i)
+func (su *StatisticUpdate) SetLastMessage(t time.Time) *StatisticUpdate {
+	su.mutation.SetLastMessage(t)
 	return su
 }
 
 // SetNillableLastMessage sets the "last_message" field if the given value is not nil.
-func (su *StatisticUpdate) SetNillableLastMessage(i *int64) *StatisticUpdate {
-	if i != nil {
-		su.SetLastMessage(*i)
+func (su *StatisticUpdate) SetNillableLastMessage(t *time.Time) *StatisticUpdate {
+	if t != nil {
+		su.SetLastMessage(*t)
 	}
-	return su
-}
-
-// AddLastMessage adds i to the "last_message" field.
-func (su *StatisticUpdate) AddLastMessage(i int64) *StatisticUpdate {
-	su.mutation.AddLastMessage(i)
 	return su
 }
 
@@ -357,14 +344,7 @@ func (su *StatisticUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := su.mutation.JoinTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
-			Value:  value,
-			Column: statistic.FieldJoinTime,
-		})
-	}
-	if value, ok := su.mutation.AddedJoinTime(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: statistic.FieldJoinTime,
 		})
@@ -399,14 +379,7 @@ func (su *StatisticUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := su.mutation.LastMessage(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
-			Value:  value,
-			Column: statistic.FieldLastMessage,
-		})
-	}
-	if value, ok := su.mutation.AddedLastMessage(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: statistic.FieldLastMessage,
 		})
@@ -536,23 +509,16 @@ func (suo *StatisticUpdateOne) AddUserID(i int) *StatisticUpdateOne {
 }
 
 // SetJoinTime sets the "join_time" field.
-func (suo *StatisticUpdateOne) SetJoinTime(i int64) *StatisticUpdateOne {
-	suo.mutation.ResetJoinTime()
-	suo.mutation.SetJoinTime(i)
+func (suo *StatisticUpdateOne) SetJoinTime(t time.Time) *StatisticUpdateOne {
+	suo.mutation.SetJoinTime(t)
 	return suo
 }
 
 // SetNillableJoinTime sets the "join_time" field if the given value is not nil.
-func (suo *StatisticUpdateOne) SetNillableJoinTime(i *int64) *StatisticUpdateOne {
-	if i != nil {
-		suo.SetJoinTime(*i)
+func (suo *StatisticUpdateOne) SetNillableJoinTime(t *time.Time) *StatisticUpdateOne {
+	if t != nil {
+		suo.SetJoinTime(*t)
 	}
-	return suo
-}
-
-// AddJoinTime adds i to the "join_time" field.
-func (suo *StatisticUpdateOne) AddJoinTime(i int64) *StatisticUpdateOne {
-	suo.mutation.AddJoinTime(i)
 	return suo
 }
 
@@ -599,23 +565,16 @@ func (suo *StatisticUpdateOne) AddMessage(i int64) *StatisticUpdateOne {
 }
 
 // SetLastMessage sets the "last_message" field.
-func (suo *StatisticUpdateOne) SetLastMessage(i int64) *StatisticUpdateOne {
-	suo.mutation.ResetLastMessage()
-	suo.mutation.SetLastMessage(i)
+func (suo *StatisticUpdateOne) SetLastMessage(t time.Time) *StatisticUpdateOne {
+	suo.mutation.SetLastMessage(t)
 	return suo
 }
 
 // SetNillableLastMessage sets the "last_message" field if the given value is not nil.
-func (suo *StatisticUpdateOne) SetNillableLastMessage(i *int64) *StatisticUpdateOne {
-	if i != nil {
-		suo.SetLastMessage(*i)
+func (suo *StatisticUpdateOne) SetNillableLastMessage(t *time.Time) *StatisticUpdateOne {
+	if t != nil {
+		suo.SetLastMessage(*t)
 	}
-	return suo
-}
-
-// AddLastMessage adds i to the "last_message" field.
-func (suo *StatisticUpdateOne) AddLastMessage(i int64) *StatisticUpdateOne {
-	suo.mutation.AddLastMessage(i)
 	return suo
 }
 
@@ -785,14 +744,7 @@ func (suo *StatisticUpdateOne) sqlSave(ctx context.Context) (_node *Statistic, e
 	}
 	if value, ok := suo.mutation.JoinTime(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
-			Value:  value,
-			Column: statistic.FieldJoinTime,
-		})
-	}
-	if value, ok := suo.mutation.AddedJoinTime(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: statistic.FieldJoinTime,
 		})
@@ -827,14 +779,7 @@ func (suo *StatisticUpdateOne) sqlSave(ctx context.Context) (_node *Statistic, e
 	}
 	if value, ok := suo.mutation.LastMessage(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
-			Value:  value,
-			Column: statistic.FieldLastMessage,
-		})
-	}
-	if value, ok := suo.mutation.AddedLastMessage(); ok {
-		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
-			Type:   field.TypeInt64,
+			Type:   field.TypeTime,
 			Value:  value,
 			Column: statistic.FieldLastMessage,
 		})

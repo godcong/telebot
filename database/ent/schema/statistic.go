@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"time"
+
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 )
@@ -19,10 +21,14 @@ func (Statistic) Fields() []ent.Field {
 		field.Int("from_user").Default(0),
 		field.Int64("channel_id").Default(0),
 		field.Int("user_id").Default(0),
-		field.Int64("join_time").Default(0),
+		field.Time("join_time").Default(func() time.Time {
+			return time.Now().UTC()
+		}),
 		field.Int64("invited").Default(0),
 		field.Int64("message").Default(0),
-		field.Int64("last_message").Default(0),
+		field.Time("last_message").Default(func() time.Time {
+			return time.Now().UTC()
+		}),
 	}
 }
 
