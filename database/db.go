@@ -79,6 +79,10 @@ func (d *DB) UpdateInviteStatistic(ctx context.Context, stc *ent.Statistic) erro
 	return err
 }
 
+func (d *DB) QueryStatistics(ctx context.Context) ([]*ent.Statistic, error) {
+	return d.Statistic.Query().All(ctx)
+}
+
 func Open(ctx context.Context, file string, debug bool) (*DB, error) {
 	var options []ent.Option
 

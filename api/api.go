@@ -4,20 +4,35 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/motomototv/telebot/abstract"
+	"github.com/motomototv/telebot/database"
 )
 
 type api struct {
 	*gin.Engine
+	db *database.DB
 }
 
-func (api) Run() error {
+func (a *api) Run() error {
+	g := a.Engine.Group("api/v0")
+	g.Handle("statistisc", "GET", a.handleStatistic)
 	return nil
 }
 
-func New() abstract.API {
+func (a *api) handleStatistic(context *gin.Context) {
+	statistics, err := a.db.QueryStatistics(context.Request.Context())
+	if err != nil {
+		context.JSON(500, err)
+		return
+	}
+	context.JSON(200, statistics)
+}
+
+func New(db *database.DB) abstract.API {
 	engine := gin.Default()
+
 	return &api{
 		Engine: engine,
+		db:     db,
 	}
 }
 
