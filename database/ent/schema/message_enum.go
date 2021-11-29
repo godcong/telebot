@@ -13,18 +13,21 @@ import (
 const (
 	// MessageTypeNone is a MessageType of type None.
 	MessageTypeNone MessageType = iota
+	// MessageTypeMessage is a MessageType of type Message.
+	MessageTypeMessage
 	// MessageTypeChatMember is a MessageType of type Chat_member.
 	MessageTypeChatMember
 	// MessageTypeMax is a MessageType of type Max.
 	MessageTypeMax
 )
 
-const _MessageTypeName = "nonechat_membermax"
+const _MessageTypeName = "nonemessagechat_membermax"
 
 var _MessageTypeMap = map[MessageType]string{
 	MessageTypeNone:       _MessageTypeName[0:4],
-	MessageTypeChatMember: _MessageTypeName[4:15],
-	MessageTypeMax:        _MessageTypeName[15:18],
+	MessageTypeMessage:    _MessageTypeName[4:11],
+	MessageTypeChatMember: _MessageTypeName[11:22],
+	MessageTypeMax:        _MessageTypeName[22:25],
 }
 
 // String implements the Stringer interface.
@@ -37,8 +40,9 @@ func (x MessageType) String() string {
 
 var _MessageTypeValue = map[string]MessageType{
 	_MessageTypeName[0:4]:   MessageTypeNone,
-	_MessageTypeName[4:15]:  MessageTypeChatMember,
-	_MessageTypeName[15:18]: MessageTypeMax,
+	_MessageTypeName[4:11]:  MessageTypeMessage,
+	_MessageTypeName[11:22]: MessageTypeChatMember,
+	_MessageTypeName[22:25]: MessageTypeMax,
 }
 
 // ParseMessageType attempts to convert a string to a MessageType

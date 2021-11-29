@@ -6,7 +6,7 @@ import (
 )
 
 // MessageType ...
-// ENUM(none,chat_member,max)
+// ENUM(none,message,chat_member,max)
 type MessageType int
 
 // Message holds the schema definition for the Message entity.

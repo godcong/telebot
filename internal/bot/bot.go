@@ -307,10 +307,20 @@ func (b bot) hookMessage(updates tgbotapi.UpdatesChannel) {
 }
 
 func (b bot) switchMessage(update tgbotapi.Update) error {
-	switch {
-	case update.Message.NewChatMembers != nil:
-		return message.Message(b, schema.MessageTypeChatMember, update)
+	var err error
+	if update.Message != nil {
+		err = message.Message(b, schema.MessageTypeMessage, update)
+		if err != nil {
+			return err
+		}
 	}
+	if update.Message.NewChatMembers != nil {
+		err = message.Message(b, schema.MessageTypeChatMember, update)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
