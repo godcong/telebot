@@ -29,6 +29,7 @@ func actionMessage(bot abstract.Bot, message *ent.Message, update tgbotapi.Updat
 		FirstName: update.Message.From.FirstName,
 		LatName:   update.Message.From.LastName,
 		UserName:  update.Message.From.UserName,
+		UserID:    update.Message.From.ID,
 		FromUser:  update.Message.From.ID,
 		ChannelID: update.Message.Chat.ID,
 	})
