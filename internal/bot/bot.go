@@ -142,6 +142,16 @@ func NewBot(cfg *config.Config) (abstract.Bot, error) {
 		ibot.Close()
 		return nil, err
 	}
+	count, err := db.Message.Query().Count(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if count == 0 {
+		if err := db.Migrate(ctx); err != nil {
+			return nil, err
+		}
+	}
+
 	ibot.db = db
 
 	ibot.hook = [config.BotModelMax]func() error{
