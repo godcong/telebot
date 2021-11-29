@@ -12,6 +12,9 @@ func (d *DB) Migrate(ctx context.Context) error {
 	if err := initWelcomeHook(ctx, d.Message.Create()); err != nil {
 		return err
 	}
+	if err := initNewMemberStatisticHook(ctx, d.Message.Create()); err != nil {
+		return err
+	}
 	if err := initStatisticHook(ctx, d.Message.Create()); err != nil {
 		return err
 	}
@@ -23,6 +26,16 @@ func initWelcomeHook(ctx context.Context, create *ent.MessageCreate) error {
 		SetAction(message.ActionWelcome).
 		SetAutoRemove(true).
 		SetAutoRemoveTime(30).
+		SetType(int(schema.MessageTypeChatMember)).
+		Save(ctx)
+	return err
+}
+
+func initNewMemberStatisticHook(ctx context.Context, create *ent.MessageCreate) error {
+	_, err := create.SetMessage("").
+		SetAction(message.ActionStatistic).
+		SetAutoRemove(false).
+		SetAutoRemoveTime(0).
 		SetType(int(schema.MessageTypeChatMember)).
 		Save(ctx)
 	return err

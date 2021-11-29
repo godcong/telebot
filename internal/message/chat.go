@@ -20,7 +20,8 @@ func getName(user *tgbotapi.User) string {
 }
 
 func actionChatMember(bot abstract.Bot, msg *ent.Message, update tgbotapi.Update) error {
-	log.Println("received new chat member from:", update.Message.From.ID, "channel:", update.Message.Chat.ID)
+	log.Println("received new chat member from:",
+		"type", msg.Type, update.Message.From.ID, "channel:", update.Message.Chat.ID)
 	switch msg.Action {
 	case message.ActionWelcome:
 		var usrs []string
