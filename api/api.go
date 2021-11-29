@@ -16,7 +16,7 @@ func (a *api) Run() error {
 	g := a.Engine.Group("api/v0")
 	g.Handle("GET", "statistics", a.handleStatistic)
 
-	go a.Engine.Run(":80")
+	go a.Engine.Run(":18080")
 
 	return nil
 }

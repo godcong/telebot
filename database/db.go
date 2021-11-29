@@ -21,7 +21,7 @@ func (d DB) QueryMessages(ctx context.Context, t schema.MessageType) ([]*ent.Mes
 }
 
 func (d DB) UpdateNewMemberStatistic(ctx context.Context, stc *ent.Statistic) error {
-	s, err := d.Statistic.Query().Where(statistic.UserID(stc.UserID), statistic.ChannelID(stc.ChannelID)).First(ctx)
+	_, err := d.Statistic.Query().Where(statistic.UserID(stc.UserID), statistic.ChannelID(stc.ChannelID)).First(ctx)
 	if err != nil {
 		_, err = d.Statistic.Create().
 			SetUserID(stc.UserID).
@@ -30,9 +30,11 @@ func (d DB) UpdateNewMemberStatistic(ctx context.Context, stc *ent.Statistic) er
 			SetFirstName(stc.FirstName).
 			SetLatName(stc.LatName).
 			SetUserName(stc.UserName).
+			//SetLastMessage(stc.LastMessage).
 			SetJoinTime(stc.JoinTime).Save(ctx)
 	} else {
-		_, err = d.Statistic.UpdateOneID(s.ID).SetMessage(s.Message + 1).Save(ctx)
+		//_, err = d.Statistic.UpdateOneID(s.ID).SetMessage(s.Message + 1).SetLastMessage(stc.LastMessage).Save(ctx)
+		return nil
 	}
 	return err
 	//s, err = d.Statistic.Query().Where(statistic.UserID(stc.FromUser)).First(ctx)
@@ -54,9 +56,10 @@ func (d *DB) UpdateChatStatistic(ctx context.Context, stc *ent.Statistic) error 
 			SetLatName(stc.LatName).
 			SetUserName(stc.UserName).
 			SetMessage(1).
+			SetLastMessage(stc.LastMessage).
 			SetJoinTime(stc.JoinTime).Save(ctx)
 	} else {
-		_, err = d.Statistic.UpdateOneID(s.ID).SetMessage(s.Message + 1).Save(ctx)
+		_, err = d.Statistic.UpdateOneID(s.ID).SetMessage(s.Message + 1).SetLastMessage(stc.LastMessage).Save(ctx)
 	}
 	return err
 }
@@ -72,6 +75,7 @@ func (d *DB) UpdateInviteStatistic(ctx context.Context, stc *ent.Statistic) erro
 			SetLatName(stc.LatName).
 			SetUserName(stc.UserName).
 			SetInvited(1).
+			SetLastMessage(stc.LastMessage).
 			SetJoinTime(stc.JoinTime).Save(ctx)
 	} else {
 		_, err = d.Statistic.UpdateOneID(s.ID).SetInvited(s.Invited + 1).Save(ctx)
