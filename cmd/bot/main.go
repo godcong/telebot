@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -38,6 +39,7 @@ func handleInterrupt() error {
 
 	select {
 	case <-interrupts:
+		fmt.Println("interrupt exit")
 		return nil
 	}
 
