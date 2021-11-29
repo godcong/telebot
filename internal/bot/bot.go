@@ -184,7 +184,7 @@ func (b bot) hookWeb() error {
 func (b bot) hookUpdate() error {
 	log.Println("get updates")
 	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 15
+	u.Timeout = 60
 
 	updates, err := b.bot.GetUpdatesChan(u)
 	if err != nil {
