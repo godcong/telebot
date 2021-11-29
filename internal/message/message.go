@@ -30,7 +30,7 @@ func actionMessage(bot abstract.Bot, message *ent.Message, update tgbotapi.Updat
 		LatName:   update.Message.From.LastName,
 		UserName:  update.Message.From.UserName,
 		UserID:    update.Message.From.ID,
-		FromUser:  update.Message.From.ID,
+		FromUser:  0,
 		ChannelID: update.Message.Chat.ID,
 	})
 }
