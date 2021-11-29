@@ -43,7 +43,7 @@ func Message(bot abstract.Bot, msgT schema.MessageType, update tgbotapi.Update) 
 		if schema.MessageType(message.Type) >= schema.MessageTypeMax {
 			continue
 		}
-		log.Println("Process new message:", message.Type)
+		log.Println("Process new message:", schema.MessageType(message.Type))
 		log.Printfln("Update message detail:%+v", update.Message)
 		if err := actions[message.Type](bot, message, update); err != nil {
 			log.Println("ERROR:", "type:", message.Type, "error:", err)
