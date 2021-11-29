@@ -15,6 +15,9 @@ type api struct {
 func (a *api) Run() error {
 	g := a.Engine.Group("api/v0")
 	g.Handle("statistisc", "GET", a.handleStatistic)
+
+	go a.Engine.Run(":80")
+
 	return nil
 }
 

@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
+	"github.com/motomototv/telebot/api"
 	"github.com/motomototv/telebot/config"
 	"github.com/motomototv/telebot/internal/bot"
 )
@@ -30,6 +31,11 @@ func main() {
 	if err := telebot.Run(); err != nil {
 		panic(err)
 	}
+	api := api.New(telebot.DB())
+	if err := api.Run(); err != nil {
+		panic(err)
+	}
+
 	handleInterrupt()
 }
 
