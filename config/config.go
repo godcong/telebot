@@ -32,7 +32,7 @@ func LoadConfig(pathname string) (*Config, error) {
 func defaultConfig() *Config {
 	return &Config{
 		Bot: Bot{
-			Model:          BotModelWebhook.String(),
+			Model:          BotModelWebhook,
 			Welcome:        "",
 			GroupName:      "",
 			BotName:        "",
