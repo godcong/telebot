@@ -137,6 +137,13 @@ func NewBot(cfg *config.Config) (abstract.Bot, error) {
 		ct:      make(chan tgbotapi.Chattable, 5),
 	}
 
+	db, err := database.Open(ctx, cfg.Bot.Database, cfg.Debug)
+	if err != nil {
+		ibot.Close()
+		return nil, err
+	}
+	ibot.db = db
+
 	ibot.hook = [config.BotModelMax]func() error{
 		config.BotModelWebhook: ibot.hookWeb,
 		config.BotModelUpdate:  ibot.hookUpdate,
@@ -292,6 +299,13 @@ func (b bot) switchMessage(update tgbotapi.Update) error {
 		return message.Message(b, schema.MessageTypeChatMember, update)
 	}
 	return nil
+}
+
+func (b *bot) Close() {
+	if b.cancel != nil {
+		b.cancel()
+		b.cancel = nil
+	}
 }
 
 var _ abstract.Bot = (*bot)(nil)

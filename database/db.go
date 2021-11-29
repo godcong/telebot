@@ -45,7 +45,7 @@ func (d DB) UpdateStatistic(ctx context.Context, stc *ent.Statistic) error {
 	return err
 }
 
-func Open(file string, debug bool) (*DB, error) {
+func Open(ctx context.Context, file string, debug bool) (*DB, error) {
 	var options []ent.Option
 
 	if debug {
@@ -55,6 +55,10 @@ func Open(file string, debug bool) (*DB, error) {
 	client, err := ent.Open("sqlite3", dsnFile(file), options...)
 	if err != nil {
 		return nil, fmt.Errorf("failed opening connection to database: %v", err)
+	}
+
+	if err := client.Schema.Create(ctx); err != nil {
+		return nil, err
 	}
 
 	return &DB{
