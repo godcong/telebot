@@ -71,9 +71,9 @@ func actionChatMember(bot abstract.Bot, msg *ent.Message, update tgbotapi.Update
 				FirstName:   update.Message.From.FirstName,
 				LatName:     update.Message.From.LastName,
 				UserName:    update.Message.From.UserName,
+				UserID:      update.Message.From.ID,
 				FromUser:    0,
 				ChannelID:   update.Message.Chat.ID,
-				UserID:      update.Message.From.ID,
 				JoinTime:    time.Now().Unix(),
 				LastMessage: time.Now().Unix(),
 			})
