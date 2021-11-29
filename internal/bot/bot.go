@@ -105,8 +105,8 @@ func NewBot(cfg *config.Config) (abstract.Bot, error) {
 		return nil, err
 	}
 
-	log.Printf("Webhook info:%+v\n", response)
-	log.Printf("Authorized on account %s\n", tgbot.Self.UserName)
+	fmt.Printf("Webhook info:%+v\n", response)
+	fmt.Printf("Authorized on account %s\n", tgbot.Self.UserName)
 	_, err = tgbot.SetWebhook(tgbotapi.NewWebhook(cfg.Bot.Host + cfg.Bot.HookAddress))
 	if err != nil {
 		log.Fatal(err)
@@ -116,7 +116,7 @@ func NewBot(cfg *config.Config) (abstract.Bot, error) {
 		log.Fatal(err)
 	}
 	if info.LastErrorDate != 0 {
-		log.Printf("Telegram callback failed: %s\n", info.LastErrorMessage)
+		fmt.Printf("Telegram callback failed: %s\n", info.LastErrorMessage)
 	}
 
 	http.HandleFunc("/ping", func(writer http.ResponseWriter, request *http.Request) {
@@ -177,6 +177,7 @@ func (b bot) hookMessage(updates tgbotapi.UpdatesChannel) {
 		if update.Message == nil {
 			continue
 		}
+		fmt.Println("Received new message")
 		err := b.switchMessage(update)
 		if err != nil {
 			fmt.Println("ERROR:", "message:", err)
