@@ -197,10 +197,11 @@ func (b bot) hookUpdate() error {
 func (b bot) hookMessage(updates tgbotapi.UpdatesChannel) {
 	fmt.Println("Start message hook")
 	for update := range updates {
+		fmt.Printf("Received new message:%+v\n", update)
 		if update.Message == nil {
 			continue
 		}
-		fmt.Println("Received new message")
+
 		err := b.switchMessage(update)
 		if err != nil {
 			fmt.Println("ERROR:", "message:", err)
