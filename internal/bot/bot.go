@@ -321,6 +321,7 @@ func (b bot) hookMessage(updates tgbotapi.UpdatesChannel) {
 
 func (b bot) switchMessage(update tgbotapi.Update) error {
 	var err error
+	log.Println("process switch message hooks")
 	err = message.Message(b, schema.MessageTypeMessage, update)
 	if err != nil {
 		return err
