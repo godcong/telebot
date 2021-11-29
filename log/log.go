@@ -17,6 +17,6 @@ func Printfln(format string, v ...interface{}) {
 	if !Debug {
 		return
 	}
-	fmt.Sprintf(format, v)
+	fmt.Printf(format, v)
 	fmt.Println()
 }
