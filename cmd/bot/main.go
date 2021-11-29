@@ -2,6 +2,9 @@ package main
 
 import (
 	"flag"
+	"os"
+	"os/signal"
+	"syscall"
 
 	_ "github.com/mattn/go-sqlite3"
 
@@ -10,6 +13,7 @@ import (
 )
 
 var path = flag.String("path", "config", "default property path")
+
 //var port = flag.String("port", "443", "default port")
 //
 func main() {
@@ -25,4 +29,16 @@ func main() {
 	if err := telebot.Run(); err != nil {
 		panic(err)
 	}
+	handleInterrupt()
+}
+
+func handleInterrupt() error {
+	interrupts := make(chan os.Signal, 1)
+	signal.Notify(interrupts, os.Interrupt, syscall.SIGTERM)
+
+	select {
+	case <-interrupts:
+		return nil
+	}
+
 }
