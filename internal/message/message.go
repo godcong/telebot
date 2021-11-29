@@ -44,7 +44,8 @@ func Message(bot abstract.Bot, msgT schema.MessageType, update tgbotapi.Update) 
 			continue
 		}
 		log.Println("Process new message:", schema.MessageType(message.Type))
-		log.Printfln("Update message detail:%+v", update.Message)
+		log.Printfln("Update message from detail:%+v", update.Message.From)
+		log.Printfln("Update message chat detail:%+v", update.Message.Chat)
 		if err := actions[message.Type](bot, message, update); err != nil {
 			log.Println("ERROR:", "type:", message.Type, "error:", err)
 		}
