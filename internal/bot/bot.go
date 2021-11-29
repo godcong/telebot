@@ -5,9 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"net/http"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
 	"github.com/motomototv/telebot/abstract"
 	"github.com/motomototv/telebot/config"
@@ -101,33 +100,33 @@ func NewBot(cfg *config.Config) (abstract.Bot, error) {
 	tgbot.Debug = cfg.Debug
 
 	//remove pre start webhook
-	response, err := tgbot.RemoveWebhook()
-	if err != nil {
-		return nil, err
-	}
+	//response, err := tgbot.RemoveWebhook()
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	fmt.Printf("Webhook info:%+v\n", response)
+	//fmt.Printf("Webhook info:%+v\n", response)
 	fmt.Printf("Authorized on account %s\n", tgbot.Self.UserName)
-	_, err = tgbot.SetWebhook(tgbotapi.NewWebhook(cfg.Bot.Host + cfg.Bot.HookAddress))
-	if err != nil {
-		log.Fatal(err)
-	}
-	info, err := tgbot.GetWebhookInfo()
-	if err != nil {
-		log.Fatal(err)
-	}
-	if info.LastErrorDate != 0 {
-		fmt.Printf("Telegram callback failed: %s\n", info.LastErrorMessage)
-	}
+	//_, err = tgbot.SetWebhook(tgbotapi.NewWebhook(cfg.Bot.Host + cfg.Bot.HookAddress))
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//info, err := tgbot.GetWebhookInfo()
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//if info.LastErrorDate != 0 {
+	//	fmt.Printf("Telegram callback failed: %s\n", info.LastErrorMessage)
+	//}
 
-	http.HandleFunc("/ping", func(writer http.ResponseWriter, request *http.Request) {
-		log.Println("Ping test call")
-		writer.WriteHeader(http.StatusOK)
-		_, e := writer.Write([]byte("PONG"))
-		if e != nil {
-			log.Println("ERROR:", e)
-		}
-	})
+	//http.HandleFunc("/ping", func(writer http.ResponseWriter, request *http.Request) {
+	//	log.Println("Ping test call")
+	//	writer.WriteHeader(http.StatusOK)
+	//	_, e := writer.Write([]byte("PONG"))
+	//	if e != nil {
+	//		log.Println("ERROR:", e)
+	//	}
+	//})
 
 	ctx, cancel := context.WithCancel(context.TODO())
 	ibot := &bot{
@@ -155,6 +154,18 @@ func NewBot(cfg *config.Config) (abstract.Bot, error) {
 
 func (b bot) hookWeb() error {
 	log.Println("get hooks")
+	//_, err = b.bot.SetWebhook(tgbotapi.NewWebhookWithCert("https://www.google.com:8443/"+bot.Token, "cert.pem"))
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	info, err := b.bot.GetWebhookInfo()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if info.LastErrorDate != 0 {
+		log.Printf("Telegram callback failed: %s", info.LastErrorMessage)
+	}
+
 	updates := b.bot.ListenForWebhook("/" + b.config.Bot.HookAddress)
 	go b.hookMessage(updates)
 	return nil
@@ -165,10 +176,7 @@ func (b bot) hookUpdate() error {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 15
 
-	updates, err := b.bot.GetUpdatesChan(u)
-	if err != nil {
-		return err
-	}
+	updates := b.bot.GetUpdatesChan(u)
 	go b.hookMessage(updates)
 	return nil
 }
