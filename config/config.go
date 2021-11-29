@@ -1,6 +1,8 @@
 package config
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -16,17 +18,26 @@ type Config struct {
 // LoadConfig ...
 func LoadConfig(pathname string) (*Config, error) {
 	property := defaultConfig()
-	file, e := os.Open(pathname)
-	if e != nil {
-		return nil, e
+	file, err := os.Open(pathname)
+	if err != nil {
+		err = writeDefaultConfig(pathname)
+		return nil, err
 	}
 	dec := jsoniter.NewDecoder(file)
-	e = dec.Decode(property)
-	if e != nil {
-		return nil, e
+	err = dec.Decode(property)
+	if err != nil {
+		return nil, err
 	}
 	log.Printf("property:%+v", *property)
 	return property, nil
+}
+
+func writeDefaultConfig(pathname string) error {
+	data, err := json.Marshal(defaultConfig())
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(pathname, data, 0755)
 }
 
 func defaultConfig() *Config {
