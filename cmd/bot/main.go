@@ -9,7 +9,7 @@ import (
 	"github.com/motomototv/telebot/internal/bot"
 )
 
-var path = flag.String("path", "yinhe.json", "default property path")
+var path = flag.String("path", "config", "default property path")
 //var port = flag.String("port", "443", "default port")
 //
 func main() {

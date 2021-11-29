@@ -33,7 +33,7 @@ func LoadConfig(pathname string) (*Config, error) {
 }
 
 func writeDefaultConfig(pathname string) error {
-	data, err := json.Marshal(defaultConfig())
+	data, err := json.MarshalIndent(defaultConfig(), "", " ")
 	if err != nil {
 		return err
 	}
