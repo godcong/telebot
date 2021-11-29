@@ -44,6 +44,7 @@ func (b bot) DB() *database.DB {
 }
 
 func (b bot) startHook() error {
+	fmt.Println("start hook model:", b.config.Bot.Model)
 	if err := b.hook[b.config.Bot.Model](); err != nil {
 		return err
 	}
@@ -195,6 +196,7 @@ func (b bot) hookUpdate() error {
 }
 
 func (b bot) hookMessage(updates tgbotapi.UpdatesChannel) {
+	//defer close(updates)
 	fmt.Println("Start message hook")
 	for update := range updates {
 		fmt.Printf("Received new message:%+v\n", update)
