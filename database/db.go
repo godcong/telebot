@@ -20,7 +20,7 @@ func (d DB) QueryMessages(ctx context.Context, t schema.MessageType) ([]*ent.Mes
 	return d.Message.Query().Where(message.TypeEQ(int(t))).All(ctx)
 }
 
-func (d DB) UpdateStatistic(ctx context.Context, stc *ent.Statistic) error {
+func (d DB) UpdateNewMemberStatistic(ctx context.Context, stc *ent.Statistic) error {
 	s, err := d.Statistic.Query().Where(statistic.UserID(stc.UserID), statistic.ChannelID(stc.ChannelID)).First(ctx)
 	if err != nil {
 		_, err = d.Statistic.Create().
@@ -42,6 +42,24 @@ func (d DB) UpdateStatistic(ctx context.Context, stc *ent.Statistic) error {
 		return err
 	}
 	_, err = d.Statistic.UpdateOneID(s.ID).SetInvited(s.Invited + 1).Save(ctx)
+	return err
+}
+
+func (d *DB) UpdateChatStatistic(ctx context.Context, stc *ent.Statistic) error {
+	s, err := d.Statistic.Query().Where(statistic.UserID(stc.UserID), statistic.ChannelID(stc.ChannelID)).First(ctx)
+	if err != nil {
+		_, err = d.Statistic.Create().
+			SetUserID(stc.UserID).
+			SetChannelID(stc.ChannelID).
+			SetFromUser(stc.FromUser).
+			SetFirstName(stc.FirstName).
+			SetLatName(stc.LatName).
+			SetUserName(stc.UserName).
+			SetMessage(1).
+			SetJoinTime(stc.JoinTime).Save(ctx)
+	} else {
+		_, err = d.Statistic.UpdateOneID(s.ID).SetMessage(s.Message + 1).Save(ctx)
+	}
 	return err
 }
 

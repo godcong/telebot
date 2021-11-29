@@ -153,6 +153,13 @@ func Message(v int64) predicate.Statistic {
 	})
 }
 
+// LastMessage applies equality check predicate on the "last_message" field. It's identical to LastMessageEQ.
+func LastMessage(v int64) predicate.Statistic {
+	return predicate.Statistic(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLastMessage), v))
+	})
+}
+
 // FirstNameEQ applies the EQ predicate on the "first_name" field.
 func FirstNameEQ(v string) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
@@ -939,6 +946,82 @@ func MessageLT(v int64) predicate.Statistic {
 func MessageLTE(v int64) predicate.Statistic {
 	return predicate.Statistic(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldMessage), v))
+	})
+}
+
+// LastMessageEQ applies the EQ predicate on the "last_message" field.
+func LastMessageEQ(v int64) predicate.Statistic {
+	return predicate.Statistic(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldLastMessage), v))
+	})
+}
+
+// LastMessageNEQ applies the NEQ predicate on the "last_message" field.
+func LastMessageNEQ(v int64) predicate.Statistic {
+	return predicate.Statistic(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldLastMessage), v))
+	})
+}
+
+// LastMessageIn applies the In predicate on the "last_message" field.
+func LastMessageIn(vs ...int64) predicate.Statistic {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Statistic(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.In(s.C(FieldLastMessage), v...))
+	})
+}
+
+// LastMessageNotIn applies the NotIn predicate on the "last_message" field.
+func LastMessageNotIn(vs ...int64) predicate.Statistic {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.Statistic(func(s *sql.Selector) {
+		// if not arguments were provided, append the FALSE constants,
+		// since we can't apply "IN ()". This will make this predicate falsy.
+		if len(v) == 0 {
+			s.Where(sql.False())
+			return
+		}
+		s.Where(sql.NotIn(s.C(FieldLastMessage), v...))
+	})
+}
+
+// LastMessageGT applies the GT predicate on the "last_message" field.
+func LastMessageGT(v int64) predicate.Statistic {
+	return predicate.Statistic(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldLastMessage), v))
+	})
+}
+
+// LastMessageGTE applies the GTE predicate on the "last_message" field.
+func LastMessageGTE(v int64) predicate.Statistic {
+	return predicate.Statistic(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldLastMessage), v))
+	})
+}
+
+// LastMessageLT applies the LT predicate on the "last_message" field.
+func LastMessageLT(v int64) predicate.Statistic {
+	return predicate.Statistic(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldLastMessage), v))
+	})
+}
+
+// LastMessageLTE applies the LTE predicate on the "last_message" field.
+func LastMessageLTE(v int64) predicate.Statistic {
+	return predicate.Statistic(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldLastMessage), v))
 	})
 }
 

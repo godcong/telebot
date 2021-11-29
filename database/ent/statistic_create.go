@@ -145,6 +145,20 @@ func (sc *StatisticCreate) SetNillableMessage(i *int64) *StatisticCreate {
 	return sc
 }
 
+// SetLastMessage sets the "last_message" field.
+func (sc *StatisticCreate) SetLastMessage(i int64) *StatisticCreate {
+	sc.mutation.SetLastMessage(i)
+	return sc
+}
+
+// SetNillableLastMessage sets the "last_message" field if the given value is not nil.
+func (sc *StatisticCreate) SetNillableLastMessage(i *int64) *StatisticCreate {
+	if i != nil {
+		sc.SetLastMessage(*i)
+	}
+	return sc
+}
+
 // Mutation returns the StatisticMutation object of the builder.
 func (sc *StatisticCreate) Mutation() *StatisticMutation {
 	return sc.mutation
@@ -252,6 +266,10 @@ func (sc *StatisticCreate) defaults() {
 		v := statistic.DefaultMessage
 		sc.mutation.SetMessage(v)
 	}
+	if _, ok := sc.mutation.LastMessage(); !ok {
+		v := statistic.DefaultLastMessage
+		sc.mutation.SetLastMessage(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -282,6 +300,9 @@ func (sc *StatisticCreate) check() error {
 	}
 	if _, ok := sc.mutation.Message(); !ok {
 		return &ValidationError{Name: "message", err: errors.New(`ent: missing required field "message"`)}
+	}
+	if _, ok := sc.mutation.LastMessage(); !ok {
+		return &ValidationError{Name: "last_message", err: errors.New(`ent: missing required field "last_message"`)}
 	}
 	return nil
 }
@@ -381,6 +402,14 @@ func (sc *StatisticCreate) createSpec() (*Statistic, *sqlgraph.CreateSpec) {
 			Column: statistic.FieldMessage,
 		})
 		_node.Message = value
+	}
+	if value, ok := sc.mutation.LastMessage(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: statistic.FieldLastMessage,
+		})
+		_node.LastMessage = value
 	}
 	return _node, _spec
 }

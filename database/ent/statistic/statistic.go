@@ -25,6 +25,8 @@ const (
 	FieldInvited = "invited"
 	// FieldMessage holds the string denoting the message field in the database.
 	FieldMessage = "message"
+	// FieldLastMessage holds the string denoting the last_message field in the database.
+	FieldLastMessage = "last_message"
 	// Table holds the table name of the statistic in the database.
 	Table = "statistics"
 )
@@ -41,6 +43,7 @@ var Columns = []string{
 	FieldJoinTime,
 	FieldInvited,
 	FieldMessage,
+	FieldLastMessage,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -72,4 +75,6 @@ var (
 	DefaultInvited int64
 	// DefaultMessage holds the default value on creation for the "message" field.
 	DefaultMessage int64
+	// DefaultLastMessage holds the default value on creation for the "last_message" field.
+	DefaultLastMessage int64
 )

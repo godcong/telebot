@@ -45,6 +45,7 @@ var (
 		{Name: "join_time", Type: field.TypeInt64, Default: 0},
 		{Name: "invited", Type: field.TypeInt64, Default: 0},
 		{Name: "message", Type: field.TypeInt64, Default: 0},
+		{Name: "last_message", Type: field.TypeInt64, Default: 0},
 	}
 	// StatisticsTable holds the schema information for the "statistics" table.
 	StatisticsTable = &schema.Table{

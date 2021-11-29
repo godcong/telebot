@@ -22,6 +22,7 @@ func (Statistic) Fields() []ent.Field {
 		field.Int64("join_time").Default(0),
 		field.Int64("invited").Default(0),
 		field.Int64("message").Default(0),
+		field.Int64("last_message").Default(0),
 	}
 }
 

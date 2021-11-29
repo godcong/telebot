@@ -19,7 +19,7 @@ func getName(user *tgbotapi.User) string {
 	return user.LastName + "·" + user.FirstName
 }
 
-func chatMember(bot abstract.Bot, msg *ent.Message, update tgbotapi.Update) error {
+func actionChatMember(bot abstract.Bot, msg *ent.Message, update tgbotapi.Update) error {
 	switch msg.Action {
 	case message.ActionWelcome:
 		var usrs []string
@@ -52,7 +52,7 @@ func chatMember(bot abstract.Bot, msg *ent.Message, update tgbotapi.Update) erro
 		}
 	case message.ActionStatistic:
 		for _, u := range *update.Message.NewChatMembers {
-			err := bot.DB().UpdateStatistic(bot.Context(), &ent.Statistic{
+			err := bot.DB().UpdateNewMemberStatistic(bot.Context(), &ent.Statistic{
 				FirstName: u.FirstName,
 				LatName:   u.LastName,
 				FromUser:  update.Message.From.ID,

@@ -194,6 +194,27 @@ func (su *StatisticUpdate) AddMessage(i int64) *StatisticUpdate {
 	return su
 }
 
+// SetLastMessage sets the "last_message" field.
+func (su *StatisticUpdate) SetLastMessage(i int64) *StatisticUpdate {
+	su.mutation.ResetLastMessage()
+	su.mutation.SetLastMessage(i)
+	return su
+}
+
+// SetNillableLastMessage sets the "last_message" field if the given value is not nil.
+func (su *StatisticUpdate) SetNillableLastMessage(i *int64) *StatisticUpdate {
+	if i != nil {
+		su.SetLastMessage(*i)
+	}
+	return su
+}
+
+// AddLastMessage adds i to the "last_message" field.
+func (su *StatisticUpdate) AddLastMessage(i int64) *StatisticUpdate {
+	su.mutation.AddLastMessage(i)
+	return su
+}
+
 // Mutation returns the StatisticMutation object of the builder.
 func (su *StatisticUpdate) Mutation() *StatisticMutation {
 	return su.mutation
@@ -374,6 +395,20 @@ func (su *StatisticUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Type:   field.TypeInt64,
 			Value:  value,
 			Column: statistic.FieldMessage,
+		})
+	}
+	if value, ok := su.mutation.LastMessage(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: statistic.FieldLastMessage,
+		})
+	}
+	if value, ok := su.mutation.AddedLastMessage(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: statistic.FieldLastMessage,
 		})
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, su.driver, _spec); err != nil {
@@ -560,6 +595,27 @@ func (suo *StatisticUpdateOne) SetNillableMessage(i *int64) *StatisticUpdateOne 
 // AddMessage adds i to the "message" field.
 func (suo *StatisticUpdateOne) AddMessage(i int64) *StatisticUpdateOne {
 	suo.mutation.AddMessage(i)
+	return suo
+}
+
+// SetLastMessage sets the "last_message" field.
+func (suo *StatisticUpdateOne) SetLastMessage(i int64) *StatisticUpdateOne {
+	suo.mutation.ResetLastMessage()
+	suo.mutation.SetLastMessage(i)
+	return suo
+}
+
+// SetNillableLastMessage sets the "last_message" field if the given value is not nil.
+func (suo *StatisticUpdateOne) SetNillableLastMessage(i *int64) *StatisticUpdateOne {
+	if i != nil {
+		suo.SetLastMessage(*i)
+	}
+	return suo
+}
+
+// AddLastMessage adds i to the "last_message" field.
+func (suo *StatisticUpdateOne) AddLastMessage(i int64) *StatisticUpdateOne {
+	suo.mutation.AddLastMessage(i)
 	return suo
 }
 
@@ -767,6 +823,20 @@ func (suo *StatisticUpdateOne) sqlSave(ctx context.Context) (_node *Statistic, e
 			Type:   field.TypeInt64,
 			Value:  value,
 			Column: statistic.FieldMessage,
+		})
+	}
+	if value, ok := suo.mutation.LastMessage(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: statistic.FieldLastMessage,
+		})
+	}
+	if value, ok := suo.mutation.AddedLastMessage(); ok {
+		_spec.Fields.Add = append(_spec.Fields.Add, &sqlgraph.FieldSpec{
+			Type:   field.TypeInt64,
+			Value:  value,
+			Column: statistic.FieldLastMessage,
 		})
 	}
 	_node = &Statistic{config: suo.config}

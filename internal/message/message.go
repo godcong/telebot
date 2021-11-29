@@ -11,7 +11,28 @@ import (
 )
 
 var actions = [schema.MessageTypeMax]func(bot abstract.Bot, message *ent.Message, update tgbotapi.Update) error{
-	schema.MessageTypeChatMember: chatMember,
+	schema.MessageTypeNone:       actionNone,
+	schema.MessageTypeMessage:    actionMessage,
+	schema.MessageTypeChatMember: actionChatMember,
+}
+
+func actionNone(bot abstract.Bot, message *ent.Message, update tgbotapi.Update) error {
+	return nil
+}
+
+func actionMessage(bot abstract.Bot, message *ent.Message, update tgbotapi.Update) error {
+	fmt.Println("received new message from:", update.Message.From.ID, "channel:", update.Message.Chat.ID)
+	if update.Message.Chat.IsPrivate() {
+		fmt.Println("skip statistic with private talk")
+		return nil
+	}
+	return bot.DB().UpdateChatStatistic(bot.Context(), &ent.Statistic{
+		FirstName: update.Message.From.FirstName,
+		LatName:   update.Message.From.LastName,
+		UserName:  update.Message.From.UserName,
+		FromUser:  update.Message.From.ID,
+		ChannelID: update.Message.Chat.ID,
+	})
 }
 
 func Message(bot abstract.Bot, msgT schema.MessageType, update tgbotapi.Update) error {

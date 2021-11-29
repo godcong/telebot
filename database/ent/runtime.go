@@ -68,4 +68,8 @@ func init() {
 	statisticDescMessage := statisticFields[8].Descriptor()
 	// statistic.DefaultMessage holds the default value on creation for the message field.
 	statistic.DefaultMessage = statisticDescMessage.Default.(int64)
+	// statisticDescLastMessage is the schema descriptor for last_message field.
+	statisticDescLastMessage := statisticFields[9].Descriptor()
+	// statistic.DefaultLastMessage holds the default value on creation for the last_message field.
+	statistic.DefaultLastMessage = statisticDescLastMessage.Default.(int64)
 }

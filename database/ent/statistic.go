@@ -33,6 +33,8 @@ type Statistic struct {
 	Invited int64 `json:"invited,omitempty"`
 	// Message holds the value of the "message" field.
 	Message int64 `json:"message,omitempty"`
+	// LastMessage holds the value of the "last_message" field.
+	LastMessage int64 `json:"last_message,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -40,7 +42,7 @@ func (*Statistic) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case statistic.FieldID, statistic.FieldFromUser, statistic.FieldChannelID, statistic.FieldUserID, statistic.FieldJoinTime, statistic.FieldInvited, statistic.FieldMessage:
+		case statistic.FieldID, statistic.FieldFromUser, statistic.FieldChannelID, statistic.FieldUserID, statistic.FieldJoinTime, statistic.FieldInvited, statistic.FieldMessage, statistic.FieldLastMessage:
 			values[i] = new(sql.NullInt64)
 		case statistic.FieldFirstName, statistic.FieldLatName, statistic.FieldUserName:
 			values[i] = new(sql.NullString)
@@ -119,6 +121,12 @@ func (s *Statistic) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				s.Message = value.Int64
 			}
+		case statistic.FieldLastMessage:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field last_message", values[i])
+			} else if value.Valid {
+				s.LastMessage = value.Int64
+			}
 		}
 	}
 	return nil
@@ -165,6 +173,8 @@ func (s *Statistic) String() string {
 	builder.WriteString(fmt.Sprintf("%v", s.Invited))
 	builder.WriteString(", message=")
 	builder.WriteString(fmt.Sprintf("%v", s.Message))
+	builder.WriteString(", last_message=")
+	builder.WriteString(fmt.Sprintf("%v", s.LastMessage))
 	builder.WriteByte(')')
 	return builder.String()
 }
