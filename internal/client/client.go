@@ -19,8 +19,8 @@ func NewClient(config *config.Config) *Client {
 
 	// Create new instance of client
 	client := tdlib.NewClient(tdlib.Config{
-		APIID:               config.APIID,
-		APIHash:             config.APIHash,
+		APIID:               config.Client.APIID,
+		APIHash:             config.Client.APIHash,
 		SystemLanguageCode:  "en",
 		DeviceModel:         "Server",
 		SystemVersion:       "1.0.0",

@@ -3,8 +3,6 @@ package bot
 import (
 	"context"
 	"errors"
-	"fmt"
-	"log"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
@@ -13,6 +11,7 @@ import (
 	"github.com/motomototv/telebot/database"
 	"github.com/motomototv/telebot/database/ent/schema"
 	"github.com/motomototv/telebot/internal/message"
+	"github.com/motomototv/telebot/log"
 )
 
 var ErrConfigNil = errors.New("config is nil")
@@ -44,7 +43,7 @@ func (b bot) DB() *database.DB {
 }
 
 func (b bot) startHook() error {
-	fmt.Println("start hook model:", b.config.Bot.Model)
+	log.Println("start hook model:", b.config.Bot.Model)
 	if err := b.hook[b.config.Bot.Model](); err != nil {
 		return err
 	}
@@ -107,7 +106,7 @@ func NewBot(cfg *config.Config) (abstract.Bot, error) {
 	//}
 
 	//fmt.Printf("Webhook info:%+v\n", response)
-	fmt.Printf("Authorized on account %s\n", tgbot.Self.UserName)
+	log.Printfln("Authorized on account %s", tgbot.Self.UserName)
 	//_, err = tgbot.SetWebhook(tgbotapi.NewWebhook(cfg.Bot.Host + cfg.Bot.HookAddress))
 	//if err != nil {
 	//	log.Fatal(err)
@@ -171,10 +170,10 @@ func (b bot) hookWeb() error {
 	//}
 	info, err := b.bot.GetWebhookInfo()
 	if err != nil {
-		log.Fatal(err)
+		//log.Fatal(err)
 	}
 	if info.LastErrorDate != 0 {
-		log.Printf("Telegram callback failed: %s", info.LastErrorMessage)
+		log.Printfln("Telegram callback failed: %s", info.LastErrorMessage)
 	}
 
 	updates := b.bot.ListenForWebhook("/" + b.config.Bot.HookAddress)
@@ -197,16 +196,16 @@ func (b bot) hookUpdate() error {
 
 func (b bot) hookMessage(updates tgbotapi.UpdatesChannel) {
 	//defer close(updates)
-	fmt.Println("Start message hook")
+	log.Println("Start message hook")
 	for update := range updates {
-		fmt.Printf("Received new message:%+v\n", update)
+		log.Printfln("Received new message:%+v\n", update)
 		if update.Message == nil {
 			continue
 		}
 
 		err := b.switchMessage(update)
 		if err != nil {
-			fmt.Println("ERROR:", "message:", err)
+			log.Println("ERROR:", "message:", err)
 		}
 
 	}

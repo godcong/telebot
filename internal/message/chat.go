@@ -61,8 +61,8 @@ func actionChatMember(bot abstract.Bot, msg *ent.Message, update tgbotapi.Update
 				JoinTime:  time.Now().Unix(),
 			})
 			if err != nil {
-				fmt.Println("ERROR", "update statistic:", err)
-				fmt.Sprintf("user:%+v\n", u)
+				log.Println("ERROR", "update statistic:", err)
+				log.Sprintf("user:%+v\n", u)
 			}
 		}
 	}

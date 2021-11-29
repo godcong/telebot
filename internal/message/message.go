@@ -1,13 +1,12 @@
 package message
 
 import (
-	"fmt"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
 	"github.com/motomototv/telebot/abstract"
 	"github.com/motomototv/telebot/database/ent"
 	"github.com/motomototv/telebot/database/ent/schema"
+	"github.com/motomototv/telebot/log"
 )
 
 var actions = [schema.MessageTypeMax]func(bot abstract.Bot, message *ent.Message, update tgbotapi.Update) error{
@@ -21,9 +20,9 @@ func actionNone(bot abstract.Bot, message *ent.Message, update tgbotapi.Update) 
 }
 
 func actionMessage(bot abstract.Bot, message *ent.Message, update tgbotapi.Update) error {
-	fmt.Println("received new message from:", update.Message.From.ID, "channel:", update.Message.Chat.ID)
+	log.Println("received new message from:", update.Message.From.ID, "channel:", update.Message.Chat.ID)
 	if update.Message.Chat.IsPrivate() {
-		fmt.Println("skip statistic with private talk")
+		log.Println("skip statistic with private talk")
 		return nil
 	}
 	return bot.DB().UpdateChatStatistic(bot.Context(), &ent.Statistic{
@@ -44,8 +43,10 @@ func Message(bot abstract.Bot, msgT schema.MessageType, update tgbotapi.Update) 
 		if schema.MessageType(message.Type) >= schema.MessageTypeMax {
 			continue
 		}
+		log.Println("Process new message:", message.Type)
+		log.Printfln("Update message detail:%+v", update.Message)
 		if err := actions[message.Type](bot, message, update); err != nil {
-			fmt.Println("ERROR:", "type:", message.Type, "error:", err)
+			log.Println("ERROR:", "type:", message.Type, "error:", err)
 		}
 	}
 	return nil
