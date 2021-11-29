@@ -57,14 +57,33 @@ func actionChatMember(bot abstract.Bot, msg *ent.Message, update tgbotapi.Update
 			err := bot.DB().UpdateNewMemberStatistic(bot.Context(), &ent.Statistic{
 				FirstName: u.FirstName,
 				LatName:   u.LastName,
+				UserName:  u.UserName,
 				FromUser:  update.Message.From.ID,
 				ChannelID: update.Message.Chat.ID,
 				UserID:    u.ID,
 				JoinTime:  time.Now().Unix(),
+				//Invited:     0,
+				//Message:     0,
+				//LastMessage: 0,
 			})
 			if err != nil {
 				log.Println("ERROR", "update statistic:", err)
 				log.Printfln("user:%+v\n", u)
+			}
+			err = bot.DB().UpdateInviteStatistic(bot.Context(), &ent.Statistic{
+				FirstName:   update.Message.From.FirstName,
+				LatName:     update.Message.From.LastName,
+				UserName:    update.Message.From.UserName,
+				FromUser:    update.Message.From.ID,
+				ChannelID:   update.Message.Chat.ID,
+				UserID:      update.Message.From.ID,
+				JoinTime:    time.Now().Unix(),
+				//Invited:     0,
+				//Message:     0,
+				LastMessage: time.Now().Unix(),
+			})
+			if err != nil {
+				log.Println("ERROR", "update invite statistic:", err)
 			}
 		}
 	}
