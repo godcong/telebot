@@ -2,7 +2,6 @@ package message
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -10,6 +9,7 @@ import (
 	"github.com/motomototv/telebot/abstract"
 	"github.com/motomototv/telebot/database/ent"
 	"github.com/motomototv/telebot/database/ent/message"
+	"github.com/motomototv/telebot/log"
 )
 
 func getName(user *tgbotapi.User) string {
@@ -62,7 +62,7 @@ func actionChatMember(bot abstract.Bot, msg *ent.Message, update tgbotapi.Update
 			})
 			if err != nil {
 				log.Println("ERROR", "update statistic:", err)
-				log.Sprintf("user:%+v\n", u)
+				log.Printfln("user:%+v\n", u)
 			}
 		}
 	}
