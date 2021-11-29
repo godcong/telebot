@@ -56,31 +56,32 @@ func (b bot) Run() error {
 		return err
 	}
 
-	go func() {
-		//e := http.ListenAndServeTLS(fmt.Sprintf(":%s", port), "cert.pem", "key.pem", nil)
-		//if e != nil {
-		//	log.Println("ERROR:", e)
-		//}
-	}()
+	//go func() {
+	//e := http.ListenAndServeTLS(fmt.Sprintf(":%s", port), "cert.pem", "key.pem", nil)
+	//if e != nil {
+	//	log.Println("ERROR:", e)
+	//}
+	//}()
 
-	var in tgbotapi.Chattable
-	var ok bool
-	for {
-		select {
-		case in, ok = <-b.ct:
-			if !ok || in == nil {
-				continue
-			}
-			if resp, err := b.bot.Send(in); err != nil {
-				log.Println("ERROR:", "send message:", err)
-			} else {
-				if resp.Document != nil {
-					//downloadFileID = resp.Document.FileID
-					//todo(feat):update download
-				}
-			}
-		}
-	}
+	//var in tgbotapi.Chattable
+	//var ok bool
+	//for {
+	//	select {
+	//	case in, ok = <-b.ct:
+	//		if !ok || in == nil {
+	//			continue
+	//		}
+	//		if resp, err := b.bot.Send(in); err != nil {
+	//			log.Println("ERROR:", "send message:", err)
+	//		} else {
+	//			if resp.Document != nil {
+	//				//downloadFileID = resp.Document.FileID
+	//				//todo(feat):update download
+	//			}
+	//		}
+	//	}
+	//}
+	return nil
 }
 
 // NewBot ...
