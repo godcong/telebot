@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
 	"github.com/motomototv/telebot/abstract"
 	"github.com/motomototv/telebot/config"
@@ -176,7 +176,10 @@ func (b bot) hookUpdate() error {
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 15
 
-	updates := b.bot.GetUpdatesChan(u)
+	updates, err := b.bot.GetUpdatesChan(u)
+	if err != nil {
+		return err
+	}
 	go b.hookMessage(updates)
 	return nil
 }

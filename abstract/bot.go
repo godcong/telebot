@@ -3,7 +3,7 @@ package abstract
 import (
 	"context"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
 	"github.com/motomototv/telebot/config"
 	"github.com/motomototv/telebot/database"
