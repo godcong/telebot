@@ -6,35 +6,35 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (a *api) middleware(ctx *gin.Context) {
-	if ctx.Request.Method == "GET" {
-		ctx.Next()
+func (a *api) middleware(context *gin.Context) {
+	if context.Request.Method == "GET" {
+		context.Next()
 		return
 	}
-	auth := ctx.GetHeader("Authorization")
+	auth := context.GetHeader("Authorization")
 	auths := strings.Split(auth, " ")
 	if len(auths) != 2 {
-		ctx.JSON(401, gin.H{
+		context.JSON(401, gin.H{
 			"code": 401,
 			"msg":  "Unauthorized",
 		})
-		ctx.Abort()
+		context.Abort()
 		return
 	}
 	if auths[0] != "Bearer" {
-		ctx.JSON(401, gin.H{
+		context.JSON(401, gin.H{
 			"code": 401,
 			"msg":  "Unauthorized",
 		})
-		ctx.Abort()
+		context.Abort()
 		return
 	}
 	token := auths[1]
 	if strings.Compare(a.config.Auth, token) == 0 {
-		ctx.Next()
+		context.Next()
 		return
 	}
-	ctx.JSON(401, gin.H{
+	context.JSON(401, gin.H{
 		"code": 401,
 		"msg":  "Unauthorized",
 	})

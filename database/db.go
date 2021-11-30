@@ -87,6 +87,16 @@ func (d *DB) QueryStatistics(ctx context.Context) ([]*ent.Statistic, error) {
 	return d.Statistic.Query().All(ctx)
 }
 
+func (d *DB) UpdateMessage(ctx context.Context, e *ent.Message) (*ent.Message, error) {
+	return d.Message.UpdateOneID(e.ID).
+		SetMessage(e.Message).
+		SetType(e.Type).
+		SetAction(e.Action).
+		SetAutoRemoveTime(e.AutoRemoveTime).
+		SetAutoRemove(e.AutoRemove).
+		Save(ctx)
+}
+
 func Open(ctx context.Context, file string, debug bool) (*DB, error) {
 	var options []ent.Option
 

@@ -32,6 +32,10 @@ func init() {
 	messageDescAutoRemoveTime := messageFields[4].Descriptor()
 	// message.DefaultAutoRemoveTime holds the default value on creation for the auto_remove_time field.
 	message.DefaultAutoRemoveTime = messageDescAutoRemoveTime.Default.(int)
+	// messageDescEnable is the schema descriptor for enable field.
+	messageDescEnable := messageFields[5].Descriptor()
+	// message.DefaultEnable holds the default value on creation for the enable field.
+	message.DefaultEnable = messageDescEnable.Default.(bool)
 	statisticFields := schema.Statistic{}.Fields()
 	_ = statisticFields
 	// statisticDescFirstName is the schema descriptor for first_name field.
