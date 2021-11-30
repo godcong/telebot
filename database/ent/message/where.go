@@ -118,6 +118,13 @@ func AutoRemoveTime(v int) predicate.Message {
 	})
 }
 
+// Enable applies equality check predicate on the "enable" field. It's identical to EnableEQ.
+func Enable(v bool) predicate.Message {
+	return predicate.Message(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnable), v))
+	})
+}
+
 // TypeEQ applies the EQ predicate on the "type" field.
 func TypeEQ(v int) predicate.Message {
 	return predicate.Message(func(s *sql.Selector) {
@@ -440,6 +447,20 @@ func AutoRemoveTimeLT(v int) predicate.Message {
 func AutoRemoveTimeLTE(v int) predicate.Message {
 	return predicate.Message(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldAutoRemoveTime), v))
+	})
+}
+
+// EnableEQ applies the EQ predicate on the "enable" field.
+func EnableEQ(v bool) predicate.Message {
+	return predicate.Message(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldEnable), v))
+	})
+}
+
+// EnableNEQ applies the NEQ predicate on the "enable" field.
+func EnableNEQ(v bool) predicate.Message {
+	return predicate.Message(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldEnable), v))
 	})
 }
 

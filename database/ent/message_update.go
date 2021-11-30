@@ -102,6 +102,20 @@ func (mu *MessageUpdate) AddAutoRemoveTime(i int) *MessageUpdate {
 	return mu
 }
 
+// SetEnable sets the "enable" field.
+func (mu *MessageUpdate) SetEnable(b bool) *MessageUpdate {
+	mu.mutation.SetEnable(b)
+	return mu
+}
+
+// SetNillableEnable sets the "enable" field if the given value is not nil.
+func (mu *MessageUpdate) SetNillableEnable(b *bool) *MessageUpdate {
+	if b != nil {
+		mu.SetEnable(*b)
+	}
+	return mu
+}
+
 // Mutation returns the MessageMutation object of the builder.
 func (mu *MessageUpdate) Mutation() *MessageMutation {
 	return mu.mutation
@@ -244,6 +258,13 @@ func (mu *MessageUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: message.FieldAutoRemoveTime,
 		})
 	}
+	if value, ok := mu.mutation.Enable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: message.FieldEnable,
+		})
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, mu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{message.Label}
@@ -336,6 +357,20 @@ func (muo *MessageUpdateOne) SetNillableAutoRemoveTime(i *int) *MessageUpdateOne
 // AddAutoRemoveTime adds i to the "auto_remove_time" field.
 func (muo *MessageUpdateOne) AddAutoRemoveTime(i int) *MessageUpdateOne {
 	muo.mutation.AddAutoRemoveTime(i)
+	return muo
+}
+
+// SetEnable sets the "enable" field.
+func (muo *MessageUpdateOne) SetEnable(b bool) *MessageUpdateOne {
+	muo.mutation.SetEnable(b)
+	return muo
+}
+
+// SetNillableEnable sets the "enable" field if the given value is not nil.
+func (muo *MessageUpdateOne) SetNillableEnable(b *bool) *MessageUpdateOne {
+	if b != nil {
+		muo.SetEnable(*b)
+	}
 	return muo
 }
 
@@ -503,6 +538,13 @@ func (muo *MessageUpdateOne) sqlSave(ctx context.Context) (_node *Message, err e
 			Type:   field.TypeInt,
 			Value:  value,
 			Column: message.FieldAutoRemoveTime,
+		})
+	}
+	if value, ok := muo.mutation.Enable(); ok {
+		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: message.FieldEnable,
 		})
 	}
 	_node = &Message{config: muo.config}

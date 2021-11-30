@@ -25,6 +25,8 @@ type Message struct {
 	AutoRemove bool `json:"auto_remove,omitempty"`
 	// AutoRemoveTime holds the value of the "auto_remove_time" field.
 	AutoRemoveTime int `json:"auto_remove_time,omitempty"`
+	// Enable holds the value of the "enable" field.
+	Enable bool `json:"enable,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -32,7 +34,7 @@ func (*Message) scanValues(columns []string) ([]interface{}, error) {
 	values := make([]interface{}, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case message.FieldAutoRemove:
+		case message.FieldAutoRemove, message.FieldEnable:
 			values[i] = new(sql.NullBool)
 		case message.FieldID, message.FieldType, message.FieldAutoRemoveTime:
 			values[i] = new(sql.NullInt64)
@@ -89,6 +91,12 @@ func (m *Message) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				m.AutoRemoveTime = int(value.Int64)
 			}
+		case message.FieldEnable:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field enable", values[i])
+			} else if value.Valid {
+				m.Enable = value.Bool
+			}
 		}
 	}
 	return nil
@@ -127,6 +135,8 @@ func (m *Message) String() string {
 	builder.WriteString(fmt.Sprintf("%v", m.AutoRemove))
 	builder.WriteString(", auto_remove_time=")
 	builder.WriteString(fmt.Sprintf("%v", m.AutoRemoveTime))
+	builder.WriteString(", enable=")
+	builder.WriteString(fmt.Sprintf("%v", m.Enable))
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -21,6 +21,8 @@ const (
 	FieldAutoRemove = "auto_remove"
 	// FieldAutoRemoveTime holds the string denoting the auto_remove_time field in the database.
 	FieldAutoRemoveTime = "auto_remove_time"
+	// FieldEnable holds the string denoting the enable field in the database.
+	FieldEnable = "enable"
 	// Table holds the table name of the message in the database.
 	Table = "messages"
 )
@@ -33,6 +35,7 @@ var Columns = []string{
 	FieldMessage,
 	FieldAutoRemove,
 	FieldAutoRemoveTime,
+	FieldEnable,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -54,6 +57,8 @@ var (
 	DefaultAutoRemove bool
 	// DefaultAutoRemoveTime holds the default value on creation for the "auto_remove_time" field.
 	DefaultAutoRemoveTime int
+	// DefaultEnable holds the default value on creation for the "enable" field.
+	DefaultEnable bool
 )
 
 // Action defines the type for the "action" enum field.

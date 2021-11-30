@@ -272,6 +272,7 @@ type MessageMutation struct {
 	auto_remove         *bool
 	auto_remove_time    *int
 	addauto_remove_time *int
+	enable              *bool
 	clearedFields       map[string]struct{}
 	done                bool
 	oldValue            func(context.Context) (*Message, error)
@@ -577,6 +578,42 @@ func (m *MessageMutation) ResetAutoRemoveTime() {
 	m.addauto_remove_time = nil
 }
 
+// SetEnable sets the "enable" field.
+func (m *MessageMutation) SetEnable(b bool) {
+	m.enable = &b
+}
+
+// Enable returns the value of the "enable" field in the mutation.
+func (m *MessageMutation) Enable() (r bool, exists bool) {
+	v := m.enable
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnable returns the old "enable" field's value of the Message entity.
+// If the Message object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MessageMutation) OldEnable(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, fmt.Errorf("OldEnable is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, fmt.Errorf("OldEnable requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnable: %w", err)
+	}
+	return oldValue.Enable, nil
+}
+
+// ResetEnable resets all changes to the "enable" field.
+func (m *MessageMutation) ResetEnable() {
+	m.enable = nil
+}
+
 // Where appends a list predicates to the MessageMutation builder.
 func (m *MessageMutation) Where(ps ...predicate.Message) {
 	m.predicates = append(m.predicates, ps...)
@@ -596,7 +633,7 @@ func (m *MessageMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MessageMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m._type != nil {
 		fields = append(fields, message.FieldType)
 	}
@@ -611,6 +648,9 @@ func (m *MessageMutation) Fields() []string {
 	}
 	if m.auto_remove_time != nil {
 		fields = append(fields, message.FieldAutoRemoveTime)
+	}
+	if m.enable != nil {
+		fields = append(fields, message.FieldEnable)
 	}
 	return fields
 }
@@ -630,6 +670,8 @@ func (m *MessageMutation) Field(name string) (ent.Value, bool) {
 		return m.AutoRemove()
 	case message.FieldAutoRemoveTime:
 		return m.AutoRemoveTime()
+	case message.FieldEnable:
+		return m.Enable()
 	}
 	return nil, false
 }
@@ -649,6 +691,8 @@ func (m *MessageMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldAutoRemove(ctx)
 	case message.FieldAutoRemoveTime:
 		return m.OldAutoRemoveTime(ctx)
+	case message.FieldEnable:
+		return m.OldEnable(ctx)
 	}
 	return nil, fmt.Errorf("unknown Message field %s", name)
 }
@@ -692,6 +736,13 @@ func (m *MessageMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAutoRemoveTime(v)
+		return nil
+	case message.FieldEnable:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnable(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Message field %s", name)
@@ -783,6 +834,9 @@ func (m *MessageMutation) ResetField(name string) error {
 		return nil
 	case message.FieldAutoRemoveTime:
 		m.ResetAutoRemoveTime()
+		return nil
+	case message.FieldEnable:
+		m.ResetEnable()
 		return nil
 	}
 	return fmt.Errorf("unknown Message field %s", name)

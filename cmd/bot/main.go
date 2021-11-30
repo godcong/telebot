@@ -31,7 +31,7 @@ func main() {
 	if err := telebot.Run(); err != nil {
 		panic(err)
 	}
-	api := api.New(telebot.DB())
+	api := api.New(cfg, telebot.DB())
 	if err := api.Run(); err != nil {
 		panic(err)
 	}

@@ -26,6 +26,7 @@ var (
 		{Name: "message", Type: field.TypeString, Default: ""},
 		{Name: "auto_remove", Type: field.TypeBool, Default: false},
 		{Name: "auto_remove_time", Type: field.TypeInt, Default: 30},
+		{Name: "enable", Type: field.TypeBool, Default: false},
 	}
 	// MessagesTable holds the schema information for the "messages" table.
 	MessagesTable = &schema.Table{

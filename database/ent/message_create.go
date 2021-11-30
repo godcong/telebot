@@ -81,6 +81,20 @@ func (mc *MessageCreate) SetNillableAutoRemoveTime(i *int) *MessageCreate {
 	return mc
 }
 
+// SetEnable sets the "enable" field.
+func (mc *MessageCreate) SetEnable(b bool) *MessageCreate {
+	mc.mutation.SetEnable(b)
+	return mc
+}
+
+// SetNillableEnable sets the "enable" field if the given value is not nil.
+func (mc *MessageCreate) SetNillableEnable(b *bool) *MessageCreate {
+	if b != nil {
+		mc.SetEnable(*b)
+	}
+	return mc
+}
+
 // Mutation returns the MessageMutation object of the builder.
 func (mc *MessageCreate) Mutation() *MessageMutation {
 	return mc.mutation
@@ -168,6 +182,10 @@ func (mc *MessageCreate) defaults() {
 		v := message.DefaultAutoRemoveTime
 		mc.mutation.SetAutoRemoveTime(v)
 	}
+	if _, ok := mc.mutation.Enable(); !ok {
+		v := message.DefaultEnable
+		mc.mutation.SetEnable(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -191,6 +209,9 @@ func (mc *MessageCreate) check() error {
 	}
 	if _, ok := mc.mutation.AutoRemoveTime(); !ok {
 		return &ValidationError{Name: "auto_remove_time", err: errors.New(`ent: missing required field "auto_remove_time"`)}
+	}
+	if _, ok := mc.mutation.Enable(); !ok {
+		return &ValidationError{Name: "enable", err: errors.New(`ent: missing required field "enable"`)}
 	}
 	return nil
 }
@@ -258,6 +279,14 @@ func (mc *MessageCreate) createSpec() (*Message, *sqlgraph.CreateSpec) {
 			Column: message.FieldAutoRemoveTime,
 		})
 		_node.AutoRemoveTime = value
+	}
+	if value, ok := mc.mutation.Enable(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeBool,
+			Value:  value,
+			Column: message.FieldEnable,
+		})
+		_node.Enable = value
 	}
 	return _node, _spec
 }
