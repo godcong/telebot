@@ -16,7 +16,7 @@ type DB struct {
 	*ent.Client
 }
 
-func (d DB) QueryMessages(ctx context.Context, t schema.MessageType) ([]*ent.Message, error) {
+func (d DB) QueryTypeMessages(ctx context.Context, t schema.MessageType) ([]*ent.Message, error) {
 	return d.Message.Query().Where(message.TypeEQ(int(t))).All(ctx)
 }
 
@@ -30,10 +30,8 @@ func (d DB) UpdateNewMemberStatistic(ctx context.Context, stc *ent.Statistic) er
 			SetFirstName(stc.FirstName).
 			SetLatName(stc.LatName).
 			SetUserName(stc.UserName).
-			//SetLastMessage(stc.LastMessage).
 			SetJoinTime(stc.JoinTime).Save(ctx)
 	} else {
-		//_, err = d.Statistic.UpdateOneID(s.ID).SetMessage(s.Message + 1).SetLastMessage(stc.LastMessage).Save(ctx)
 		return nil
 	}
 	return err
@@ -95,6 +93,10 @@ func (d *DB) UpdateMessage(ctx context.Context, e *ent.Message) (*ent.Message, e
 		SetAutoRemoveTime(e.AutoRemoveTime).
 		SetAutoRemove(e.AutoRemove).
 		Save(ctx)
+}
+
+func (d *DB) QueryMessages(ctx context.Context) ([]*ent.Message, error) {
+	return d.Message.Query().All(ctx)
 }
 
 func Open(ctx context.Context, file string, debug bool) (*DB, error) {

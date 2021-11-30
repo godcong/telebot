@@ -6,6 +6,15 @@ import (
 	"github.com/motomototv/telebot/database/ent"
 )
 
+func (a *api) handleMessage(context *gin.Context) {
+	messages, err := a.db.QueryMessages(context.Request.Context())
+	if err != nil {
+		context.JSON(500, err)
+		return
+	}
+	context.JSON(200, messages)
+}
+
 func (a *api) handleMessagePOST(context *gin.Context) {
 	msg := new(ent.Message)
 	var err error

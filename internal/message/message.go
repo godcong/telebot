@@ -39,7 +39,7 @@ func actionMessage(bot abstract.Bot, message *ent.Message, update tgbotapi.Updat
 }
 
 func Message(bot abstract.Bot, msgT schema.MessageType, update tgbotapi.Update) error {
-	messages, err := bot.DB().QueryMessages(bot.Context(), msgT)
+	messages, err := bot.DB().QueryTypeMessages(bot.Context(), msgT)
 	if err != nil {
 		return err
 	}

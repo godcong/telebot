@@ -19,20 +19,12 @@ type api struct {
 func (a *api) Run() error {
 	g := a.Engine.Group("api/v0", a.middleware)
 	g.Handle("GET", "statistics", a.handleStatistic)
+	g.Handle("GET", "messages", a.handleMessage)
 	g.Handle("POST", "message/:id", a.handleMessagePOST)
 
 	go a.Engine.Run(":18080")
 
 	return nil
-}
-
-func (a *api) handleStatistic(context *gin.Context) {
-	statistics, err := a.db.QueryStatistics(context.Request.Context())
-	if err != nil {
-		context.JSON(500, err)
-		return
-	}
-	context.JSON(200, statistics)
 }
 
 func (a *api) GetIntID(context *gin.Context, i *int) error {
