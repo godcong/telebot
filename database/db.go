@@ -17,7 +17,7 @@ type DB struct {
 }
 
 func (d DB) QueryTypeMessages(ctx context.Context, t schema.MessageType) ([]*ent.Message, error) {
-	return d.Message.Query().Where(message.TypeEQ(int(t))).All(ctx)
+	return d.Message.Query().Where(message.TypeEQ(int(t)), message.Enable(true)).All(ctx)
 }
 
 func (d DB) UpdateNewMemberStatistic(ctx context.Context, stc *ent.Statistic) error {
