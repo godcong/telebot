@@ -22,6 +22,7 @@ func (Message) Fields() []ent.Field {
 		field.String("message").Default(""),
 		field.Bool("auto_remove").Default(false),
 		field.Int("auto_remove_time").Default(30),
+		field.Bool("enable").Default(false),
 	}
 }
 

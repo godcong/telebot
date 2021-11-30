@@ -13,6 +13,7 @@ type Config struct {
 	Bot    Bot    `json:"bot"`
 	Client Client `json:"client"`
 	Debug  bool   `json:"debug"`
+	Auth   string `json:"auth"`
 }
 
 // LoadConfig ...
