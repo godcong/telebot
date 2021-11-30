@@ -92,6 +92,7 @@ func (d *DB) UpdateMessage(ctx context.Context, e *ent.Message) (*ent.Message, e
 		SetAction(e.Action).
 		SetAutoRemoveTime(e.AutoRemoveTime).
 		SetAutoRemove(e.AutoRemove).
+		SetEnable(e.Enable).
 		Save(ctx)
 }
 
