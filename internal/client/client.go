@@ -80,6 +80,9 @@ func (c *Client) Run() {
 					continue
 				}
 				log.Printfln("ChatID:%#v", v.ChatId)
+				if v.LastMessage == nil {
+					continue
+				}
 				log.Printfln("MessageContentType:%#v", v.LastMessage.Content.MessageContentType())
 				log.Printfln("Content:%#v", v.LastMessage.Content)
 				processMessage(v.LastMessage)
