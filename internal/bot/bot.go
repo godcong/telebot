@@ -98,7 +98,6 @@ func NewBot(cfg *config.Config) (abstract.Bot, error) {
 	}
 
 	tgbot.Debug = cfg.Debug
-	log.Debug = cfg.Debug
 	//remove pre start webhook
 	//response, err := tgbot.RemoveWebhook()
 	//if err != nil {

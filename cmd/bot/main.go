@@ -12,6 +12,7 @@ import (
 	"github.com/motomototv/telebot/api"
 	"github.com/motomototv/telebot/config"
 	"github.com/motomototv/telebot/internal/bot"
+	"github.com/motomototv/telebot/log"
 )
 
 var path = flag.String("path", "config", "default property path")
@@ -24,6 +25,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	log.Debug = cfg.Debug
 	telebot, err := bot.NewBot(cfg)
 	if err != nil {
 		panic(err)

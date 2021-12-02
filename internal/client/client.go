@@ -3,8 +3,10 @@ package client
 import (
 	"fmt"
 	"path/filepath"
+	"reflect"
 
 	"github.com/motomototv/telebot/config"
+	"github.com/motomototv/telebot/log"
 	"github.com/motomototv/telebot/pkg/go-tdlib/client"
 )
 
@@ -41,17 +43,17 @@ func NewClient(config *config.Config) (*Client, error) {
 
 	tdlibClient, err := client.NewClient(authorizer, logVerbosity)
 	if err != nil {
-		return nil, fmt.Errorf("NewClient error: %s", err)
+		return nil, fmt.Errorf("NewClient error: %s\n", err)
 	}
 
 	optionValue, err := tdlibClient.GetOption(&client.GetOptionRequest{
 		Name: "version",
 	})
 	if err != nil {
-		return nil, fmt.Errorf("GetOption error: %s", err)
+		return nil, fmt.Errorf("GetOption error: %s\n", err)
 	}
 
-	fmt.Printf("TDLib version: %s", optionValue.(*client.OptionValueString).Value)
+	fmt.Printf("TDLib version: %s\n", optionValue.(*client.OptionValueString).Value)
 
 	me, err := tdlibClient.GetMe()
 	if err != nil {
@@ -65,6 +67,36 @@ func NewClient(config *config.Config) (*Client, error) {
 	}, nil
 }
 
-func (client *Client) Run() {
+func (c *Client) Run() {
+	listener := c.Client.GetListener()
+	defer listener.Close()
 
+	for update := range listener.Updates {
+		if update.GetClass() == client.ClassUpdate {
+			switch update.GetType() {
+			case client.TypeUpdateChatLastMessage:
+				v, ok := update.(*client.UpdateChatLastMessage)
+				if !ok {
+					continue
+				}
+				log.Printfln("ChatID:%#v", v.ChatId)
+				log.Printfln("MessageContentType:%#v", v.LastMessage.Content.MessageContentType())
+				log.Printfln("Content:%#v", v.LastMessage.Content)
+				processMessage(v.LastMessage)
+			}
+
+		}
+	}
+}
+
+func processMessage(msg *client.Message) {
+	switch msg.Content.MessageContentType() {
+	case client.TypeMessageText:
+		v, ok := msg.Content.(*client.MessageText)
+		if !ok {
+			log.Printfln("MessageText error:", reflect.TypeOf(msg.Content))
+			return
+		}
+		log.Printfln("MessageText:%#v", v.Text.Text)
+	}
 }
