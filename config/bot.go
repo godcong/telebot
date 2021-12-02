@@ -1,7 +1,5 @@
 package config
 
-const defaultBotModel = "GAE" //Update
-
 //BotModel
 //ENUM(webhook,update,max)
 type BotModel int

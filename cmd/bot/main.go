@@ -43,10 +43,9 @@ func handleInterrupt() error {
 	interrupts := make(chan os.Signal, 1)
 	signal.Notify(interrupts, os.Interrupt, syscall.SIGTERM)
 
-	select {
-	case <-interrupts:
+	_, ok := <-interrupts
+	if ok {
 		fmt.Println("interrupt exit")
-		return nil
 	}
-
+	return nil
 }

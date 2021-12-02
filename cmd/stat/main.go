@@ -7,8 +7,13 @@ import (
 
 func main() {
 	c := client.NewClient(&config.Config{
-		APIID:   "",
-		APIHash: "",
+		Bot:    config.Bot{},
+		Client: config.Client{
+			APIID:   "",
+			APIHash: "",
+		},
+		Debug:  false,
+		Auth:   "",
 	})
 	c.Run()
 }
