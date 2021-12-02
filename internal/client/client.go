@@ -2,81 +2,69 @@ package client
 
 import (
 	"fmt"
-
-	"github.com/Arman92/go-tdlib"
+	"path/filepath"
 
 	"github.com/motomototv/telebot/config"
+	"github.com/motomototv/telebot/pkg/go-tdlib/client"
 )
 
 type Client struct {
-	*tdlib.Client
+	*client.Client
 	config *config.Config
 }
 
-func NewClient(config *config.Config) *Client {
-	tdlib.SetLogVerbosityLevel(1)
-	tdlib.SetFilePath("./errors.txt")
+func NewClient(config *config.Config) (*Client, error) {
+	authorizer := client.ClientAuthorizer()
+	go client.CliInteractor(authorizer)
 
-	// Create new instance of client
-	client := tdlib.NewClient(tdlib.Config{
-		APIID:               config.Client.APIID,
-		APIHash:             config.Client.APIHash,
-		SystemLanguageCode:  "en",
-		DeviceModel:         "Server",
-		SystemVersion:       "1.0.0",
-		ApplicationVersion:  "1.0.0",
-		UseMessageDatabase:  true,
-		UseFileDatabase:     true,
-		UseChatInfoDatabase: true,
-		UseTestDataCenter:   false,
-		DatabaseDirectory:   "./tdlib-db",
-		FileDirectory:       "./tdlib-files",
-		IgnoreFileNames:     false,
-	})
-	return &Client{
-		Client: client,
-		config: config,
+	authorizer.TdlibParameters <- &client.TdlibParameters{
+		UseTestDc:              false,
+		DatabaseDirectory:      filepath.Join(".tdlib", "database"),
+		FilesDirectory:         filepath.Join(".tdlib", "files"),
+		UseFileDatabase:        true,
+		UseChatInfoDatabase:    true,
+		UseMessageDatabase:     true,
+		UseSecretChats:         false,
+		ApiId:                  config.Client.APIID,
+		ApiHash:                config.Client.APIHash,
+		SystemLanguageCode:     "en",
+		DeviceModel:            "Server",
+		SystemVersion:          "1.0.0",
+		ApplicationVersion:     "1.0.0",
+		EnableStorageOptimizer: true,
+		IgnoreFileNames:        false,
 	}
+
+	logVerbosity := client.WithLogVerbosity(&client.SetLogVerbosityLevelRequest{
+		NewVerbosityLevel: 0,
+	})
+
+	tdlibClient, err := client.NewClient(authorizer, logVerbosity)
+	if err != nil {
+		return nil, fmt.Errorf("NewClient error: %s", err)
+	}
+
+	optionValue, err := tdlibClient.GetOption(&client.GetOptionRequest{
+		Name: "version",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("GetOption error: %s", err)
+	}
+
+	fmt.Printf("TDLib version: %s", optionValue.(*client.OptionValueString).Value)
+
+	me, err := tdlibClient.GetMe()
+	if err != nil {
+		return nil, fmt.Errorf("GetMe error: %s", err)
+	}
+
+	fmt.Printf("Me: %s %s [%s]", me.FirstName, me.LastName, me.Username)
+	return &Client{
+		Client: tdlibClient,
+		config: config,
+	}, nil
 }
 
 func (client *Client) Run() {
-	for {
-		currentState, _ := client.Authorize()
-		if currentState.GetAuthorizationStateEnum() == tdlib.AuthorizationStateWaitPhoneNumberType {
-			fmt.Print("Enter phone: ")
-			var number string
-			fmt.Scanln(&number)
-			_, err := client.SendPhoneNumber(number)
-			if err != nil {
-				fmt.Printf("Error sending phone number: %v", err)
-			}
-		} else if currentState.GetAuthorizationStateEnum() == tdlib.AuthorizationStateWaitCodeType {
-			fmt.Print("Enter code: ")
-			var code string
-			fmt.Scanln(&code)
-			_, err := client.SendAuthCode(code)
-			if err != nil {
-				fmt.Printf("Error sending auth code : %v", err)
-			}
-		} else if currentState.GetAuthorizationStateEnum() == tdlib.AuthorizationStateWaitPasswordType {
-			fmt.Print("Enter Password: ")
-			var password string
-			fmt.Scanln(&password)
-			_, err := client.SendAuthPassword(password)
-			if err != nil {
-				fmt.Printf("Error sending auth password: %v", err)
-			}
-		} else if currentState.GetAuthorizationStateEnum() == tdlib.AuthorizationStateReadyType {
-			fmt.Println("Authorization Ready! Let's rock")
-			break
-		}
-	}
-
-	// Main loop
-	for update := range client.Client.GetRawUpdatesChannel(1024) {
-		// Show all updates
-		fmt.Println(update.Data)
-		fmt.Print("\n\n")
-	}
 
 }

@@ -22,7 +22,7 @@ func LoadConfig(pathname string) (*Config, error) {
 	file, err := os.Open(pathname)
 	if err != nil {
 		err = writeDefaultConfig(pathname)
-		return nil, err
+		return property, err
 	}
 	dec := jsoniter.NewDecoder(file)
 	err = dec.Decode(property)
@@ -61,7 +61,7 @@ func defaultConfig() *Config {
 			LocalURL:       "",
 		},
 		Client: Client{
-			APIID:   "",
+			APIID:   0,
 			APIHash: "",
 		},
 	}

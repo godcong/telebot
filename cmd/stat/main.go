@@ -1,19 +1,26 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+
 	"github.com/motomototv/telebot/config"
 	"github.com/motomototv/telebot/internal/client"
 )
 
+var path = flag.String("path", "bot.cfg", "default property path")
+
 func main() {
-	c := client.NewClient(&config.Config{
-		Bot:    config.Bot{},
-		Client: config.Client{
-			APIID:   "",
-			APIHash: "",
-		},
-		Debug:  false,
-		Auth:   "",
-	})
+	flag.Parse()
+	cfg, err := config.LoadConfig(*path)
+	if err != nil {
+		panic(err)
+	}
+
+	c, err := client.NewClient(cfg)
+	if err != nil {
+		panic(err)
+	}
 	c.Run()
+	fmt.Println("end")
 }
