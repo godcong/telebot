@@ -81,14 +81,13 @@ func (c *Client) Run() {
 				}
 				log.Printfln("ChatID:%#v", v.ChatId)
 				if v.LastMessage == nil {
-					json, err := v.LastMessage.MarshalJSON()
-					if err != nil {
-						log.Printfln("MarshalJSON error: %s", err)
-					}
-					log.Printfln("Message:%s", string(json))
 					continue
 				}
-
+				json, err := v.LastMessage.MarshalJSON()
+				if err != nil {
+					log.Printfln("MarshalJSON error: %s", err)
+				}
+				log.Printfln("Message:%s", string(json))
 				if v.LastMessage.Content == nil {
 					continue
 				}
