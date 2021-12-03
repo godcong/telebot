@@ -8,6 +8,7 @@ import (
 	"github.com/motomototv/telebot/config"
 	"github.com/motomototv/telebot/log"
 	"github.com/motomototv/telebot/pkg/go-tdlib/client"
+	"github.com/motomototv/telebot/pkg/tdutil"
 )
 
 type Client struct {
@@ -71,9 +72,18 @@ func (c *Client) Me() (*client.User, error) {
 	return me, nil
 }
 
-func (c *Client) GetUserRequest(id int32) (*client.User, error) {
+func (c *Client) GetUserRequest(sender client.MessageSender) (*client.User, error) {
+	var id client.MessageSenderUser
+	if sender.MessageSenderType() != client.TypeMessageSenderUser {
+		return nil, fmt.Errorf("sender type is not user")
+	}
+
+	err := tdutil.MessageSender(sender, &id)
+	if err != nil {
+		return nil, err
+	}
 	return c.Client.GetUser(&client.GetUserRequest{
-		UserID: id,
+		UserID: id.UserID,
 	})
 }
 

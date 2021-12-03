@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/motomototv/telebot/config"
 	"github.com/motomototv/telebot/internal/client"
@@ -10,6 +13,7 @@ import (
 )
 
 var path = flag.String("path", "bot.cfg", "default property path")
+var chatid = flag.Int64("chatid", 0, "chat id")
 
 func main() {
 	flag.Parse()
@@ -22,6 +26,36 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	c.Run()
+	go c.Run()
+	fmt.Println("Bot is running")
+
+	members, err := c.ChatMembers(*chatid)
+	if err == nil {
+		fmt.Println("Group members:", len(members.Members), members.TotalCount)
+		for i := range members.Members {
+
+			fmt.Println("User:", members.Members[i].MemberID)
+			request, err := c.GetUserRequest(members.Members[i].MemberID)
+			if err == nil {
+				fmt.Println("User:", request.Username, "joined chat:", -1102281440)
+			}
+
+		}
+	} else {
+		fmt.Println("GetChatMembers error:", err)
+	}
+
+	handleInterrupt()
 	fmt.Println("end")
+}
+
+func handleInterrupt() error {
+	interrupts := make(chan os.Signal, 1)
+	signal.Notify(interrupts, os.Interrupt, syscall.SIGTERM)
+
+	_, ok := <-interrupts
+	if ok {
+		fmt.Println("interrupt exit")
+	}
+	return nil
 }

@@ -1,6 +1,6 @@
 package config
 
 type Client struct {
-	APIID   int32
+	APIID   int64
 	APIHash string
 }
