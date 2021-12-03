@@ -55,22 +55,25 @@ func NewClient(config *config.Config) (*Client, error) {
 
 	fmt.Printf("TDLib version: %s\n", optionValue.(*client.OptionValueString).Value)
 
-	me, err := tdlibClient.GetMe()
-	if err != nil {
-		return nil, fmt.Errorf("GetMe error: %s", err)
-	}
-
-	fmt.Printf("Me: %s %s [%s]", me.FirstName, me.LastName, me.Username)
 	return &Client{
 		Client: tdlibClient,
 		config: config,
 	}, nil
 }
 
+func (c *Client) Me() (*client.User, error) {
+	me, err := c.Client.GetMe()
+	if err != nil {
+		return nil, fmt.Errorf("GetMe error: %s", err)
+	}
+
+	log.Printfln("Me: %s %s [%s]", me.FirstName, me.LastName, me.Username)
+	return me, nil
+}
+
 func (c *Client) Run() {
 	listener := c.Client.GetListener()
 	defer listener.Close()
-
 	for update := range listener.Updates {
 		if update.GetClass() == client.ClassUpdate {
 			switch update.GetType() {
