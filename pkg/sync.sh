@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "Clone required repositories"
-git clone https://github.com/zelenin/go-tdlib.git
+git clone https://github.com/godcong/go-tdlib.git
 git clone https://github.com/tdlib/td.git
 
 echo "Copying files..."

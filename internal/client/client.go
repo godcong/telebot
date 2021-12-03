@@ -27,7 +27,7 @@ func NewClient(config *config.Config) (*Client, error) {
 		UseChatInfoDatabase:    true,
 		UseMessageDatabase:     true,
 		UseSecretChats:         false,
-		ApiId:                  config.Client.APIID,
+		ApiID:                  config.Client.APIID,
 		ApiHash:                config.Client.APIHash,
 		SystemLanguageCode:     "en",
 		DeviceModel:            "Server",
@@ -71,6 +71,26 @@ func (c *Client) Me() (*client.User, error) {
 	return me, nil
 }
 
+func (c *Client) GetUserRequest(id int32) (*client.User, error) {
+	return c.Client.GetUser(&client.GetUserRequest{
+		UserID: id,
+	})
+}
+
+func (c *Client) ChatMembers(chatid int64) (*client.ChatMembers, error) {
+	members, err := c.Client.SearchChatMembers(&client.SearchChatMembersRequest{
+		ChatID: chatid,
+		Query:  "",
+		Limit:  100,
+		Filter: &client.ChatMembersFilterMembers{},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("SearchChatMembers error: %s", err)
+	}
+	log.Printfln("SearchChatMembers: %#v", members)
+	return members, nil
+}
+
 func (c *Client) Run() {
 	listener := c.Client.GetListener()
 	defer listener.Close()
@@ -82,7 +102,7 @@ func (c *Client) Run() {
 				if !ok {
 					continue
 				}
-				log.Printfln("ChatID:%#v", v.ChatId)
+				log.Printfln("ChatID:%#v", v.ChatID)
 				if v.LastMessage == nil {
 					continue
 				}
