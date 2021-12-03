@@ -109,6 +109,9 @@ func processMessage(msg *client.Message) {
 			log.Printfln("MessageText error:", reflect.TypeOf(msg.Content))
 			return
 		}
-		log.Printfln("MessageText:%#v", v.Text.Text)
+		if v.Text != nil {
+			fmt.Println("MessageText:", v.Text.Text)
+		}
+		//log.Printfln("MessageText:%s", v.Text.Text)
 	}
 }
