@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"reflect"
 
+	"go.uber.org/atomic"
+
 	"github.com/motomototv/telebot/config"
 	"github.com/motomototv/telebot/log"
 	"github.com/motomototv/telebot/pkg/go-tdlib/client"
@@ -14,16 +16,18 @@ import (
 type Client struct {
 	*client.Client
 	config *config.Config
+	state  *atomic.String
+	hash   string
 }
 
-func NewClient(config *config.Config) (*Client, error) {
+func NewClient(hash string, config *config.Config) (*Client, error) {
 	authorizer := client.ClientAuthorizer()
 	go client.CliInteractor(authorizer)
 
 	authorizer.TdlibParameters <- &client.TdlibParameters{
 		UseTestDc:              false,
-		DatabaseDirectory:      filepath.Join(".tdlib", "database"),
-		FilesDirectory:         filepath.Join(".tdlib", "files"),
+		DatabaseDirectory:      filepath.Join(".tdlib", hash, "database"),
+		FilesDirectory:         filepath.Join(".tdlib", hash, "files"),
 		UseFileDatabase:        true,
 		UseChatInfoDatabase:    true,
 		UseMessageDatabase:     true,
@@ -59,7 +63,17 @@ func NewClient(config *config.Config) (*Client, error) {
 	return &Client{
 		Client: tdlibClient,
 		config: config,
+		state:  atomic.NewString(""),
+		hash:   hash,
 	}, nil
+}
+
+func (c *Client) State() string {
+	return c.state.Load()
+}
+
+func (c *Client) Hash() string {
+	return c.hash
 }
 
 func (c *Client) Me() (*client.User, error) {
@@ -67,27 +81,30 @@ func (c *Client) Me() (*client.User, error) {
 	if err != nil {
 		return nil, fmt.Errorf("GetMe error: %s", err)
 	}
-
 	log.Printfln("Me: %s %s [%s]", me.FirstName, me.LastName, me.Username)
 	return me, nil
 }
 
-func (c *Client) GetUserRequest(sender client.MessageSender) (*client.User, error) {
+func (c *Client) GetUserByID(sender client.MessageSender) (*client.User, error) {
 	var id client.MessageSenderUser
 	if sender.MessageSenderType() != client.TypeMessageSenderUser {
 		return nil, fmt.Errorf("sender type is not user")
 	}
-
 	err := tdutil.MessageSender(sender, &id)
 	if err != nil {
 		return nil, err
 	}
-	return c.Client.GetUser(&client.GetUserRequest{
+	user, err := c.Client.GetUser(&client.GetUserRequest{
 		UserID: id.UserID,
 	})
+	if err != nil {
+		return nil, fmt.Errorf("GetUser error: %s", err)
+	}
+	log.Printfln("User: %#v", user)
+	return user, nil
 }
 
-func (c *Client) ChatMembers(chatid int64) (*client.ChatMembers, error) {
+func (c *Client) SearchChatMembersByID(chatid int64) (*client.ChatMembers, error) {
 	members, err := c.Client.SearchChatMembers(&client.SearchChatMembersRequest{
 		ChatID: chatid,
 		Query:  "",
@@ -97,7 +114,7 @@ func (c *Client) ChatMembers(chatid int64) (*client.ChatMembers, error) {
 	if err != nil {
 		return nil, fmt.Errorf("SearchChatMembers error: %s", err)
 	}
-	log.Printfln("SearchChatMembers: %#v", members)
+	log.Printfln("ChatMembers: %#v", members)
 	return members, nil
 }
 
@@ -120,13 +137,13 @@ func (c *Client) Run() {
 				if err != nil {
 					log.Printfln("MarshalJSON error: %s", err)
 				}
-				log.Printfln("Message:%s", string(json))
+				log.Printfln("LastMessage:%s", string(json))
 				if v.LastMessage.Content == nil {
 					continue
 				}
 
-				log.Printfln("MessageContentType:%#v", v.LastMessage.Content.MessageContentType())
-				log.Printfln("Content:%#v", v.LastMessage.Content)
+				//log.Printfln("MessageContentType:%#v", v.LastMessage.Content.MessageContentType())
+				//log.Printfln("Content:%#v", v.LastMessage.Content)
 				processMessage(v.LastMessage)
 			}
 

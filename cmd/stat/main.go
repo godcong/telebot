@@ -22,20 +22,20 @@ func main() {
 		panic(err)
 	}
 	log.Debug = cfg.Debug
-	c, err := client.NewClient(cfg)
+	c, err := client.NewClient("user1", cfg)
 	if err != nil {
 		panic(err)
 	}
 	go c.Run()
 	fmt.Println("Bot is running")
 
-	members, err := c.ChatMembers(*chatid)
+	members, err := c.SearchChatMembersByID(*chatid)
 	if err == nil {
 		fmt.Println("Group members:", len(members.Members), members.TotalCount)
 		for i := range members.Members {
 
 			fmt.Println("User:", members.Members[i].MemberID)
-			request, err := c.GetUserRequest(members.Members[i].MemberID)
+			request, err := c.GetUserByID(members.Members[i].MemberID)
 			if err == nil {
 				fmt.Println("User:", request.Username, "joined chat:", -1102281440)
 			}
