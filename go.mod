@@ -1,4 +1,4 @@
-module github.com/motomototv/telebot
+module github.com/godcong/telebot
 
 require (
 	entgo.io/ent v0.9.1
