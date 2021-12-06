@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/motomototv/telebot/database/ent/predicate"
-	"github.com/motomototv/telebot/database/ent/statistic"
+	"github.com/godcong/telebot/database/ent/predicate"
+	"github.com/godcong/telebot/database/ent/statistic"
 )
 
 // StatisticQuery is the builder for querying Statistic entities.

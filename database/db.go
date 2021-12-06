@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/motomototv/telebot/database/ent"
-	"github.com/motomototv/telebot/database/ent/message"
-	"github.com/motomototv/telebot/database/ent/schema"
-	"github.com/motomototv/telebot/database/ent/statistic"
+	"github.com/godcong/telebot/database/ent"
+	"github.com/godcong/telebot/database/ent/message"
+	"github.com/godcong/telebot/database/ent/schema"
+	"github.com/godcong/telebot/database/ent/statistic"
 )
 
 const sqlDSN = "file:%v?cache=shared&_journal=WAL&_fk=1"

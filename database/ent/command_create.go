@@ -8,7 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/motomototv/telebot/database/ent/command"
+	"github.com/godcong/telebot/database/ent/command"
 )
 
 // CommandCreate is the builder for creating a Command entity.

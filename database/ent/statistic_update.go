@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/motomototv/telebot/database/ent/predicate"
-	"github.com/motomototv/telebot/database/ent/statistic"
+	"github.com/godcong/telebot/database/ent/predicate"
+	"github.com/godcong/telebot/database/ent/statistic"
 )
 
 // StatisticUpdate is the builder for updating Statistic entities.

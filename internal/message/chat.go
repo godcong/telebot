@@ -6,10 +6,10 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
-	"github.com/motomototv/telebot/abstract"
-	"github.com/motomototv/telebot/database/ent"
-	"github.com/motomototv/telebot/database/ent/message"
-	"github.com/motomototv/telebot/log"
+	"github.com/godcong/telebot/abstract"
+	"github.com/godcong/telebot/database/ent"
+	"github.com/godcong/telebot/database/ent/message"
+	"github.com/godcong/telebot/log"
 )
 
 func getName(user *tgbotapi.User) string {

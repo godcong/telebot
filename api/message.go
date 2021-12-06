@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 
-	"github.com/motomototv/telebot/database/ent"
+	"github.com/godcong/telebot/database/ent"
 )
 
 func (a *api) handleMessage(context *gin.Context) {

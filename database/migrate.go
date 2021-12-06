@@ -3,9 +3,9 @@ package database
 import (
 	"context"
 
-	"github.com/motomototv/telebot/database/ent"
-	"github.com/motomototv/telebot/database/ent/message"
-	"github.com/motomototv/telebot/database/ent/schema"
+	"github.com/godcong/telebot/database/ent"
+	"github.com/godcong/telebot/database/ent/message"
+	"github.com/godcong/telebot/database/ent/schema"
 )
 
 func (d *DB) Migrate(ctx context.Context) error {

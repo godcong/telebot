@@ -8,9 +8,9 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/motomototv/telebot/database/ent/command"
-	"github.com/motomototv/telebot/database/ent/message"
-	"github.com/motomototv/telebot/database/ent/statistic"
+	"github.com/godcong/telebot/database/ent/command"
+	"github.com/godcong/telebot/database/ent/message"
+	"github.com/godcong/telebot/database/ent/statistic"
 )
 
 // ent aliases to avoid import conflicts in user's code.

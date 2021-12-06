@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/motomototv/telebot/database/ent/message"
-	"github.com/motomototv/telebot/database/ent/predicate"
-	"github.com/motomototv/telebot/database/ent/statistic"
+	"github.com/godcong/telebot/database/ent/message"
+	"github.com/godcong/telebot/database/ent/predicate"
+	"github.com/godcong/telebot/database/ent/statistic"
 
 	"entgo.io/ent"
 )

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/motomototv/telebot/database/ent/command"
+	"github.com/godcong/telebot/database/ent/command"
 )
 
 // Command is the model entity for the Command schema.

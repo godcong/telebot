@@ -5,8 +5,8 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
-	"github.com/motomototv/telebot/config"
-	"github.com/motomototv/telebot/database"
+	"github.com/godcong/telebot/config"
+	"github.com/godcong/telebot/database"
 )
 
 type Bot interface {

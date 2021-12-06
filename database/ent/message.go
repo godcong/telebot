@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/motomototv/telebot/database/ent/message"
+	"github.com/godcong/telebot/database/ent/message"
 )
 
 // Message is the model entity for the Message schema.

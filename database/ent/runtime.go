@@ -5,9 +5,9 @@ package ent
 import (
 	"time"
 
-	"github.com/motomototv/telebot/database/ent/message"
-	"github.com/motomototv/telebot/database/ent/schema"
-	"github.com/motomototv/telebot/database/ent/statistic"
+	"github.com/godcong/telebot/database/ent/message"
+	"github.com/godcong/telebot/database/ent/schema"
+	"github.com/godcong/telebot/database/ent/statistic"
 )
 
 // The init function reads all schema descriptors with runtime code

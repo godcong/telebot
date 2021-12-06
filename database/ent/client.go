@@ -7,11 +7,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/motomototv/telebot/database/ent/migrate"
+	"github.com/godcong/telebot/database/ent/migrate"
 
-	"github.com/motomototv/telebot/database/ent/command"
-	"github.com/motomototv/telebot/database/ent/message"
-	"github.com/motomototv/telebot/database/ent/statistic"
+	"github.com/godcong/telebot/database/ent/command"
+	"github.com/godcong/telebot/database/ent/message"
+	"github.com/godcong/telebot/database/ent/statistic"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"

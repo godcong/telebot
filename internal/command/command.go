@@ -3,8 +3,8 @@ package command
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
-	"github.com/motomototv/telebot/abstract"
-	"github.com/motomototv/telebot/database/ent/schema"
+	"github.com/godcong/telebot/abstract"
+	"github.com/godcong/telebot/database/ent/schema"
 )
 
 const help = `输入:

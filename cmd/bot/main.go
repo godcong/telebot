@@ -9,10 +9,10 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/motomototv/telebot/api"
-	"github.com/motomototv/telebot/config"
-	"github.com/motomototv/telebot/internal/bot"
-	"github.com/motomototv/telebot/log"
+	"github.com/godcong/telebot/api"
+	"github.com/godcong/telebot/config"
+	"github.com/godcong/telebot/internal/bot"
+	"github.com/godcong/telebot/log"
 )
 
 var path = flag.String("path", "config", "default property path")

@@ -5,9 +5,9 @@ package enttest
 import (
 	"context"
 
-	"github.com/motomototv/telebot/database/ent"
+	"github.com/godcong/telebot/database/ent"
 	// required by schema hooks.
-	_ "github.com/motomototv/telebot/database/ent/runtime"
+	_ "github.com/godcong/telebot/database/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

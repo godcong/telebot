@@ -6,12 +6,12 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
-	"github.com/motomototv/telebot/abstract"
-	"github.com/motomototv/telebot/config"
-	"github.com/motomototv/telebot/database"
-	"github.com/motomototv/telebot/database/ent/schema"
-	"github.com/motomototv/telebot/internal/message"
-	"github.com/motomototv/telebot/log"
+	"github.com/godcong/telebot/abstract"
+	"github.com/godcong/telebot/config"
+	"github.com/godcong/telebot/database"
+	"github.com/godcong/telebot/database/ent/schema"
+	"github.com/godcong/telebot/internal/message"
+	"github.com/godcong/telebot/log"
 )
 
 var ErrConfigNil = errors.New("config is nil")

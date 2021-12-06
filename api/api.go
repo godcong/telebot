@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/motomototv/telebot/abstract"
-	"github.com/motomototv/telebot/config"
-	"github.com/motomototv/telebot/database"
+	"github.com/godcong/telebot/abstract"
+	"github.com/godcong/telebot/config"
+	"github.com/godcong/telebot/database"
 )
 
 type api struct {

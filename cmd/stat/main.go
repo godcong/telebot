@@ -7,9 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/motomototv/telebot/config"
-	"github.com/motomototv/telebot/internal/client"
-	"github.com/motomototv/telebot/log"
+	"github.com/godcong/telebot/config"
+	"github.com/godcong/telebot/internal/client"
+	"github.com/godcong/telebot/log"
 )
 
 var path = flag.String("path", "bot.cfg", "default property path")

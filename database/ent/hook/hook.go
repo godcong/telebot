@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/motomototv/telebot/database/ent"
+	"github.com/godcong/telebot/database/ent"
 )
 
 // The CommandFunc type is an adapter to allow the use of ordinary

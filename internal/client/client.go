@@ -7,10 +7,10 @@ import (
 
 	"go.uber.org/atomic"
 
-	"github.com/motomototv/telebot/config"
-	"github.com/motomototv/telebot/log"
-	"github.com/motomototv/telebot/pkg/go-tdlib/client"
-	"github.com/motomototv/telebot/pkg/tdutil"
+	"github.com/godcong/telebot/config"
+	"github.com/godcong/telebot/log"
+	"github.com/godcong/telebot/pkg/go-tdlib/client"
+	"github.com/godcong/telebot/pkg/tdutil"
 )
 
 type Client struct {
